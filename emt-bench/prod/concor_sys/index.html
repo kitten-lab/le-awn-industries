@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jack's Concor · CO.JX-001-CONCOR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body class="concor">
+  <header class="cc-chrome" data-deck-chrome>
+    <span class="cc-chip" data-deck-menu title="Menu">CO.<strong>JX</strong></span>
+    <span class="cc-drag" data-deck-drag title="drag">JACK'S CONCOR · 001-CONCOR</span>
+    <div class="cc-win" data-deck-window-controls aria-label="Window"></div>
+  </header>
+
+  <main class="cc-table" id="table" aria-label="Work table">
+    <!-- books + papers injected -->
+  </main>
+
+  <aside class="cc-heb" id="hebBoard" hidden aria-label="Hebrew alphabet board">
+    <div class="cc-heb-head">
+      <span class="cc-heb-title">HEBREW BOARD</span>
+      <label class="cc-heb-toggle">
+        <input type="checkbox" id="hebFinals" />
+        finals
+      </label>
+      <button type="button" class="cc-heb-close" id="hebClose" title="close">×</button>
+    </div>
+    <div class="cc-heb-grid" id="hebGrid"></div>
+  </aside>
+
+  <footer class="cc-bar" id="bottomBar" aria-label="Control bar">
+    <div class="cc-bar-books" id="barBooks" title="Books"></div>
+    <div class="cc-bar-div" aria-hidden="true"></div>
+    <div class="cc-bar-papers" id="barPapers" title="Shelved papers"></div>
+    <div class="cc-bar-tools">
+      <button type="button" class="cc-bar-btn" id="btnHelp" title="How to">?</button>
+      <button type="button" class="cc-bar-btn" id="btnCab" title="Cab — JX FileKeeper papers">CAB</button>
+      <button type="button" class="cc-bar-btn" id="btnHeb" title="Hebrew alphabet board">א ב</button>
+      <button type="button" class="cc-bar-btn" id="btnNewWord" title="New word paper">+WORD</button>
+      <button type="button" class="cc-bar-btn" id="btnSave" title="Save store">SAVE</button>
+    </div>
+    <div class="cc-bar-clock" id="clock" aria-live="polite">--:--</div>
+  </footer>
+
+  <div class="cc-toast" id="toast" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>

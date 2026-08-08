@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nim Bench · cut</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body class="bench">
+  <header class="b-chrome" data-deck-chrome>
+    <span class="b-chip" data-deck-menu title="Nim Bench">JX·<strong>CUT</strong></span>
+    <span class="b-drag" data-deck-drag>NIM BENCH · hand branches</span>
+    <span class="b-meta" id="metaLine">—</span>
+    <div class="b-win" data-deck-window-controls></div>
+  </header>
+
+  <main class="b-main">
+    <aside class="b-side">
+      <div class="b-side-h">Logs</div>
+      <div class="b-side-sub" id="logCount">lived order · OT-001 style</div>
+      <input id="logFilter" class="b-input" type="search" placeholder="filter OT-012 · title…" autocomplete="off" />
+      <div id="logList" class="b-list"></div>
+    </aside>
+
+    <section class="b-stage">
+      <div id="emptyState" class="b-empty">
+        Pick a log. Place a cut to split a new <strong>trunk</strong>.
+        Each message is a <strong>branch</strong> with a stable chip
+        (<span class="mono">OT-001.T01.B000</span>) — click to copy.
+      </div>
+      <div id="logView" class="b-log" hidden>
+        <header class="b-log-head">
+          <div>
+            <div class="b-log-code-row">
+              <div class="b-log-code" id="logCode">—</div>
+              <button type="button" class="b-hide-down-btn" id="hideDownBtn" title="Hide ▾ don't-care branches">
+                hide ▾
+              </button>
+              <button type="button" class="b-done-btn" id="cutDoneBtn" title="Mark this log as cut into trunks">
+                mark cut done
+              </button>
+            </div>
+            <div class="b-log-title" id="logTitle">—</div>
+            <div class="b-log-quiet" id="logQuiet"></div>
+          </div>
+          <div class="b-branches" id="branchPills"></div>
+        </header>
+        <div class="b-hint">
+          Tree: <strong>log → trunk → branch</strong> ·
+          chip e.g. <strong>OT-001.T02.B014</strong> (click to copy) ·
+          <strong>▸ / ▾</strong> = collapse rail · click header ·
+          <strong>Cut</strong> = new trunk ·
+          <strong>▴ / ▾</strong> = gravity ·
+          place is remembered when you return.
+        </div>
+        <div id="msgStream" class="b-stream"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="b-toast" id="toast" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>

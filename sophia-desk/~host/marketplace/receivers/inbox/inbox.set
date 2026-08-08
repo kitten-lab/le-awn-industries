@@ -1,0 +1,13 @@
+<!-- inbox.set · HERMES MAIL banker box — NOT a stamper -->
+<div class="tool-inbox" data-tool="inbox" data-drag-chrome title="Hermes Mail · drop a leaf to file · click to open tray">
+  <div class="tool-inbox-shell">
+    <div class="tool-inbox-flag" data-inbox-mail hidden aria-hidden="true">MAIL</div>
+    <div class="tool-inbox-slot" aria-hidden="true"></div>
+    <div class="tool-inbox-plate">
+      <span class="tool-inbox-word">HERMES</span>
+      <span class="tool-inbox-sub">MAIL</span>
+      <span class="tool-inbox-count" data-inbox-count>0</span>
+      <span class="tool-inbox-address" data-inbox-address>—</span>
+    </div>
+  </div>
+</div>

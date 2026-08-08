@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Concor mockup · study + your dictionary</title>
+  <style>
+    :root {
+      --felt: #1e3d32;
+      --felt-deep: #152a23;
+      --paper: #f4efe4;
+      --ink: #1a1814;
+      --muted: #6b6560;
+      --amber: #c47a2c;
+      --amber-soft: #f3e4d0;
+      --ledger: #4a5560;
+      --ledger-soft: #e4e8ec;
+      --ticket: #fffdf8;
+      --you: #b45309;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #0f1412;
+      color: var(--paper);
+      line-height: 1.45;
+    }
+    header {
+      padding: 1.25rem 1.5rem 0.5rem;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+    }
+    header p {
+      margin: 0;
+      color: #a8b5ae;
+      font-size: 0.9rem;
+      max-width: 68ch;
+    }
+    .path {
+      margin-top: 0.65rem;
+      font-size: 0.72rem;
+      color: #6a7a74;
+      font-family: ui-monospace, Consolas, monospace;
+      word-break: break-all;
+    }
+    .tabs {
+      max-width: 1120px;
+      margin: 1rem auto 0;
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .tabs button {
+      appearance: none;
+      border: 1px solid #3d5c50;
+      background: #1a2a24;
+      color: #b7c9c0;
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .tabs button[aria-selected="true"] {
+      background: #2f5648;
+      color: #f0f4f2;
+      border-color: #5a8a72;
+    }
+    section.panel {
+      display: none;
+      max-width: 1120px;
+      margin: 0.85rem auto 2rem;
+      padding: 0 1.5rem;
+    }
+    section.panel.active { display: block; }
+    .label-bar {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .label-bar h2 {
+      margin: 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #8fa39a;
+      font-weight: 600;
+    }
+    .label-bar em {
+      font-style: normal;
+      font-size: 0.75rem;
+      color: #6a7a74;
+    }
+    .study {
+      background: linear-gradient(160deg, #2a4a3f 0%, var(--felt) 40%, var(--felt-deep) 100%);
+      border-radius: 14px;
+      padding: 1.1rem 1.15rem 1.25rem;
+      border: 1px solid #3d5c50;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+    .study-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.9rem;
+      font-size: 0.8rem;
+      color: #b7c9c0;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .study-top strong { color: #e8f0ec; font-weight: 600; }
+    .chip {
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.72rem;
+      color: #c5d5cd;
+    }
+    .verse-row {
+      display: flex;
+      flex-direction: row-reverse;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      justify-content: flex-start;
+      margin-bottom: 1rem;
+    }
+    .word-col {
+      background: rgba(0,0,0,0.15);
+      border-radius: 10px;
+      padding: 0.4rem;
+      min-width: 7.2rem;
+      max-width: 9.5rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .word-col:hover { border-color: rgba(255,255,255,0.12); }
+    .word-col.selected {
+      border-color: rgba(196, 122, 44, 0.7);
+      box-shadow: 0 0 0 1px rgba(196, 122, 44, 0.25);
+    }
+    .ticket {
+      background: var(--ticket);
+      color: var(--ink);
+      border-radius: 7px;
+      padding: 0.55rem 0.45rem 0.45rem;
+      text-align: center;
+      box-shadow: 0 2px 0 #d4cbb8, 0 4px 10px rgba(0,0,0,0.18);
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.45rem;
+      direction: rtl;
+      line-height: 1.2;
+    }
+    .lane {
+      margin-top: 0.35rem;
+      border-radius: 6px;
+      padding: 0.35rem 0.4rem;
+      font-size: 0.68rem;
+      line-height: 1.25;
+      min-height: 2.35rem;
+      direction: ltr;
+      text-align: left;
+    }
+    .lane .tag {
+      display: block;
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.15rem;
+      font-weight: 600;
+    }
+    .lane.you {
+      background: var(--amber-soft);
+      color: #5c3410;
+      border: 1px solid #e0c49a;
+    }
+    .lane.you .tag { color: var(--you); }
+    .lane.ledger {
+      background: var(--ledger-soft);
+      color: #2d3640;
+      border: 1px solid #c5ced6;
+    }
+    .lane.ledger .tag { color: var(--ledger); }
+    .lane.ledger.none {
+      background: transparent;
+      border-style: dashed;
+      border-color: rgba(200,210,218,0.35);
+      color: #8a969e;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 0.85rem;
+    }
+    @media (max-width: 860px) {
+      .split { grid-template-columns: 1fr; }
+    }
+    .drawer {
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 0.75rem 0.8rem;
+      font-size: 0.78rem;
+      color: #d0dbd5;
+    }
+    .drawer h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #8fa39a;
+      font-weight: 600;
+    }
+    .drawer .entry-title {
+      font-weight: 600;
+      color: #f0f4f2;
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.25rem;
+      direction: rtl;
+      text-align: right;
+      margin-bottom: 0.25rem;
+    }
+    .drawer .muted { color: #8fa39a; font-size: 0.72rem; }
+    .drawer hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin: 0.65rem 0;
+    }
+    .you-box {
+      background: rgba(196, 122, 44, 0.15);
+      border: 1px solid rgba(196, 122, 44, 0.35);
+      border-radius: 8px;
+      padding: 0.5rem 0.55rem;
+      color: #f3e0c4;
+    }
+    .you-box .tag {
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #e0a86a;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      background: rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      color: #f0e6d8;
+      padding: 0.4rem 0.5rem;
+      font: inherit;
+      font-size: 0.8rem;
+      resize: vertical;
+    }
+    textarea:focus, input[type="text"]:focus {
+      outline: 1px solid rgba(196, 122, 44, 0.55);
+      border-color: rgba(196, 122, 44, 0.45);
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(196, 122, 44, 0.55);
+      background: rgba(196, 122, 44, 0.22);
+      color: #f5d9a8;
+      border-radius: 7px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn:hover { background: rgba(196, 122, 44, 0.35); }
+    .btn.ghost {
+      background: transparent;
+      border-color: rgba(255,255,255,0.14);
+      color: #b7c9c0;
+      font-weight: 500;
+    }
+    .note {
+      margin-top: 0.85rem;
+      background: rgba(0,0,0,0.18);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      font-size: 0.78rem;
+      color: #b7c9c0;
+    }
+
+    /* dictionary */
+    .dict {
+      background: linear-gradient(165deg, #2a3832, #1a2420 55%, #141c19);
+      border-radius: 14px;
+      padding: 1.1rem 1.15rem 1.25rem;
+      border: 1px solid #3a4e46;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+    .dict-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 0.9rem;
+    }
+    @media (max-width: 860px) {
+      .dict-grid { grid-template-columns: 1fr; }
+    }
+    .compose {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 0.85rem;
+    }
+    .compose h3, .dict-list-wrap h3 {
+      margin: 0 0 0.55rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #8fa39a;
+      font-weight: 600;
+    }
+    .letters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-bottom: 0.75rem;
+      direction: rtl;
+      justify-content: flex-start;
+    }
+    .letters button {
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 6px;
+      border: 1px solid #4a5c54;
+      background: #2a3832;
+      color: #f0e6d8;
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #121816;
+    }
+    .letters button:hover { background: #354840; }
+    .build-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+      flex-wrap: wrap;
+    }
+    .build-preview {
+      flex: 1;
+      min-width: 8rem;
+      background: var(--ticket);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.55rem;
+      direction: rtl;
+      text-align: center;
+      min-height: 2.6rem;
+      box-shadow: 0 2px 0 #d4cbb8;
+    }
+    .build-preview:empty::before {
+      content: "…";
+      color: #b0a898;
+    }
+    .field { margin-bottom: 0.55rem; }
+    .field label {
+      display: block;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8fa39a;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .actions { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.35rem; }
+    .hint {
+      margin-top: 0.65rem;
+      font-size: 0.75rem;
+      color: #8fa39a;
+    }
+    .dict-list-wrap {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 0.85rem;
+      max-height: 28rem;
+      overflow: auto;
+    }
+    .dict-list { list-style: none; margin: 0; padding: 0; }
+    .dict-list li {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0.55rem 0.15rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.55rem 0.75rem;
+      align-items: start;
+    }
+    .dict-list li:last-child { border-bottom: none; }
+    .dict-list .heb {
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.2rem;
+      direction: rtl;
+      color: #f0e6d8;
+      min-width: 3.5rem;
+      text-align: right;
+    }
+    .dict-list .reading { color: #e8d4b0; font-size: 0.85rem; }
+    .dict-list .meta {
+      grid-column: 2;
+      font-size: 0.68rem;
+      color: #7a8a84;
+    }
+    .dict-list .badge {
+      display: inline-block;
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      margin-right: 0.3rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .badge.yours { color: #e0a86a; border-color: rgba(196,122,44,0.4); }
+    .badge.ledger { color: #9ab0c0; border-color: rgba(120,140,160,0.35); }
+    .badge.none { color: #8a9690; }
+
+    .switchboard {
+      background: #1a1512;
+      border-radius: 14px;
+      padding: 1.1rem;
+      border: 1px solid #3a322c;
+      background-image: linear-gradient(180deg, #241e1a, #14110f);
+    }
+    .keys {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin: 0.75rem 0 0.75rem;
+    }
+    .key {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: linear-gradient(160deg, #3a342e, #2a2520);
+      border: 1px solid #4a433c;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.2rem;
+      color: #f0e6d8;
+      box-shadow: 0 3px 0 #1a1612;
+    }
+    .key.cluster {
+      width: auto;
+      padding: 0 0.45rem;
+      background: linear-gradient(160deg, #4a3a28, #32281c);
+      border-color: #6a5640;
+      color: #f5d9a8;
+    }
+    .sb-note { font-size: 0.8rem; color: #9a8f84; max-width: 55ch; margin: 0; }
+
+    .foot {
+      max-width: 1120px;
+      margin: 0 auto 2rem;
+      padding: 0 1.5rem;
+      font-size: 0.78rem;
+      color: #6a7a74;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Concor mockup · study surface + your dictionary</h1>
+    <p>
+      Not root of Alice Box — lives under the Concor island.
+      Your dictionary is separate from Strong’s. You can invent letter combinations
+      that have no ledger entry. Reading surface and invent surface are two tabs;
+      switchboard is a third, different tool.
+    </p>
+    <p class="path">jacks-cross/the-concor/docs/study-surface-mockup.html</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="tab-study" aria-selected="true" aria-controls="panel-study">Study (verse)</button>
+    <button type="button" role="tab" id="tab-dict" aria-selected="false" aria-controls="panel-dict">Your dictionary (invent)</button>
+    <button type="button" role="tab" id="tab-sb" aria-selected="false" aria-controls="panel-sb">Switchboard (not study)</button>
+  </div>
+
+  <!-- STUDY -->
+  <section class="panel active" id="panel-study" role="tabpanel">
+    <div class="label-bar">
+      <h2>Study surface</h2>
+      <em>Click a ticket · edit your reading in the drawer · ledger stays optional</em>
+    </div>
+    <div class="study">
+      <div class="study-top">
+        <div><strong>Genesis 1:1</strong> · MorphHB-style tokens</div>
+        <div class="chip">yours ≠ Strong’s</div>
+      </div>
+      <div class="split">
+        <div>
+          <div class="verse-row" id="verse-row" dir="rtl"></div>
+          <div class="note">
+            <strong>Empty ledger is fine.</strong> Click a word, type in
+            <em>Your reading</em>, Save. That write goes to your dictionary only.
+          </div>
+        </div>
+        <aside class="drawer" id="study-drawer">
+          <h3>Selected</h3>
+          <div class="entry-title" id="sd-heb">—</div>
+          <div class="muted" id="sd-meta">pick a ticket</div>
+          <hr />
+          <div class="you-box">
+            <div class="tag">Your reading (primary)</div>
+            <textarea id="sd-yours" rows="3" placeholder="your function / gloss…"></textarea>
+            <div class="actions" style="margin-top:0.45rem">
+              <button type="button" class="btn" id="sd-save">Save to your dict</button>
+            </div>
+          </div>
+          <hr />
+          <div>
+            <div class="tag" style="font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:#8fa39a;font-weight:600;margin-bottom:0.2rem">
+              Ledger (optional peek · not editable)
+            </div>
+            <div id="sd-ledger">—</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- DICTIONARY / INVENT -->
+  <section class="panel" id="panel-dict" role="tabpanel">
+    <div class="label-bar">
+      <h2>Your dictionary</h2>
+      <em>Define letter combinations Strong’s never named</em>
+    </div>
+    <div class="dict">
+      <div class="study-top">
+        <div><strong>Invent · not a merge with HebrewStrong.xml</strong></div>
+        <div class="chip">local mock only · refresh clears</div>
+      </div>
+      <div class="dict-grid">
+        <div class="compose">
+          <h3>Compose a combination</h3>
+          <div class="letters" id="letter-pad" dir="rtl" aria-label="Hebrew letter pad"></div>
+          <div class="build-row">
+            <div class="build-preview" id="build-preview" aria-live="polite"></div>
+            <button type="button" class="btn ghost" id="build-back">⌫</button>
+            <button type="button" class="btn ghost" id="build-clear">Clear</button>
+          </div>
+          <div class="field">
+            <label for="build-manual">Or type / paste Hebrew</label>
+            <input type="text" id="build-manual" dir="rtl" placeholder="אותיות…" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="build-reading">Your reading (function / gloss)</label>
+            <textarea id="build-reading" rows="3" placeholder="what this combination does / means for you…"></textarea>
+          </div>
+          <div class="field">
+            <label for="build-note">Optional note</label>
+            <input type="text" id="build-note" placeholder="program / loop / becoming…" />
+          </div>
+          <div class="actions">
+            <button type="button" class="btn" id="build-add">Add to your dictionary</button>
+          </div>
+          <p class="hint">
+            No Strong number required. If the ledger has nothing for this cluster,
+            the list will show <span class="badge none">no ledger</span> — that is success, not a hole.
+          </p>
+        </div>
+        <div class="dict-list-wrap">
+          <h3>Your entries <span id="dict-count" class="muted"></span></h3>
+          <ul class="dict-list" id="dict-list"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SWITCHBOARD -->
+  <section class="panel" id="panel-sb" role="tabpanel">
+    <div class="label-bar">
+      <h2>Switchboard</h2>
+      <em>Different tool — keys &amp; stories, not the concordance reader</em>
+    </div>
+    <div class="switchboard">
+      <div class="study-top">
+        <div><strong>Alphabet loadout (mood only in this mock)</strong></div>
+        <div class="chip">not the study app</div>
+      </div>
+      <div class="keys">
+        <div class="key">א</div><div class="key">ב</div><div class="key">ג</div>
+        <div class="key">ד</div><div class="key">ה</div><div class="key">ו</div>
+        <div class="key">ז</div><div class="key">ח</div><div class="key">ט</div>
+        <div class="key">י</div>
+        <div class="key cluster">ראש</div>
+        <div class="key cluster">ברא</div>
+        <div class="key cluster">את</div>
+      </div>
+      <p class="sb-note">
+        Place for loading alphabets as movable keys, rotate, stack programs.
+        Your dictionary invent (middle tab) is where definitions live;
+        this is where physical letter-play lives. Study may later borrow a cluster
+        you defined — still not one meshed Strong’s book.
+      </p>
+    </div>
+  </section>
+
+  <p class="foot">
+    Island path: <code>ALICE_BOX/jacks-cross/the-concor/docs/</code>
+    · mock only · not a ROM · not root
+  </p>
+
+  <script>
+    // --- tiny in-memory store (mock) ---
+    const letters = "אבגדהוזחטיכלמנסעפצקרשת".split("");
+    // seed: verse tokens + your readings (some without ledger)
+    const verse = [
+      { id: "w1", heb: "בְּרֵאשִׁית", yours: "in-the-head-of · program start", ledger: "H7225 · beginning" },
+      { id: "w2", heb: "בָּרָא", yours: "cut-into-being · emit form", ledger: "H1254 · create" },
+      { id: "w3", heb: "אֱלֹהִים", yours: "powers-as-one · agency stack", ledger: "H430 · God / gods" },
+      { id: "w4", heb: "אֵת", yours: "pointer / mark-the-object", ledger: null },
+      { id: "w5", heb: "הַשָּׁמַיִם", yours: "the-name-waters · height stack", ledger: "H8064 · heavens" },
+    ];
+    // your dictionary: includes invent entries that are NOT in the verse
+    let dict = [
+      { heb: "אֵת", reading: "pointer / mark-the-object", note: "from Gen 1:1", ledger: null },
+      { heb: "ראש", reading: "head · source node of a program", note: "root cluster", ledger: "related H7218" },
+      { heb: "בר", reading: "grain / pure cut — your sense, not forcing a Strong", note: "invented emphasis", ledger: null },
+    ];
+
+    let selectedId = "w1";
+    let build = "";
+
+    const $ = (id) => document.getElementById(id);
+
+    function selectTab(name) {
+      ["study", "dict", "sb"].forEach((n) => {
+        $("tab-" + n).setAttribute("aria-selected", n === name ? "true" : "false");
+        $("panel-" + n).classList.toggle("active", n === name);
+      });
+    }
+    $("tab-study").onclick = () => selectTab("study");
+    $("tab-dict").onclick = () => selectTab("dict");
+    $("tab-sb").onclick = () => selectTab("sb");
+
+    function readingFor(heb) {
+      const d = dict.find((x) => x.heb.replace(/[\u0591-\u05C7]/g, "") === heb.replace(/[\u0591-\u05C7]/g, "") || x.heb === heb);
+      return d ? d.reading : null;
+    }
+
+    function renderVerse() {
+      const row = $("verse-row");
+      row.innerHTML = "";
+      verse.forEach((w) => {
+        const yours = w.yours || readingFor(w.heb) || "—";
+        const col = document.createElement("div");
+        col.className = "word-col" + (w.id === selectedId ? " selected" : "");
+        col.dataset.id = w.id;
+        col.innerHTML =
+          '<div class="ticket">' + w.heb + "</div>" +
+          '<div class="lane you"><span class="tag">yours</span><div class="body"></div></div>' +
+          '<div class="lane ledger' + (w.ledger ? "" : " none") + '"><span class="tag">ledger</span><div class="body"></div></div>';
+        col.querySelector(".lane.you .body").textContent = yours;
+        col.querySelector(".lane.ledger .body").textContent = w.ledger || "— no entry —";
+        col.onclick = () => {
+          selectedId = w.id;
+          renderVerse();
+          renderDrawer();
+        };
+        row.appendChild(col);
+      });
+    }
+
+    function renderDrawer() {
+      const w = verse.find((x) => x.id === selectedId);
+      if (!w) return;
+      $("sd-heb").textContent = w.heb;
+      $("sd-meta").textContent = w.ledger
+        ? "MorphHB token · ledger available"
+        : "MorphHB token · no Strong / ledger — yours only";
+      $("sd-yours").value = w.yours || readingFor(w.heb) || "";
+      $("sd-ledger").textContent = w.ledger || "— no entry — (this is allowed)";
+    }
+
+    $("sd-save").onclick = () => {
+      const w = verse.find((x) => x.id === selectedId);
+      if (!w) return;
+      const reading = $("sd-yours").value.trim();
+      w.yours = reading;
+      // upsert your dictionary by surface form
+      const bare = w.heb;
+      const i = dict.findIndex((d) => d.heb === bare);
+      const entry = {
+        heb: bare,
+        reading: reading || "(empty)",
+        note: "from study surface",
+        ledger: w.ledger,
+      };
+      if (i >= 0) dict[i] = { ...dict[i], ...entry };
+      else dict.unshift(entry);
+      renderVerse();
+      renderDict();
+    };
+
+    // letter pad
+    function renderPad() {
+      const pad = $("letter-pad");
+      pad.innerHTML = "";
+      letters.forEach((ch) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = ch;
+        b.onclick = () => {
+          build += ch;
+          syncBuild();
+        };
+        pad.appendChild(b);
+      });
+    }
+    function syncBuild() {
+      $("build-preview").textContent = build;
+      if (document.activeElement !== $("build-manual")) {
+        $("build-manual").value = build;
+      }
+    }
+    $("build-manual").addEventListener("input", (e) => {
+      build = e.target.value;
+      $("build-preview").textContent = build;
+    });
+    $("build-back").onclick = () => {
+      build = build.slice(0, -1);
+      syncBuild();
+    };
+    $("build-clear").onclick = () => {
+      build = "";
+      $("build-reading").value = "";
+      $("build-note").value = "";
+      syncBuild();
+    };
+    $("build-add").onclick = () => {
+      const heb = (build || $("build-manual").value).trim();
+      const reading = $("build-reading").value.trim();
+      if (!heb) {
+        alert("Add some letters first.");
+        return;
+      }
+      if (!reading) {
+        alert("Give it your reading — this is your dictionary.");
+        return;
+      }
+      dict.unshift({
+        heb,
+        reading,
+        note: $("build-note").value.trim() || "invented combination",
+        ledger: null,
+      });
+      build = "";
+      $("build-reading").value = "";
+      $("build-note").value = "";
+      syncBuild();
+      renderDict();
+    };
+
+    function renderDict() {
+      $("dict-count").textContent = "(" + dict.length + ")";
+      const ul = $("dict-list");
+      ul.innerHTML = "";
+      dict.forEach((d) => {
+        const li = document.createElement("li");
+        const badges =
+          '<span class="badge yours">yours</span>' +
+          (d.ledger
+            ? '<span class="badge ledger">ledger peek</span>'
+            : '<span class="badge none">no ledger</span>');
+        li.innerHTML =
+          '<div class="heb"></div><div class="reading"></div><div class="meta"></div>';
+        li.querySelector(".heb").textContent = d.heb;
+        li.querySelector(".reading").textContent = d.reading;
+        li.querySelector(".meta").innerHTML = badges + " · " + (d.note || "");
+        ul.appendChild(li);
+      });
+    }
+
+    renderPad();
+    renderVerse();
+    renderDrawer();
+    renderDict();
+    syncBuild();
+  </script>
+</body>
+</html>

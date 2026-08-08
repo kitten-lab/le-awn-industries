@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Concor · editor feel mockup</title>
+  <style>
+    :root {
+      --felt: #1a332b;
+      --felt-deep: #12241e;
+      --ink: #e8efe9;
+      --mute: #8fa399;
+      --paper: #f6f0e4;
+      --paper-ink: #1c1914;
+      --amber: #d4a05a;
+      --amber-dim: rgba(212, 160, 90, 0.15);
+      --ledger: #7a9bb0;
+      --ledger-dim: rgba(122, 155, 176, 0.12);
+      --func: #8ec9a8;
+      --func-dim: rgba(142, 201, 168, 0.12);
+      --prog: #c9a0d4;
+      --prog-dim: rgba(201, 160, 212, 0.12);
+      --become: #e0b070;
+      --become-dim: rgba(224, 176, 112, 0.14);
+      --q: #9ab0c8;
+      --q-dim: rgba(154, 176, 200, 0.12);
+      --line: rgba(255,255,255,0.08);
+      --danger: #c97a7a;
+      --radius: 12px;
+      --font: "Segoe UI", system-ui, sans-serif;
+      --he: "SBL Hebrew", "Times New Roman", "David", serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: #0d1210;
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0.85rem 1rem 2rem;
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .topbar h1 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .topbar .hint {
+      font-size: 0.75rem;
+      color: var(--mute);
+      max-width: 48ch;
+    }
+    .path {
+      font-size: 0.68rem;
+      color: #5a6b63;
+      font-family: ui-monospace, Consolas, monospace;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ===== verse rail ===== */
+    .verse-rail {
+      background: linear-gradient(165deg, #243f36, var(--felt) 45%, var(--felt-deep));
+      border: 1px solid #2f5246;
+      border-radius: var(--radius);
+      padding: 0.75rem 0.85rem 0.9rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+    }
+    .verse-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--mute);
+      margin-bottom: 0.55rem;
+    }
+    .verse-meta strong { color: #d4e0d9; font-weight: 600; }
+    .tokens {
+      display: flex;
+      flex-direction: row-reverse;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      justify-content: flex-start;
+    }
+    .tok {
+      appearance: none;
+      border: 1px solid transparent;
+      background: rgba(0,0,0,0.18);
+      border-radius: 10px;
+      padding: 0.35rem 0.4rem 0.4rem;
+      cursor: pointer;
+      color: inherit;
+      min-width: 4.5rem;
+      text-align: center;
+      transition: border-color 0.12s, box-shadow 0.12s;
+    }
+    .tok:hover { border-color: rgba(255,255,255,0.12); }
+    .tok.on {
+      border-color: rgba(212, 160, 90, 0.65);
+      box-shadow: 0 0 0 1px rgba(212, 160, 90, 0.2);
+      background: rgba(0,0,0,0.28);
+    }
+    .tok .surf {
+      font-family: var(--he);
+      font-size: 1.35rem;
+      direction: rtl;
+      color: var(--paper);
+      line-height: 1.2;
+      display: block;
+    }
+    .tok .dots {
+      display: flex;
+      justify-content: center;
+      gap: 3px;
+      margin-top: 0.25rem;
+      min-height: 6px;
+    }
+    .tok .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--amber);
+      opacity: 0.85;
+    }
+    .tok .dot.func { background: var(--func); }
+    .tok .dot.prog { background: var(--prog); }
+    .tok .dot.become { background: var(--become); }
+    .tok .dot.question { background: var(--q); }
+    .tok .dot.link { background: #eee; opacity: 0.5; width: 4px; height: 4px; }
+
+    /* ===== workspace ===== */
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 0.75rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    .main-col { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+
+    /* data face */
+    .data-face {
+      background: #1e2c27;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.85rem 0.95rem;
+    }
+    .df-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.65rem;
+    }
+    .df-he {
+      font-family: var(--he);
+      font-size: 1.85rem;
+      direction: rtl;
+      color: var(--paper);
+      line-height: 1.15;
+    }
+    .df-ref {
+      font-size: 0.72rem;
+      color: var(--mute);
+      text-align: right;
+    }
+    .df-ref code {
+      font-size: 0.65rem;
+      opacity: 0.55;
+      background: rgba(0,0,0,0.25);
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+    }
+    .segs {
+      display: flex;
+      flex-direction: row-reverse;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.65rem;
+      justify-content: flex-start;
+    }
+    .seg {
+      background: rgba(246, 240, 228, 0.08);
+      border: 1px solid rgba(246, 240, 228, 0.14);
+      border-radius: 8px;
+      padding: 0.3rem 0.5rem;
+      font-family: var(--he);
+      font-size: 1.15rem;
+      direction: rtl;
+      color: #f0e6d4;
+    }
+    .seg small {
+      display: block;
+      font-family: var(--font);
+      font-size: 0.58rem;
+      direction: ltr;
+      color: var(--mute);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 0.15rem;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: flex-start;
+      margin-bottom: 0.55rem;
+    }
+    .chip {
+      font-size: 0.72rem;
+      border-radius: 6px;
+      padding: 0.25rem 0.45rem;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.2);
+      color: #c5d4cc;
+    }
+    .chip b {
+      font-weight: 600;
+      color: var(--mute);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.3rem;
+    }
+    .chip.lemma b { color: var(--amber); }
+    details.morph-exp {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.18);
+      padding: 0;
+      flex: 1 1 12rem;
+      min-width: 10rem;
+    }
+    details.morph-exp summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.72rem;
+      color: #c5d4cc;
+      user-select: none;
+    }
+    details.morph-exp summary::-webkit-details-marker { display: none; }
+    details.morph-exp summary::before {
+      content: "▸ ";
+      color: var(--func);
+      font-size: 0.65rem;
+    }
+    details.morph-exp[open] summary::before { content: "▾ "; }
+    details.morph-exp summary b {
+      color: var(--func);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.3rem;
+    }
+    details.morph-exp .morph-body {
+      padding: 0.35rem 0.55rem 0.5rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.75rem;
+      color: #b8c9c0;
+    }
+    details.morph-exp .morph-body div {
+      padding: 0.15rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    details.morph-exp .morph-body div:last-child { border-bottom: none; }
+    details.morph-exp .morph-body code {
+      color: var(--func);
+      font-size: 0.7rem;
+      margin-right: 0.35rem;
+    }
+
+    .ledger {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.35rem 0.75rem;
+      background: var(--ledger-dim);
+      border: 1px solid rgba(122, 155, 176, 0.25);
+      border-radius: 8px;
+      padding: 0.5rem 0.65rem;
+      font-size: 0.8rem;
+      align-items: baseline;
+    }
+    .ledger .lbl {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ledger);
+      font-weight: 600;
+    }
+    .ledger .head {
+      font-family: var(--he);
+      font-size: 1.15rem;
+      direction: rtl;
+      color: #dce8f0;
+    }
+    .ledger .gloss { color: #c5d5e0; grid-column: 2; }
+
+    /* marks */
+    .marks-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+    }
+    .marks-head h2 {
+      margin: 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--mute);
+      font-weight: 600;
+    }
+    .mark-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.25);
+      color: #c5d4cc;
+      border-radius: 7px;
+      padding: 0.3rem 0.55rem;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn:hover { background: rgba(255,255,255,0.06); }
+    .btn.primary {
+      border-color: rgba(212, 160, 90, 0.45);
+      background: var(--amber-dim);
+      color: #f0d4a8;
+      font-weight: 600;
+    }
+    .btn.kind-function { border-color: rgba(142,201,168,0.4); color: var(--func); }
+    .btn.kind-program { border-color: rgba(201,160,212,0.4); color: var(--prog); }
+    .btn.kind-becoming { border-color: rgba(224,176,112,0.4); color: var(--become); }
+    .btn.kind-question { border-color: rgba(154,176,200,0.4); color: var(--q); }
+    .btn.kind-foil { border-color: rgba(122,155,176,0.4); color: var(--ledger); }
+
+    .marks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .mark {
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #1a2622;
+      padding: 0.65rem 0.75rem;
+      position: relative;
+    }
+    .mark.kind-function { border-left: 3px solid var(--func); background: linear-gradient(90deg, var(--func-dim), #1a2622 40%); }
+    .mark.kind-program { border-left: 3px solid var(--prog); background: linear-gradient(90deg, var(--prog-dim), #1a2622 40%); }
+    .mark.kind-becoming { border-left: 3px solid var(--become); background: linear-gradient(90deg, var(--become-dim), #1a2622 40%); }
+    .mark.kind-question { border-left: 3px solid var(--q); background: linear-gradient(90deg, var(--q-dim), #1a2622 40%); }
+    .mark.kind-foil { border-left: 3px solid var(--ledger); background: linear-gradient(90deg, var(--ledger-dim), #1a2622 40%); }
+    .mark-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+    .kind-tag {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      padding: 0.12rem 0.35rem;
+      border-radius: 4px;
+    }
+    .mark.kind-function .kind-tag { color: var(--func); background: var(--func-dim); }
+    .mark.kind-program .kind-tag { color: var(--prog); background: var(--prog-dim); }
+    .mark.kind-becoming .kind-tag { color: var(--become); background: var(--become-dim); }
+    .mark.kind-question .kind-tag { color: var(--q); background: var(--q-dim); }
+    .mark.kind-foil .kind-tag { color: var(--ledger); background: var(--ledger-dim); }
+    .anchors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      flex: 1;
+    }
+    .anchor {
+      font-size: 0.65rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.1rem 0.4rem;
+      color: #b0c0b8;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .anchor:hover { border-color: rgba(212,160,90,0.4); color: #e0d0b0; }
+    .anchor.he { font-family: var(--he); font-size: 0.8rem; direction: rtl; }
+    .mark textarea {
+      width: 100%;
+      min-height: 3.2rem;
+      resize: vertical;
+      background: rgba(0,0,0,0.22);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: #e8efe9;
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.55rem;
+      line-height: 1.4;
+    }
+    .mark textarea:focus {
+      outline: none;
+      border-color: rgba(212, 160, 90, 0.45);
+    }
+    .mark-foot {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+      align-items: center;
+    }
+    .mark-foot .ghost {
+      font-size: 0.68rem;
+      color: var(--mute);
+    }
+    .empty-marks {
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      color: var(--mute);
+      font-size: 0.82rem;
+    }
+
+    /* side rail: links */
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      position: sticky;
+      top: 0.5rem;
+    }
+    .panel {
+      background: #1a2420;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.7rem 0.75rem;
+    }
+    .panel h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--mute);
+      font-weight: 600;
+    }
+    .link-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .link-list li {
+      background: rgba(0,0,0,0.22);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.45rem 0.5rem;
+      font-size: 0.78rem;
+    }
+    .link-list .rel {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--amber);
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .link-list .to {
+      color: #d4e0d9;
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-color: rgba(212,160,90,0.35);
+      text-underline-offset: 2px;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      text-align: left;
+      color: inherit;
+      display: block;
+      width: 100%;
+    }
+    .link-list .to:hover { color: var(--amber); }
+    .link-list .to .he {
+      font-family: var(--he);
+      font-size: 1rem;
+      direction: rtl;
+      display: inline-block;
+      margin-left: 0.25rem;
+    }
+    .link-list .note {
+      font-size: 0.7rem;
+      color: var(--mute);
+      margin-top: 0.2rem;
+    }
+    .link-list .empty {
+      color: var(--mute);
+      font-size: 0.78rem;
+      font-style: italic;
+      border-style: dashed;
+      background: transparent;
+    }
+
+    .link-form label {
+      display: block;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--mute);
+      margin: 0.35rem 0 0.2rem;
+      font-weight: 600;
+    }
+    .link-form select, .link-form input {
+      width: 100%;
+      background: rgba(0,0,0,0.28);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      padding: 0.35rem 0.4rem;
+      font: inherit;
+      font-size: 0.78rem;
+    }
+    .link-form .row-btns {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 0.5rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: #2a3d34;
+      border: 1px solid rgba(212,160,90,0.4);
+      color: #f0e6d4;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      transition: transform 0.25s ease;
+      z-index: 50;
+      pointer-events: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .coach {
+      margin-top: 0.85rem;
+      font-size: 0.75rem;
+      color: #6a7c74;
+      max-width: 70ch;
+    }
+    .coach strong { color: #8fa399; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <h1>Editor feel · multi-thinking + self-cross-refs</h1>
+      <p class="hint">Click a token · add different kinds of marks · link this spot to another · jump the link. Local mock only.</p>
+    </div>
+    <p class="path">jacks-cross/the-concor/docs/editor-feel-mockup.html</p>
+
+    <div class="verse-rail">
+      <div class="verse-meta">
+        <span><strong id="verse-label">Genesis 1:1</strong> · click a work spot</span>
+        <span>dots = marks on that spot</span>
+      </div>
+      <div class="tokens" id="tokens" dir="rtl"></div>
+    </div>
+
+    <div class="workspace">
+      <div class="main-col">
+        <!-- DATA FACE -->
+        <section class="data-face" id="data-face" aria-label="Data face">
+          <div class="df-top">
+            <div class="df-he" id="df-surface">—</div>
+            <div class="df-ref">
+              <div id="df-ref">—</div>
+              <div style="margin-top:0.25rem"><code id="df-id" title="MorphHB word id · silent pin">id · —</code></div>
+            </div>
+          </div>
+          <div class="segs" id="df-segs"></div>
+          <div class="meta-row">
+            <span class="chip lemma"><b>lemma</b><span id="df-lemma">—</span></span>
+            <details class="morph-exp" id="morph-exp">
+              <summary><b>morph</b><span id="df-morph-code">—</span></summary>
+              <div class="morph-body" id="df-morph-exp"></div>
+            </details>
+          </div>
+          <div class="ledger">
+            <span class="lbl">Strong</span>
+            <span class="head" id="df-strong-he">—</span>
+            <span class="lbl" id="df-strong-num">—</span>
+            <span class="gloss" id="df-strong-gloss">—</span>
+          </div>
+        </section>
+
+        <!-- MARKS -->
+        <section aria-label="Work marks">
+          <div class="marks-head">
+            <h2>Work marks on this spot</h2>
+            <div class="mark-tools">
+              <button type="button" class="btn kind-function" data-add="function">+ function</button>
+              <button type="button" class="btn kind-program" data-add="program">+ program</button>
+              <button type="button" class="btn kind-becoming" data-add="becoming">+ becoming</button>
+              <button type="button" class="btn kind-question" data-add="question">+ question</button>
+              <button type="button" class="btn kind-foil" data-add="foil">+ foil</button>
+            </div>
+          </div>
+          <div class="marks" id="marks"></div>
+        </section>
+      </div>
+
+      <aside class="side">
+        <div class="panel">
+          <h3>Linked from here</h3>
+          <ul class="link-list" id="links-out"></ul>
+        </div>
+        <div class="panel">
+          <h3>Points here (backlinks)</h3>
+          <ul class="link-list" id="links-in"></ul>
+        </div>
+        <div class="panel">
+          <h3>Add self-cross-ref</h3>
+          <div class="link-form">
+            <label for="link-to">Link this spot →</label>
+            <select id="link-to"></select>
+            <label for="link-rel">Relation</label>
+            <select id="link-rel">
+              <option value="same-function">same-function</option>
+              <option value="program-step">program-step</option>
+              <option value="contrast-ledger">contrast-ledger</option>
+              <option value="see-also">see-also</option>
+              <option value="becoming">becoming</option>
+            </select>
+            <label for="link-note">Note (optional)</label>
+            <input type="text" id="link-note" placeholder="why these connect…" />
+            <div class="row-btns">
+              <button type="button" class="btn primary" id="link-add">Link</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="font-size:0.75rem;color:var(--mute);line-height:1.4">
+          <h3>How to feel it</h3>
+          1. Click <span style="font-family:var(--he)">בְּ/רֵאשִׁית</span><br>
+          2. Expand morph<br>
+          3. Edit a function mark<br>
+          4. Link → <span style="font-family:var(--he)">בָּרָא</span><br>
+          5. Click that token — backlink shows<br>
+          6. Add a different kind of mark on the same spot
+        </div>
+      </aside>
+    </div>
+
+    <p class="coach">
+      <strong>Not</strong> “one notes field on a word.” Each colored card is a different thinking.
+      Links are edges you can follow. Word <code>id</code> is the silent pin under the hood.
+      Refresh clears invents (mock only).
+    </p>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    // --- morph expand dictionary (tiny demo set) ---
+    const MORPH = {
+      H: "Hebrew",
+      R: "preposition",
+      N: "noun",
+      V: "verb",
+      C: "conjunction",
+      T: "particle",
+      d: "definite article",
+      c: "conjunction (prefix)",
+      b: "preposition בּ",
+      a: "adjective",
+      // gender/number/state-ish fragments (OSHM simplified for feel)
+      cfsa: "common feminine singular absolute",
+      cmsa: "common masculine singular absolute",
+      cmpa: "common masculine plural absolute",
+      cbsa: "common both singular absolute",
+      qp3ms: "qal perfect 3rd masculine singular",
+      qw3ms: "qal sequential imperfect (wayyiqtol) 3ms",
+      o: "object marker",
+      fsa: "feminine singular absolute",
+      mpa: "masculine plural absolute",
+      Td: "definite article",
+      To: "object particle",
+      Rd: "preposition + article",
+      Ncfsa: "noun · common · feminine · singular · absolute",
+      Ncmpa: "noun · common · masculine · plural · absolute",
+      Ncbsa: "noun · common · both · singular · absolute",
+      Vqp3ms: "verb · qal · perfect · 3ms",
+      Vqw3ms: "verb · qal · wayyiqtol · 3ms",
+      HC: "Hebrew · conjunction",
+      HR: "Hebrew · preposition",
+      HTd: "Hebrew · definite article",
+      HTo: "Hebrew · object marker",
+      HNcfsa: "Hebrew · noun c.f.s. absolute",
+      HNcmpa: "Hebrew · noun c.m.p. absolute",
+      HNcbsa: "Hebrew · noun c. both s. absolute",
+      HVqp3ms: "Hebrew · verb qal perfect 3ms",
+      HVqw3ms: "Hebrew · verb qal wayyiqtol 3ms",
+    };
+
+    function expandMorph(code) {
+      if (!code) return [];
+      const parts = code.split("/");
+      return parts.map((p) => {
+        if (MORPH[p]) return { code: p, text: MORPH[p] };
+        // try peeling H prefix
+        if (p.startsWith("H") && MORPH[p.slice(1)]) {
+          return { code: p, text: "Hebrew · " + MORPH[p.slice(1)] };
+        }
+        if (MORPH[p]) return { code: p, text: MORPH[p] };
+        // last resort: spell known chunks
+        let t = p;
+        if (p.startsWith("H")) t = "Hebrew + " + p.slice(1);
+        return { code: p, text: t + " (code — full OSHM table later)" };
+      });
+    }
+
+    // --- corpus sample ---
+    const tokens = [
+      {
+        id: "01xeN",
+        ref: "Gen 1:1",
+        surface: "בְּ/רֵאשִׁ֖ית",
+        segs: [
+          { he: "בְּ", role: "prep" },
+          { he: "רֵאשִׁ֖ית", role: "body" },
+        ],
+        lemma: "b/7225",
+        morph: "HR/Ncfsa",
+        strong: { num: "H7225", he: "רֵאשִׁית", gloss: "beginning" },
+      },
+      {
+        id: "01Nvk",
+        ref: "Gen 1:1",
+        surface: "בָּרָ֣א",
+        segs: [{ he: "בָּרָ֣א", role: "body" }],
+        lemma: "1254 a",
+        morph: "HVqp3ms",
+        strong: { num: "H1254", he: "בָּרָא", gloss: "create / shape" },
+      },
+      {
+        id: "01TyA",
+        ref: "Gen 1:1",
+        surface: "אֱלֹהִ֑ים",
+        segs: [{ he: "אֱלֹהִ֑ים", role: "body" }],
+        lemma: "430",
+        morph: "HNcmpa",
+        strong: { num: "H430", he: "אֱלֹהִים", gloss: "God / gods" },
+      },
+      {
+        id: "01vuQ",
+        ref: "Gen 1:1",
+        surface: "אֵ֥ת",
+        segs: [{ he: "אֵ֥ת", role: "body" }],
+        lemma: "853",
+        morph: "HTo",
+        strong: { num: "H853", he: "אֵת", gloss: "object marker (often untranslated)" },
+      },
+      {
+        id: "01TSc",
+        ref: "Gen 1:1",
+        surface: "הַ/שָּׁמַ֖יִם",
+        segs: [
+          { he: "הַ", role: "article" },
+          { he: "שָּׁמַ֖יִם", role: "body" },
+        ],
+        lemma: "d/8064",
+        morph: "HTd/Ncmpa",
+        strong: { num: "H8064", he: "שָׁמַיִם", gloss: "heavens / sky" },
+      },
+      {
+        id: "01k5P",
+        ref: "Gen 1:1",
+        surface: "וְ/אֵ֥ת",
+        segs: [
+          { he: "וְ", role: "and" },
+          { he: "אֵ֥ת", role: "body" },
+        ],
+        lemma: "c/853",
+        morph: "HC/To",
+        strong: { num: "H853", he: "אֵת", gloss: "object marker (+ and on surface)" },
+      },
+      {
+        id: "01nPh",
+        ref: "Gen 1:1",
+        surface: "הָ/אָֽרֶץ",
+        segs: [
+          { he: "הָ", role: "article" },
+          { he: "אָֽרֶץ", role: "body" },
+        ],
+        lemma: "d/776",
+        morph: "HTd/Ncbsa",
+        strong: { num: "H776", he: "אֶרֶץ", gloss: "earth / land" },
+      },
+      {
+        id: "01thY",
+        ref: "Gen 1:3",
+        surface: "וַ/יֹּ֥אמֶר",
+        segs: [
+          { he: "וַ", role: "and" },
+          { he: "יֹּ֥אמֶר", role: "body" },
+        ],
+        lemma: "c/559",
+        morph: "HC/Vqw3ms",
+        strong: { num: "H559", he: "אָמַר", gloss: "say" },
+      },
+    ];
+
+    // marks: multi-anchor capable; we filter by current occ for main list
+    let marks = [
+      {
+        id: "m1",
+        kind: "function",
+        body: "in-the-head-of · program start. בְּ = in/with; ראש = head/source node.",
+        anchors: ["01xeN", "letter:ב", "letter:ר"],
+      },
+      {
+        id: "m2",
+        kind: "becoming",
+        body: "Not “runtime of creation” — the text is explaining functions becoming themselves. This opening is the declaration of a start-node.",
+        anchors: ["01xeN"],
+      },
+      {
+        id: "m3",
+        kind: "foil",
+        body: "Ledger says “beginning.” I keep that as foil; my work is program-start, not calendar origin.",
+        anchors: ["01xeN"],
+      },
+      {
+        id: "m4",
+        kind: "program",
+        body: "Stack: emit-form (ברא) ← agency (אלהים) after start-node. Order matters.",
+        anchors: ["01Nvk", "01TyA", "01xeN"],
+      },
+      {
+        id: "m5",
+        kind: "question",
+        body: "Is את a pure pointer / object-mark function with no Strong “meaning” I need?",
+        anchors: ["01vuQ"],
+      },
+    ];
+
+    let links = [
+      {
+        id: "l1",
+        from: "01xeN",
+        to: "01Nvk",
+        rel: "program-step",
+        note: "start-node → emit-form",
+      },
+      {
+        id: "l2",
+        from: "01xeN",
+        to: "01thY",
+        rel: "see-also",
+        note: "later speech-act; contrast silent start vs said light",
+      },
+      {
+        id: "l3",
+        from: "01Nvk",
+        to: "01xeN",
+        rel: "same-function",
+        note: "בר root family / cutting-into-being (your sense)",
+      },
+    ];
+
+    let currentId = "01xeN";
+    let markSeq = 10;
+    let linkSeq = 10;
+
+    const $ = (id) => document.getElementById(id);
+
+    function tokById(id) {
+      return tokens.find((t) => t.id === id);
+    }
+
+    function marksFor(occId) {
+      return marks.filter((m) => m.anchors.includes(occId));
+    }
+
+    function toast(msg) {
+      const el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    function renderTokens() {
+      const box = $("tokens");
+      box.innerHTML = "";
+      // group by ref lightly via title
+      tokens.forEach((t) => {
+        const ms = marksFor(t.id);
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "tok" + (t.id === currentId ? " on" : "");
+        b.title = t.ref + " · " + t.id;
+        const kinds = [...new Set(ms.map((m) => m.kind))];
+        const hasLink =
+          links.some((l) => l.from === t.id || l.to === t.id);
+        b.innerHTML =
+          '<span class="surf"></span><span class="dots"></span>';
+        b.querySelector(".surf").textContent = t.surface.replace(/\//g, "\u200b/\u200b");
+        const dots = b.querySelector(".dots");
+        kinds.forEach((k) => {
+          const d = document.createElement("span");
+          d.className = "dot " + k;
+          d.title = k;
+          dots.appendChild(d);
+        });
+        if (hasLink) {
+          const d = document.createElement("span");
+          d.className = "dot link";
+          d.title = "has cross-ref";
+          dots.appendChild(d);
+        }
+        b.onclick = () => {
+          currentId = t.id;
+          $("morph-exp").open = false;
+          renderAll();
+        };
+        box.appendChild(b);
+      });
+    }
+
+    function renderDataFace() {
+      const t = tokById(currentId);
+      if (!t) return;
+      $("verse-label").textContent =
+        t.ref === "Gen 1:1" ? "Genesis 1:1" : t.ref + " (sample)";
+      $("df-surface").textContent = t.surface;
+      $("df-ref").textContent = t.ref;
+      $("df-id").textContent = "id · " + t.id;
+      $("df-lemma").textContent = t.lemma;
+      $("df-morph-code").textContent = t.morph;
+      $("df-strong-he").textContent = t.strong.he;
+      $("df-strong-num").textContent = t.strong.num;
+      $("df-strong-gloss").textContent = t.strong.gloss;
+
+      const segs = $("df-segs");
+      segs.innerHTML = "";
+      t.segs.forEach((s) => {
+        const el = document.createElement("div");
+        el.className = "seg";
+        el.innerHTML = "";
+        el.appendChild(document.createTextNode(s.he));
+        const sm = document.createElement("small");
+        sm.textContent = s.role;
+        el.appendChild(sm);
+        segs.appendChild(el);
+      });
+
+      const exp = $("df-morph-exp");
+      exp.innerHTML = "";
+      expandMorph(t.morph).forEach((row) => {
+        const div = document.createElement("div");
+        div.innerHTML = "<code></code><span></span>";
+        div.querySelector("code").textContent = row.code;
+        div.querySelector("span").textContent = row.text;
+        exp.appendChild(div);
+      });
+    }
+
+    function renderMarks() {
+      const box = $("marks");
+      const list = marksFor(currentId);
+      box.innerHTML = "";
+      if (!list.length) {
+        box.innerHTML =
+          '<div class="empty-marks">No marks on this spot yet. Add a kind above — function, program, becoming…</div>';
+        return;
+      }
+      list.forEach((m) => {
+        const card = document.createElement("article");
+        card.className = "mark kind-" + m.kind;
+        card.dataset.id = m.id;
+
+        const bar = document.createElement("div");
+        bar.className = "mark-bar";
+        bar.innerHTML = '<span class="kind-tag"></span><div class="anchors"></div>';
+        bar.querySelector(".kind-tag").textContent = m.kind;
+
+        const anc = bar.querySelector(".anchors");
+        m.anchors.forEach((a) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "anchor";
+          if (a.startsWith("letter:")) {
+            btn.textContent = a;
+          } else {
+            const tok = tokById(a);
+            btn.classList.add("he");
+            btn.textContent = tok ? tok.surface.split("/")[0] : a;
+            btn.title = a;
+            btn.onclick = () => {
+              if (tokById(a)) {
+                currentId = a;
+                renderAll();
+                toast("jumped to pin " + a);
+              }
+            };
+          }
+          if (a.startsWith("letter:")) {
+            btn.onclick = () => toast("letter pin · " + a + " (dictionary later)");
+          }
+          anc.appendChild(btn);
+        });
+
+        // add-anchor control
+        const addA = document.createElement("button");
+        addA.type = "button";
+        addA.className = "anchor";
+        addA.textContent = "+ pin";
+        addA.onclick = () => {
+          const other = tokens.find((t) => t.id !== currentId);
+          // cycle: offer select via prompt-lite
+          const choices = tokens.map((t) => t.id + " " + t.surface).join("\n");
+          const pick = prompt(
+            "Pin another occurrence id to this mark:\n\n" +
+              tokens.map((t) => t.id + "  " + t.surface).join("\n"),
+            other ? other.id : currentId
+          );
+          if (!pick) return;
+          const id = pick.trim().split(/\s+/)[0];
+          if (!tokById(id)) {
+            toast("unknown id");
+            return;
+          }
+          if (!m.anchors.includes(id)) m.anchors.push(id);
+          renderAll();
+          toast("mark now on multiple pins");
+        };
+        anc.appendChild(addA);
+
+        const ta = document.createElement("textarea");
+        ta.value = m.body;
+        ta.placeholder = "this kind of thinking…";
+        ta.oninput = () => {
+          m.body = ta.value;
+        };
+
+        const foot = document.createElement("div");
+        foot.className = "mark-foot";
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "btn";
+        del.textContent = "remove mark";
+        del.onclick = () => {
+          marks = marks.filter((x) => x.id !== m.id);
+          renderAll();
+        };
+        const ghost = document.createElement("span");
+        ghost.className = "ghost";
+        ghost.textContent =
+          m.anchors.length > 1
+            ? "hangs on " + m.anchors.length + " pins · not trapped in one word-note"
+            : "single pin · use + pin to hang on more spots";
+        foot.appendChild(del);
+        foot.appendChild(ghost);
+
+        card.appendChild(bar);
+        card.appendChild(ta);
+        card.appendChild(foot);
+        box.appendChild(card);
+      });
+    }
+
+    function labelFor(id) {
+      const t = tokById(id);
+      if (!t) return id;
+      return t.surface + " · " + t.ref;
+    }
+
+    function renderLinks() {
+      const out = links.filter((l) => l.from === currentId);
+      const inn = links.filter((l) => l.to === currentId);
+
+      function fill(ul, list, dir) {
+        ul.innerHTML = "";
+        if (!list.length) {
+          ul.innerHTML =
+            '<li class="empty">' +
+            (dir === "out"
+              ? "No outbound links yet. Use the form below."
+              : "Nothing points here yet.") +
+            "</li>";
+          return;
+        }
+        list.forEach((l) => {
+          const other = dir === "out" ? l.to : l.from;
+          const t = tokById(other);
+          const li = document.createElement("li");
+          li.innerHTML =
+            '<div class="rel"></div><button type="button" class="to"></button><div class="note"></div>';
+          li.querySelector(".rel").textContent = l.rel;
+          const btn = li.querySelector(".to");
+          btn.innerHTML =
+            (dir === "out" ? "→ " : "← ") +
+            '<span class="he"></span> <span class="ref"></span>';
+          btn.querySelector(".he").textContent = t ? t.surface : other;
+          btn.querySelector(".ref").textContent = t ? t.ref : "";
+          btn.onclick = () => {
+            currentId = other;
+            renderAll();
+            toast("followed " + l.rel);
+          };
+          li.querySelector(".note").textContent = l.note || "";
+          ul.appendChild(li);
+        });
+      }
+
+      fill($("links-out"), out, "out");
+      fill($("links-in"), inn, "in");
+
+      // populate select
+      const sel = $("link-to");
+      const prev = sel.value;
+      sel.innerHTML = "";
+      tokens
+        .filter((t) => t.id !== currentId)
+        .forEach((t) => {
+          const o = document.createElement("option");
+          o.value = t.id;
+          o.textContent = t.surface + "  (" + t.ref + ")";
+          sel.appendChild(o);
+        });
+      if ([...sel.options].some((o) => o.value === prev)) sel.value = prev;
+    }
+
+    function renderAll() {
+      renderTokens();
+      renderDataFace();
+      renderMarks();
+      renderLinks();
+    }
+
+    // add mark buttons
+    document.querySelectorAll("[data-add]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const kind = btn.getAttribute("data-add");
+        const id = "m" + ++markSeq;
+        marks.unshift({
+          id,
+          kind,
+          body: "",
+          anchors: [currentId],
+        });
+        renderAll();
+        toast("new " + kind + " mark");
+        // focus first textarea
+        const ta = $("marks").querySelector("textarea");
+        if (ta) ta.focus();
+      });
+    });
+
+    $("link-add").onclick = () => {
+      const to = $("link-to").value;
+      const rel = $("link-rel").value;
+      const note = $("link-note").value.trim();
+      if (!to) return;
+      // avoid exact dup
+      if (links.some((l) => l.from === currentId && l.to === to && l.rel === rel)) {
+        toast("already linked that way");
+        return;
+      }
+      links.push({
+        id: "l" + ++linkSeq,
+        from: currentId,
+        to,
+        rel,
+        note,
+      });
+      $("link-note").value = "";
+      renderAll();
+      toast("cross-ref added");
+    };
+
+    renderAll();
+  </script>
+</body>
+</html>

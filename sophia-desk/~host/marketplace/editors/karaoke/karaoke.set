@@ -1,0 +1,12 @@
+<!-- karaoke.set · pull machine face (from Eddy's Encoder machine, desk fidget) -->
+<div class="tool-karaoke" data-tool="karaoke" data-drag-chrome>
+  <div class="tool-karaoke-tag">Karaoke Eddie</div>
+  <div class="tool-karaoke-slot" data-karaoke-slot>
+    <div class="tool-karaoke-face" data-karaoke-face>— — —</div>
+  </div>
+  <div class="tool-karaoke-levers">
+    <button type="button" class="tool-karaoke-lever" data-karaoke-pull title="mint a KVEN">PULL</button>
+    <button type="button" class="tool-karaoke-lever tool-karaoke-copy" data-karaoke-copy title="copy code to clipboard">COPY</button>
+  </div>
+  <div class="tool-karaoke-meta" data-karaoke-meta>pull · copy · encode names</div>
+</div>

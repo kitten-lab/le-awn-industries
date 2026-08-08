@@ -1,0 +1,152 @@
+/* karaoke.kit · KVEN pull fidget · not the full Eddy Encoder ROM */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  var GLYPHS = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#@$%*+=";
+
+  function mintKven() {
+    var letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    var a = letters[(Math.random() * letters.length) | 0];
+    var b = letters[(Math.random() * letters.length) | 0];
+    var c = letters[(Math.random() * letters.length) | 0];
+    var n = ((Math.random() * 900) | 0) + 100;
+    return a + b + c + "-" + n;
+  }
+
+  function paintFace(w) {
+    if (!w || !w.el) return;
+    var face = w.el.querySelector("[data-karaoke-face]");
+    var meta = w.el.querySelector("[data-karaoke-meta]");
+    var prop = (w.data && w.data.prop) || {};
+    var k = prop["Kven.last"] || prop["Pull.kven"] || "— — —";
+    if (face) face.textContent = k;
+    if (meta) {
+      meta.textContent =
+        k && k.indexOf("—") < 0 ? "copy ready · " + k : "pull · copy · encode names";
+    }
+    var root = w.el.querySelector("[data-tool=karaoke]");
+    var dress =
+      (w.data && w.data.dressup && w.data.dressup.tool) ||
+      (w.data && w.data.dress) ||
+      "karaoke";
+    if (root) root.setAttribute("data-tool-dress", dress);
+  }
+
+  function setLast(w, kven) {
+    if (!w.data) w.data = {};
+    if (!w.data.prop) w.data.prop = {};
+    w.data.prop["Kven.last"] = kven;
+    w.data.prop["Pull.kven"] = kven;
+    w.data.prop.canMark = false;
+    paintFace(w);
+  }
+
+  async function pull(w) {
+    if (!w || !w.el) return null;
+    var face = w.el.querySelector("[data-karaoke-face]");
+    var slot = w.el.querySelector("[data-karaoke-slot]");
+    if (!face) return null;
+    face.classList.remove("is-live", "is-glitch");
+    if (slot) slot.classList.remove("is-glitching");
+    void face.offsetWidth;
+    if (slot) slot.classList.add("is-glitching");
+    face.classList.add("is-glitch");
+    var ticks = 0;
+    var scramble = setInterval(function () {
+      var s = "";
+      for (var i = 0; i < 9; i++) {
+        s += GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        if (i === 2 || i === 5) s += " ";
+      }
+      face.textContent = s;
+      ticks++;
+      if (ticks > 10) {
+        clearInterval(scramble);
+        scramble = null;
+      }
+    }, 42);
+    await new Promise(function (r) {
+      setTimeout(r, 480);
+    });
+    if (scramble) clearInterval(scramble);
+    var kven = mintKven();
+    face.textContent = kven;
+    face.classList.remove("is-glitch");
+    face.classList.add("is-live");
+    if (slot) slot.classList.remove("is-glitching");
+    setLast(w, kven);
+    // persist last pull on tool cfg (no mark scar — just prop)
+    try {
+      if (typeof window.pocketPersistToolProp === "function") {
+        window.pocketPersistToolProp(w, {
+          canMark: false,
+          "Kven.last": kven,
+          "Pull.kven": kven,
+        });
+      }
+    } catch (e) {}
+    return kven;
+  }
+
+  async function copyLast(w) {
+    var prop = (w.data && w.data.prop) || {};
+    var k = prop["Kven.last"] || prop["Pull.kven"] || "";
+    if (!k || String(k).indexOf("—") >= 0) {
+      k = await pull(w);
+    }
+    if (!k) return false;
+    try {
+      await navigator.clipboard.writeText(String(k));
+      if (typeof window.toast === "function") {
+        window.toast("copied · " + k);
+      }
+      var meta = w.el && w.el.querySelector("[data-karaoke-meta]");
+      if (meta) meta.textContent = "copied · " + k;
+      return true;
+    } catch (e) {
+      if (typeof window.toast === "function") {
+        window.toast("copy failed · " + k, true);
+      }
+      return false;
+    }
+  }
+
+  function mount(w) {
+    if (!w || !w.el) return;
+    paintFace(w);
+    var pullBtn = w.el.querySelector("[data-karaoke-pull]");
+    var copyBtn = w.el.querySelector("[data-karaoke-copy]");
+    if (pullBtn && !pullBtn._karaokeBound) {
+      pullBtn._karaokeBound = true;
+      pullBtn.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        pull(w).then(function (k) {
+          if (k && typeof window.toast === "function") {
+            window.toast("pulled · " + k);
+          }
+        });
+      });
+    }
+    if (copyBtn && !copyBtn._karaokeBound) {
+      copyBtn._karaokeBound = true;
+      copyBtn.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        copyLast(w);
+      });
+    }
+  }
+
+  api.register("karaoke", {
+    id: "karaoke",
+    packageId: "karaoke",
+    canMark: false,
+    paintFace: paintFace,
+    pull: pull,
+    copyLast: copyLast,
+    mount: mount,
+  });
+})();

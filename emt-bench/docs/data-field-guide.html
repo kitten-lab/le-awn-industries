@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Concor · what’s in the open data (field guide)</title>
+  <style>
+    :root {
+      --bg: #121816;
+      --panel: #1c2621;
+      --line: #2f3f38;
+      --text: #e6ebe8;
+      --mute: #8a9a92;
+      --accent: #c9a66b;
+      --morph: #7eb8a0;
+      --lex: #8aafc9;
+      --yours: #d4a574;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 0.5rem;
+    }
+    header h1 {
+      margin: 0 0 0.4rem;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    header p {
+      margin: 0;
+      color: var(--mute);
+      font-size: 0.92rem;
+      max-width: 62ch;
+    }
+    .path {
+      margin-top: 0.6rem;
+      font-size: 0.72rem;
+      color: #5f7068;
+      font-family: ui-monospace, Consolas, monospace;
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1rem 1.25rem 3rem;
+    }
+    .intro {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      color: #c5d0ca;
+    }
+    .intro strong { color: var(--accent); }
+    h2 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--mute);
+      margin: 1.5rem 0 0.65rem;
+      font-weight: 600;
+    }
+    .layers {
+      display: grid;
+      gap: 0.55rem;
+    }
+    .layer {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+    .layer summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 0.75rem 0.9rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.65rem;
+      align-items: center;
+      user-select: none;
+    }
+    .layer summary::-webkit-details-marker { display: none; }
+    .layer[open] summary { border-bottom: 1px solid var(--line); }
+    .badge {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge.morph { color: var(--morph); border-color: rgba(126,184,160,0.4); }
+    .badge.lex { color: var(--lex); border-color: rgba(138,175,201,0.4); }
+    .badge.both { color: var(--accent); border-color: rgba(201,166,107,0.45); }
+    .badge.you { color: var(--yours); border-color: rgba(212,165,116,0.45); }
+    .layer summary .title { font-weight: 600; font-size: 0.92rem; }
+    .layer summary .one-line {
+      grid-column: 2 / -1;
+      font-size: 0.78rem;
+      color: var(--mute);
+      margin-top: -0.15rem;
+    }
+    .layer .body {
+      padding: 0.85rem 0.95rem 1rem;
+      font-size: 0.86rem;
+      color: #c8d2cc;
+    }
+    .layer .body p { margin: 0 0 0.55rem; }
+    .layer .body p:last-child { margin-bottom: 0; }
+    .ex {
+      margin-top: 0.65rem;
+      background: rgba(0,0,0,0.28);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: #d8e0db;
+      direction: ltr;
+      overflow-x: auto;
+    }
+    .ex .he {
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.15rem;
+      direction: rtl;
+      display: inline-block;
+      color: #f2ebe0;
+    }
+    .ex .k { color: #7eb8a0; }
+    .ex .v { color: #e8d4b0; }
+    .surface-hint {
+      margin-top: 0.55rem;
+      font-size: 0.78rem;
+      color: #9aab9f;
+      border-left: 2px solid rgba(201,166,107,0.45);
+      padding-left: 0.55rem;
+    }
+    .surface-hint em { font-style: normal; color: var(--accent); }
+
+    /* live sample */
+    .sample-box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 0.9rem;
+    }
+    .sample-box p.lead {
+      margin: 0 0 0.75rem;
+      font-size: 0.85rem;
+      color: var(--mute);
+    }
+    .word-pick {
+      display: flex;
+      flex-direction: row-reverse;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.85rem;
+    }
+    .word-pick button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #24302b;
+      color: #f0e8dc;
+      border-radius: 8px;
+      padding: 0.45rem 0.55rem;
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.2rem;
+      direction: rtl;
+      cursor: pointer;
+    }
+    .word-pick button[aria-pressed="true"] {
+      border-color: rgba(201,166,107,0.7);
+      box-shadow: 0 0 0 1px rgba(201,166,107,0.25);
+      background: #2e3d35;
+    }
+    .field-grid {
+      display: grid;
+      gap: 0.4rem;
+    }
+    .field-row {
+      display: grid;
+      grid-template-columns: 9.5rem 1fr;
+      gap: 0.5rem;
+      padding: 0.4rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.2);
+      font-size: 0.82rem;
+      align-items: start;
+    }
+    @media (max-width: 560px) {
+      .field-row { grid-template-columns: 1fr; }
+    }
+    .field-row .fname {
+      color: var(--mute);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      padding-top: 0.15rem;
+    }
+    .field-row .fval {
+      color: var(--text);
+      word-break: break-word;
+    }
+    .field-row .fval.he {
+      font-family: "SBL Hebrew", "Times New Roman", serif;
+      font-size: 1.25rem;
+      direction: rtl;
+      text-align: right;
+    }
+    .field-row.missing .fval {
+      color: #6a7a72;
+      font-style: italic;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin: 0.75rem 0 0;
+      font-size: 0.75rem;
+      color: var(--mute);
+    }
+    .foot {
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: #5f7068;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>What’s in the open data · field guide</h1>
+    <p>
+      Not the study app. A map of the material so you can feel what exists
+      before deciding what belongs on the surface. Expand a layer, then poke
+      the Gen 1:1 sample at the bottom.
+    </p>
+    <p class="path">jacks-cross/the-concor/docs/data-field-guide.html</p>
+  </header>
+
+  <main>
+    <div class="intro">
+      Hard problem stated cleanly: the data feels <strong>valuable</strong>,
+      but until you’ve <strong>touched the fields</strong>, you can’t know what
+      deserves a ticket, a drawer, or silence. This page is that touch —
+      inventory first, surface later.
+    </div>
+
+    <h2>Packages (two repos, one family)</h2>
+    <div class="layers">
+      <details class="layer" open>
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Open Scriptures Hebrew Bible</span>
+          <span></span>
+          <span class="one-line">The verse as tokens · WLC text · lemma pointers · morph · stable ids</span>
+        </summary>
+        <div class="body">
+          <p>Source of every word-in-context. Public domain WLC text; lemma/morph CC BY 4.0.</p>
+          <p>Lives as OSIS XML per book (<code>wlc/Gen.xml</code> etc.), or JSON converters that spit
+            <code>[ wordString, lemma, morphology ]</code> arrays.</p>
+          <div class="surface-hint">Usually this is the <em>clay</em> of the study surface — not optional background.</div>
+        </div>
+      </details>
+      <details class="layer">
+        <summary>
+          <span class="badge lex">lexicon</span>
+          <span class="title">Open Scriptures Hebrew Lexicon</span>
+          <span></span>
+          <span class="one-line">Strong dictionary · BDB outline · bridges · augmented index</span>
+        </summary>
+        <div class="body">
+          <p>Not the verse. The <em>drawers</em> you open when a lemma number needs a face and a gloss.</p>
+          <p>Files: <code>HebrewStrong.xml</code>, <code>BrownDriverBriggs.xml</code>,
+            <code>LexicalIndex.xml</code>, <code>AugIndex.xml</code>.</p>
+          <div class="surface-hint">Usually <em>peek / ledger</em> — not the primary ticket text.</div>
+        </div>
+      </details>
+    </div>
+
+    <h2>Fields you can actually use</h2>
+    <div class="layers">
+
+      <details class="layer" open>
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Surface form (as written)</span>
+          <span></span>
+          <span class="one-line">The Hebrew string in this verse, with pointing</span>
+        </summary>
+        <div class="body">
+          <p>Contents of the <code>&lt;w&gt;</code> tag. This is “how it was written here,” not the dictionary headword.</p>
+          <div class="ex"><span class="he">בְּ/רֵאשִׁ֖ית</span> · <span class="he">וַ/יֹּ֥אמֶר</span> · <span class="he">הָ/אָֽרֶץ</span></div>
+          <div class="surface-hint">Default ticket face. Your function-reading hangs off this (or off segments below).</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Segment slash <code>/</code></span>
+          <span></span>
+          <span class="one-line">Prefix / body (and sometimes more) inside one written word</span>
+        </summary>
+        <div class="body">
+          <p>MorphHB often splits attached bits with <code>/</code> in the surface string.
+            That matches multi-part lemmas like <code>b/7225</code> or <code>c/d/776</code>.</p>
+          <div class="ex">
+            surface: <span class="he">הַ/שָּׁמַ֖יִם</span><br>
+            lemma: <span class="k">d/</span><span class="v">8064</span> → article + “heavens”
+          </div>
+          <div class="surface-hint">Huge for letter-function study: the “word” is already a small stack of programs.
+            You might want segments as sub-tickets — or ignore the slash and treat the blob as one.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Lemma (Strong-like pointer)</span>
+          <span></span>
+          <span class="one-line">Which dictionary entry(ies) this occurrence claims</span>
+        </summary>
+        <div class="body">
+          <p>Attribute <code>lemma</code>. Can be a bare number, a number + letter (<code>1254 a</code>),
+            or a path of prefixes + numbers (<code>b/7225</code>, <code>c/l/2822</code>).</p>
+          <div class="ex">
+            <span class="k">lemma=</span><span class="v">"b/7225"</span> ·
+            <span class="k">lemma=</span><span class="v">"1254 a"</span> ·
+            <span class="k">lemma=</span><span class="v">"c/d/776"</span>
+          </div>
+          <div class="surface-hint">Join key into the lexicon. Not a gloss by itself. Letters like <code>a</code>/<code>b</code>
+            disambiguate homographs — AugIndex helps map them.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Morphology code</span>
+          <span></span>
+          <span class="one-line">Grammar as a compact string (OSHM)</span>
+        </summary>
+        <div class="body">
+          <p>Attribute <code>morph</code>. Example: <code>HR/Ncfsa</code> = Hebrew · preposition / noun common feminine singular absolute.
+            Codes stack with <code>/</code> like the surface segments.</p>
+          <div class="ex"><span class="k">morph=</span><span class="v">"HC/Vqw3ms"</span> → conjunction + verb qal sequential imperfect 3ms …</div>
+          <div class="surface-hint">Powerful for filtering (“show me all verbs”) · noisy on every ticket.
+            Often drawer-only until you know you care.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Stable word <code>id</code></span>
+          <span></span>
+          <span class="one-line">Immutable handle for this occurrence</span>
+        </summary>
+        <div class="body">
+          <p>e.g. <code>01xeN</code>. Book-ish prefix + random-ish tail. Same word form elsewhere gets a different id.</p>
+          <div class="surface-hint">Best key for <em>your</em> notes and invent entries on a specific occurrence —
+            “this בְּרֵאשִׁית in Gen 1:1,” not every ראשׁית in the Tanakh.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Cantillation / hierarchy <code>n</code></span>
+          <span></span>
+          <span class="one-line">Optional accents / phrase tree hints</span>
+        </summary>
+        <div class="body">
+          <p>Attribute <code>n</code> on some words (e.g. <code>1.0</code>, <code>1.1.1</code>) — cantillation hierarchy for phrase structure.
+            Also separate accent marks already in the pointed text.</p>
+          <div class="surface-hint">Advanced / optional. Great later for “breath groups” and poetic line feel.
+            Easy to ignore at first.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge morph">morphhb</span>
+          <span class="title">Book · chapter · verse · order</span>
+          <span></span>
+          <span class="one-line">Where the token sits in the Tanakh</span>
+        </summary>
+        <div class="body">
+          <p>From OSIS structure (<code>Gen.1.1</code>) and word order in the verse. Remap scripts exist for English vs Hebrew versification.</p>
+          <div class="surface-hint">Navigation spine of the study surface. Always needed; rarely “displayed as data.”</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge lex">lexicon</span>
+          <span class="title">Strong headword (dictionary form)</span>
+          <span></span>
+          <span class="one-line">Citation spelling for H#### — not the verse form</span>
+        </summary>
+        <div class="body">
+          <p>From <code>HebrewStrong.xml</code> <code>&lt;w&gt;</code> inside each entry. The “fill choice” spelling in the dictionary.</p>
+          <div class="ex">verse may show <span class="he">וַ/יֹּ֥אמֶר</span> · Strong H559 headword is more like <span class="he">אָמַר</span></div>
+          <div class="surface-hint">This is the second version of the word you asked about.
+            Drawer: “as written” vs “dictionary form” side by side.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge lex">lexicon</span>
+          <span class="title">Strong gloss · meaning · usage</span>
+          <span></span>
+          <span class="one-line">Short English from the Strong dictionary</span>
+        </summary>
+        <div class="body">
+          <p><code>meaning</code>, <code>def</code>, <code>usage</code>, sometimes <code>source</code>. Tradition’s quick read — not your function bank.</p>
+          <div class="surface-hint">Ledger lane / optional under-ticket. Never required for your invent entries.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge lex">lexicon</span>
+          <span class="title">Pronunciation / transliteration</span>
+          <span></span>
+          <span class="one-line">Latin-script crutches on Strong entries</span>
+        </summary>
+        <div class="body">
+          <p>Attributes like <code>pron</code>, <code>xlit</code> on lexicon <code>&lt;w&gt;</code>.</p>
+          <div class="surface-hint">Nice for search and early reading. Easy to hide once Hebrew is the face.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge lex">lexicon</span>
+          <span class="title">BDB outline</span>
+          <span></span>
+          <span class="one-line">Deeper traditional lexicon structure (WIP in places)</span>
+        </summary>
+        <div class="body">
+          <p><code>BrownDriverBriggs.xml</code> — longer, outline-ish. Linked via lexical index, not always complete.</p>
+          <div class="surface-hint">Second-depth drawer after Strong feels thin. Not day-one surface chrome.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge both">bridge</span>
+          <span class="title">AugIndex · LexicalIndex · TWOT#</span>
+          <span></span>
+          <span class="one-line">Maps MorphHB lemmas ↔ Strong ↔ BDB (TWOT for ref only)</span>
+        </summary>
+        <div class="body">
+          <p>Plumbing so <code>b/7225</code> and <code>1254 a</code> resolve cleanly. You rarely show this to yourself;
+            the app uses it when opening the ledger.</p>
+          <div class="surface-hint">Invisible infrastructure. Explore once so you trust the join; then forget it.</div>
+        </div>
+      </details>
+
+      <details class="layer">
+        <summary>
+          <span class="badge you">yours</span>
+          <span class="title">Not in the packages · your invent / function readings</span>
+          <span></span>
+          <span class="one-line">Letter combos Strong never named · program notes · becoming</span>
+        </summary>
+        <div class="body">
+          <p>Lives only in Concor / your store. Key by MorphHB <code>id</code>, by segment, or by free cluster you composed.</p>
+          <div class="surface-hint">Primary intellectual product of the desk. The open data is fuel and foil — not the study itself.</div>
+        </div>
+      </details>
+    </div>
+
+    <h2>Touch a real word (Gen 1:1 sample)</h2>
+    <div class="sample-box">
+      <p class="lead">
+        Click a token. Fields below are what MorphHB carries on that occurrence;
+        lexicon columns are what a join <em>can</em> fill (sample stubs for the guide).
+      </p>
+      <div class="word-pick" id="word-pick" dir="rtl"></div>
+      <div class="field-grid" id="field-grid"></div>
+      <div class="legend">
+        <span>green badge fields → morphhb</span>
+        <span>blue-ish → lexicon join</span>
+        <span>italic empty → not on this token / not stubbed here</span>
+      </div>
+    </div>
+
+    <h2>What this suggests for “what goes on the surface”</h2>
+    <div class="intro" style="margin-top:0.5rem">
+      You don’t have to decide forever. A sane default once you’ve felt the fields:
+      <br><br>
+      <strong>Always on the ticket:</strong> surface form (maybe show <code>/</code> segments).<br>
+      <strong>Always yours:</strong> invent reading (may be empty).<br>
+      <strong>One click away:</strong> lemma → Strong headword + gloss; morph expanded to words.<br>
+      <strong>Later / filters:</strong> cantillation <code>n</code>, BDB, whole-Tanakh same-lemma gather.<br>
+      <br>
+      If a field doesn’t make you want to move something with your hands, it doesn’t need a surface slot yet.
+    </div>
+
+    <p class="foot">
+      Sibling mock: <code>study-surface-mockup.html</code> · same folder ·
+      this guide is exploration; that one is layout mood.
+    </p>
+  </main>
+
+  <script>
+    // Real MorphHB-shaped samples from Gen 1:1 (and one Gen 1:3 for a verb)
+    const words = [
+      {
+        label: "בְּ/רֵאשִׁ֖ית",
+        surface: "בְּ/רֵאשִׁ֖ית",
+        segments: ["בְּ", "רֵאשִׁ֖ית"],
+        lemma: "b/7225",
+        morph: "HR/Ncfsa",
+        id: "01xeN",
+        n: "1.0",
+        ref: "Gen.1.1",
+        // lexicon stubs for the guide (not live XML parse)
+        strongHead: "רֵאשִׁית",
+        strongId: "H7225",
+        strongGloss: "beginning",
+        note: "prefix b + 7225 — classic “two versions” case"
+      },
+      {
+        label: "בָּרָ֣א",
+        surface: "בָּרָ֣א",
+        segments: ["בָּרָ֣א"],
+        lemma: "1254 a",
+        morph: "HVqp3ms",
+        id: "01Nvk",
+        n: null,
+        ref: "Gen.1.1",
+        strongHead: "בָּרָא",
+        strongId: "H1254",
+        strongGloss: "create / shape (sense a)",
+        note: "homograph letter “a” on lemma — AugIndex territory"
+      },
+      {
+        label: "אֱלֹהִ֑ים",
+        surface: "אֱלֹהִ֑ים",
+        segments: ["אֱלֹהִ֑ים"],
+        lemma: "430",
+        morph: "HNcmpa",
+        id: "01TyA",
+        n: "1",
+        ref: "Gen.1.1",
+        strongHead: "אֱלֹהִים",
+        strongId: "H430",
+        strongGloss: "God / gods",
+        note: "simple lemma number — clean join"
+      },
+      {
+        label: "אֵ֥ת",
+        surface: "אֵ֥ת",
+        segments: ["אֵ֥ת"],
+        lemma: "853",
+        morph: "HTo",
+        id: "01vuQ",
+        n: null,
+        ref: "Gen.1.1",
+        strongHead: "אֵת",
+        strongId: "H853",
+        strongGloss: "untranslated object marker (often)",
+        note: "ledger may feel “empty” of meaning — your invent still free"
+      },
+      {
+        label: "הַ/שָּׁמַ֖יִם",
+        surface: "הַ/שָּׁמַ֖יִם",
+        segments: ["הַ", "שָּׁמַ֖יִם"],
+        lemma: "d/8064",
+        morph: "HTd/Ncmpa",
+        id: "01TSc",
+        n: "0.0",
+        ref: "Gen.1.1",
+        strongHead: "שָׁמַיִם",
+        strongId: "H8064",
+        strongGloss: "heavens / sky",
+        note: "article d + noun — segment slash mirrors lemma path"
+      },
+      {
+        label: "וְ/אֵ֥ת",
+        surface: "וְ/אֵ֥ת",
+        segments: ["וְ", "אֵ֥ת"],
+        lemma: "c/853",
+        morph: "HC/To",
+        id: "01k5P",
+        n: null,
+        ref: "Gen.1.1",
+        strongHead: "אֵת",
+        strongId: "H853",
+        strongGloss: "object marker (+ conjunction on surface)",
+        note: "conjunction c stacked on same particle as אֵת"
+      },
+      {
+        label: "הָ/אָֽרֶץ",
+        surface: "הָ/אָֽרֶץ",
+        segments: ["הָ", "אָֽרֶץ"],
+        lemma: "d/776",
+        morph: "HTd/Ncbsa",
+        id: "01nPh",
+        n: "0",
+        ref: "Gen.1.1",
+        strongHead: "אֶרֶץ",
+        strongId: "H776",
+        strongGloss: "earth / land",
+        note: null
+      },
+      {
+        label: "וַ/יֹּ֥אמֶר",
+        surface: "וַ/יֹּ֥אמֶר",
+        segments: ["וַ", "יֹּ֥אמֶר"],
+        lemma: "c/559",
+        morph: "HC/Vqw3ms",
+        id: "01thY",
+        n: null,
+        ref: "Gen.1.3",
+        strongHead: "אָמַר",
+        strongId: "H559",
+        strongGloss: "say",
+        note: "as-written conjugated vs dictionary root — clearest pair"
+      }
+    ];
+
+    let selected = 0;
+
+    function renderPick() {
+      const box = document.getElementById("word-pick");
+      box.innerHTML = "";
+      words.forEach((w, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = w.label;
+        b.setAttribute("aria-pressed", i === selected ? "true" : "false");
+        b.onclick = () => {
+          selected = i;
+          renderPick();
+          renderFields();
+        };
+        box.appendChild(b);
+      });
+    }
+
+    function row(name, val, opts = {}) {
+      const he = opts.he;
+      const missing = val == null || val === "";
+      return (
+        '<div class="field-row' + (missing ? " missing" : "") + '">' +
+          '<div class="fname">' + name + "</div>" +
+          '<div class="fval' + (he && !missing ? " he" : "") + '">' +
+            (missing ? "—" : escapeHtml(String(val))) +
+          "</div>" +
+        "</div>"
+      );
+    }
+
+    function escapeHtml(s) {
+      return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderFields() {
+      const w = words[selected];
+      const grid = document.getElementById("field-grid");
+      grid.innerHTML =
+        row("ref", w.ref) +
+        row("surface (as written)", w.surface, { he: true }) +
+        row("segments", w.segments.join("  ·  "), { he: true }) +
+        row("lemma pointer", w.lemma) +
+        row("morph code", w.morph) +
+        row("word id", w.id) +
+        row("cantillation n", w.n) +
+        row("Strong id (join)", w.strongId) +
+        row("Strong headword", w.strongHead, { he: true }) +
+        row("Strong gloss (stub)", w.strongGloss) +
+        row("guide note", w.note);
+    }
+
+    renderPick();
+    renderFields();
+  </script>
+</body>
+</html>

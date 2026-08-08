@@ -1,0 +1,16 @@
+<!-- deck.set · manila envelope face only · contents = .deck-pop on felt -->
+<div class="deck-face" data-tool="deck" data-deck-face data-bin-drop>
+  <button type="button" class="deck-closed" data-deck-closed data-drag-chrome data-bin-drop title="manila envelope · drag or open">
+    <span class="env-flap" aria-hidden="true"></span>
+    <span class="env-body">
+      <span class="env-label">
+        <span class="deck-closed-kind">envelope</span>
+        <span class="deck-closed-title" data-field="title"></span>
+        <span class="deck-closed-count" data-deck-count></span>
+      </span>
+      <span class="deck-closed-hint">open</span>
+    </span>
+  </button>
+  <!-- legacy stub · never shown; list is deck-pop -->
+  <div class="deck-open" data-deck-open hidden aria-hidden="true"></div>
+</div>

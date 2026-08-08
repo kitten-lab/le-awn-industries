@@ -1,0 +1,24 @@
+---
+store:
+  file: karaoke.manifest
+  type: package
+  subtype: editor
+package:
+  uid: karaoke
+  name: Karaoke Eddie
+  auth: marketplace
+  src: marketplace
+  lineage: CO.TOY-004-EEE · face extract · not the full Encoder ROM
+pin:
+  tps_created: 1786020000
+  tps_updated: 1786020000
+  tags: [fidget, kven, encode]
+prop:
+  canMark: no
+  canDressup: yes
+  canPull: yes
+
+  Dressup.types: ["tool"]
+  Dressup.tool.dscs: ["karaoke", "angry"]
+  Dressup.tool.default: karaoke
+---

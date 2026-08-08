@@ -1,0 +1,35 @@
+# Runtime / agent noise
+**/__pycache__/
+*.py[cod]
+*.log
+*.err
+desk-server.log
+.webview_profiles/
+Thumbs.db
+.DS_Store
+.venv/
+venv/
+
+# SQLite / local product data (Glass Compost cuts, etc.)
+*.db
+*.db-*
+*.db.bak*
+**/*-wal
+**/*-shm
+
+# Glass Compost hand-cut store (local mountain work)
+glass-compost/prod/bench_sys/store/
+
+# EMT local desk store if present
+emt-bench/prod/**/store.json
+emt-bench/prod/**/store/
+
+# Operator run disk is local clay (desk papers, surface poses).
+# Product code + ~host marketplace ship; un-ignore ~local slices later if you want.
+sophia-desk/~local/
+
+# Operator mats / papers — local only for now
+safe_box/
+**/safe_box/
+paper/
+**/paper/

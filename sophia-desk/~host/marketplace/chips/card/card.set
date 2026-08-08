@@ -1,0 +1,23 @@
+<!-- card.set · index chip card (store package · not leaf) -->
+<div class="tool-card" data-tool="card" data-drag-chrome>
+  <div class="tool-card-rail">
+    <span class="tool-card-marks">
+      <span class="tool-card-mark" data-card-mark hidden></span>
+      <span class="tool-card-cite" data-card-cite hidden></span>
+    </span>
+    <span class="tool-card-kind">card</span>
+  </div>
+  <div class="tool-card-title" data-card-title></div>
+  <div class="tool-card-by" data-card-by></div>
+  <div class="tool-card-body" data-card-body></div>
+  <div class="tool-card-foot">
+    <span class="tool-card-uid" data-card-uid></span>
+    <span class="tool-card-deck" data-card-deck></span>
+    <button type="button" class="tool-card-putaway" data-card-putaway hidden title="put back in home deck">
+      put away
+    </button>
+    <button type="button" class="tool-card-unfile" data-card-unfile hidden title="leave this deck forever">
+      unfile
+    </button>
+  </div>
+</div>
