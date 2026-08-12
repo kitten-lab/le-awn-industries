@@ -1,0 +1,89 @@
+---
+store:
+  file: leaf[10]-plannerfordocsforioxfork.chip
+chip:
+  uid: leaf[10]
+  name: planner for docs for IOX fork
+  auth: grok 4.5
+pin:
+  tps_created: 1785964416
+  tps_updated: 1785971131
+  tags: []
+---
+1. Constitution (one short paper) — what IOX is
+Paste/expand leaf 11 + one paragraph from leaf 4.
+Lock: open, web, composable assets, surfaces, marketplace → ~local, offline, no window-island custody.
+Audience: humans + machines. Length: ≤ 1 screen.
+
+2. Composition law (the B-chain for Pocket) — how a surface works
+The four moves, in pocket nouns:
+
+1. Declare — surface.cfg (id, name, auth, dressup)
+2. Rooms/slots — what belongs here (configs for bins/chips/tools)
+3. Look — shell/style agency
+4. Compose — available tools/kits only; no mega-desk reinvention
+
+Include: desk is not root; runtime hosts surfaces.
+Dossier/FileKeeper lesson: one jack, many rooms — don’t fork browsers into new products.
+
+3. Boot & ownership — who owns what
+┌───────────────────────────┬──────────────────────────────────┐
+│ Thing                     │ Owner                            │
+├───────────────────────────┼──────────────────────────────────┤
+│ Process / void-mirror     │ IOX core (thin)                  │
+├───────────────────────────┼──────────────────────────────────┤
+│ Auth shelf ~local/<user>/ │ user                             │
+├───────────────────────────┼──────────────────────────────────┤
+│ surfaces/<Name>/          │ that surface                     │
+├───────────────────────────┼──────────────────────────────────┤
+│ library/ materials        │ user (shared clay)               │
+├───────────────────────────┼──────────────────────────────────┤
+│ ~host/marketplace         │ store / packs                    │
+├───────────────────────────┼──────────────────────────────────┤
+│ Tools on desk             │ surface placement + kit identity │
+└───────────────────────────┴──────────────────────────────────┘
+
+Boot options: default surface for this install (yours: Archivist) vs void first vs last-used. Document so “someone else installs” isn’t stuck in your desk myth.
+
+4. Object dictionary (stable nouns)
+chip / bin / board / book / tool / surface / kit / dressup / prop / pos — what each paper is, dual matter+cfg if that’s law.
+No inventing Mail.* style freestyle.
+
+5. What Pocket Desktop is in the fork
+Honest inventory:
+
+• Keep as DNA: multi-object felt, library+configs, spawn, dress, membership, stamper/inbox as guest tools, ROM window as interim tool surface
+• Strip as product identity: DEFAULT_SURFACE = ArchivistDesk as universe
+• Promote: surface list, enter/leave surface, void boot
+• Out of scope for core: Dossier clones, full myPI letter alphabet, EDN cities
+
+6. Tool = jack law (one page)
+• Tools live as packages (~host / marketplace)
+• Surfaces place instances
+• Bigger “apps” (music ambient on save, file browse) = compose or extend jacks, not new monorepos
+• Music example belongs in this doc as the ambient state pattern (same as Echo soundtrack)
+
+7. Migration / fork map
+pocket-desktop → iox-os (or name you choose):
+
+• What moves (desk_sys hollow core, store paper law)
+• What stays personal (your ArchivistDesk configs, leaves)
+• What becomes sample surface pack
+• What becomes marketplace kit
+
+8. Anti-patterns (half page)
+• Surface hard-coded as root
+• Mega desk that reimplements tools
+• Second FileKeeper
+• Docs that are girl-weather leave-offs instead of instructionals
+• Renaming without claim/compose behavior
+
+───
+
+Minimal set if you only write three
+
+1. Leaf 11 polished = public constitution
+2. Composition + boot/void = engineer law (this conversation + B-chain rhyme)
+3. Object dictionary + jack law = so forks don’t invent nouns
+
+Leaf 4 is appendix or “hollow core howl” for implementers.

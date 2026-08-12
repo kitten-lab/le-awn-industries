@@ -1,0 +1,26 @@
+---
+store:
+  file: leaf[5]-packageregistries.chip
+chip:
+  uid: leaf[5]
+  name: package registries
+  auth: AUORI
+pin:
+  tps_created: 1785941321
+  tps_updated: 1785964319
+  tags: []
+---
+# package registries in the **io**
+The [[POCKET OS]] is broken down into composable pieces, with the core built as minimally as possible to ensure the flexibility of the user environments generated. As such, all modules, components, tools, and functionalities must be contained as individual code banks, imported by the core when required by the surface's configuration.
+
+## types of registries
+- module registry
+- rom registry
+- functions registry
+- surface registry
+- data registry
+- configuration registry
+
+Even the most basic functionality should be produced as an individual function or fragment of php or js code, imported into the core at launch, when and if required.
+
+# Registries contain the available parts and pieces which can be called into the ~local core from the ~host marketplace.

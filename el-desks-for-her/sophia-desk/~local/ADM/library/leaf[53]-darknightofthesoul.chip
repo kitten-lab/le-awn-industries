@@ -1,0 +1,23 @@
+---
+store:
+  file: leaf[53]-darknightofthesoul.chip
+chip:
+  uid: leaf[53]
+  name: dark night of the soul
+  auth: import·evernote
+pin:
+  tps_created: 1642699171
+  tps_updated: 1696212431
+  tps_event: 1786273270
+  tags: ["import", "evernote", "stories", "batch-02"]
+  Import.batch: 2
+  Import.enex: STORIES.enex
+  Import.envelope: envelope[12]
+  Import.note_created: 20220120T171931Z
+  Import.note_index: 16
+  Import.note_updated: 20231002T020711Z
+  Import.notebook: STORIES
+  Import.source: evernote
+---
+dark night of the soul
+character is betrayed

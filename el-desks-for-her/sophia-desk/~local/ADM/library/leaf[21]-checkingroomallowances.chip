@@ -1,0 +1,29 @@
+---
+store:
+  file: leaf[21]-checkingroomallowances.chip
+chip:
+  uid: leaf[21]
+  name: Checking Room Allowances
+  auth: Agent G Project Planner
+pin:
+  tps_created: 1786058091
+  tps_updated: 1786156903
+  tags: []
+---
+address: adm/house/kitchen
+        ↓
+keymaker parses → place=house, room=kitchen
+        ↓
+look up domain allowance for “adm” spaces in the config launch
+        ↓
+┌─────────────────────────────────────────────────────┐
+│ house not allowed (even if folder exists)           │
+│ → load adm’s custom “unknown or unauthorized” shell │
+└─────────────────────────────────────────────────────┘
+        ↓ (if allowed)
+┌─────────────────────────────────────────────────────┐
+│ kitchen does not exist                              │
+│ → load different custom error shell from adm        │
+└─────────────────────────────────────────────────────┘
+        ↓ (if exists)
+load rooms/house/kitchen.html + its required materials

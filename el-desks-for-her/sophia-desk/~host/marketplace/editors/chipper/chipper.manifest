@@ -1,0 +1,27 @@
+---
+store:
+  file: chipper.manifest
+  type: package
+  subtype: editor
+package:
+  uid: chipper
+  name: Chipper
+  auth: marketplace
+  src: marketplace
+pin:
+  tps_created: 1786000000
+  tps_updated: 1786000000
+  tags: []
+prop:
+  canMark: yes
+  canDressup: yes
+  Mark.class: cite
+  Mark.types: []
+  Mark.type.default: OT-000.T01.B000
+  Mark.style.default: ticket
+  Dressup.types: ["tool", "mark"]
+  Dressup.tool.dscs: ["ink", "plain"]
+  Dressup.tool.default: ink
+  Dressup.mark.dscs: ["ticket"]
+  Dressup.mark.default: ticket
+---

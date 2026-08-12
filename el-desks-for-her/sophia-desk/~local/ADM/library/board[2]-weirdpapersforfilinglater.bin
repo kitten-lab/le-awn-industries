@@ -1,0 +1,17 @@
+---
+store:
+  file: board[2]-weirdpapersforfilinglater.bin
+  type: bin
+  bit_count: 4
+bin:
+  uid: board[2]
+  type: board
+  name: Weird Papers for Filing Later
+  auth: AUORI
+  class: box
+  chips: ["leaf[63]", "leaf[65]", "leaf[35]", "leaf[66]"]
+pin:
+  tps_created: 1785960188
+  tps_updated: 1786407484
+  tags: []
+---

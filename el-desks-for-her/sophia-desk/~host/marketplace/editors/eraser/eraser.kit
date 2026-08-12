@@ -1,0 +1,58 @@
+/* eraser.kit · wipe every stamp / cite scar off a leaf or card */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  api.register("eraser", {
+    id: "eraser",
+    packageId: "eraser",
+    canMark: true,
+    canErase: true,
+    /**
+     * Clear all Mark.* and Cite.* scars from a paper.
+     * pos ignored — erase is whole-object, not a spot scrub (for now).
+     */
+    applyToLeaf: function (toolWin, leafWin, pos) {
+      if (!toolWin || !leafWin || !leafWin.data) return null;
+      var leafProp0 = leafWin.data.prop || {};
+      var markable = leafProp0.isMarkable;
+      if (
+        markable === false ||
+        markable === "no" ||
+        markable === "false" ||
+        markable === 0
+      ) {
+        return { ok: false, error: "leaf is not markable" };
+      }
+      var hasStamp =
+        leafProp0.isMarked === true ||
+        leafProp0.isMarked === "yes" ||
+        leafProp0.isMarked === "true" ||
+        !!(leafProp0["Mark.type"] || leafProp0["Mark.label"]);
+      var hasCite =
+        leafProp0.isCited === true ||
+        leafProp0.isCited === "yes" ||
+        leafProp0.isCited === "true" ||
+        !!leafProp0["Cite.code"];
+      var cites = leafWin.data.cites;
+      if (!hasCite && Array.isArray(cites) && cites.length) hasCite = true;
+      if (!hasStamp && !hasCite) {
+        return { ok: false, error: "nothing to erase · paper is clean" };
+      }
+      return {
+        ok: true,
+        erase: true,
+        leafProp: {
+          isMarkable: true,
+          isMarked: false,
+          isCited: false,
+          eraseAll: true,
+        },
+      };
+    },
+    cycleLabel: function () {
+      return null;
+    },
+  });
+})();

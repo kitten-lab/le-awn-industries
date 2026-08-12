@@ -1,0 +1,17 @@
+---
+store:
+  file: board[4]-draftinbox.bin
+  type: bin
+  bit_count: 6
+bin:
+  uid: board[4]
+  type: board
+  name: Draft Inbox
+  auth: L.E. AWN INDUSTRIES
+  class: box
+  chips: ["stamper[1]", "stamper[2]", "stamper[3]", "chipper[0]", "eraser[1]", "stamper[0]"]
+pin:
+  tps_created: 1785988945
+  tps_updated: 1786481754
+  tags: []
+---

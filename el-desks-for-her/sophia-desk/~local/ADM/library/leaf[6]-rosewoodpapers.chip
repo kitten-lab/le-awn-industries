@@ -1,0 +1,75 @@
+---
+store:
+  file: leaf[6]-rosewoodpapers.chip
+chip:
+  uid: leaf[6]
+  name: rosewood papers
+  auth: AUORI
+pin:
+  tps_created: 1785941337
+  tps_updated: 1785961872
+  tags: []
+---
+# rosewood papers, please
+
+^ what is rosewood format.
+- rosewood format is **new**. 
+
+a sample rosewood document
+```
+### ROSEDOC FORMAT 0.01v
+### CLASSIFICATION content
+---
+OIX_ID|6549_FRET_3D2H-[aboutvens]
+---
+? whowhat:
+
+~ name: About VENs
+~ auth: AUORI
+
+(+) payload FORMAT md
+===
+# ROUGH COLLECTOR **VEN**
+VEN Virtual Effective Namespace
+VEN Virtual Entity
+VEN Variable Energy Node
+
+All things are VEN. If it is not VEN, you've built it wrong.
+===
+
+& lookup
+  record|HISTORIES-6549-FRET-3D2H.tps
+```
+
+its histories
+```
+### ROSEDOC FORMAT 0.01v
+### CLASSIFICATION records | tps
+---
+OIX_ID|6549_FRET_3D2H-[aboutvens]
+---
+@records:
+
++ event
+^ created 1777209023
+  handler|LOREBOX
+  surface|ArchivistDesk
+  record|HISTORIES-6549-FRET-3D2H-0
+  
++ event
+^ modified 1777220741
+  handler|STAMPER
+  surface|UndergroundLab
+  record|HISTORIES-6549-FRET-3D2H-1
+---
+### /END ROSEDOC
+```
+
+longer histories record
+```
+### MASTER HISTORIES RECORD LOG 17772-22
+HISTORIES-6549-FRET-3D2H-0 1777209023
+  Agent AUORI created CHIP 6549-FRET-3D2H on ArchivistDesk with 'spawn'
+HISTORIES-6549-FRET-3D2H-1 1777220741
+  Agent K modified CHIP 6549-FRET-3D2H on UndergroundLab with 'stamper'
+```

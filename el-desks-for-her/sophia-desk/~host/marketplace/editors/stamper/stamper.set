@@ -1,0 +1,13 @@
+<!-- stamper.set · HTML face of the tool -->
+<div class="tool-stamper" data-tool="stamper" data-drag-chrome>
+  <div class="tool-stamper-body">
+    <div class="tool-stamper-knob" aria-hidden="true"></div>
+    <div class="tool-stamper-handle" aria-hidden="true"></div>
+    <div class="tool-stamper-collar" aria-hidden="true"></div>
+    <div class="tool-stamper-plate">
+      <span class="tool-stamper-plate-rim" aria-hidden="true"></span>
+      <span class="tool-stamper-label" data-stamp-label>URGENT</span>
+    </div>
+  </div>
+  <div class="tool-stamper-meta" data-stamp-meta>stamper</div>
+</div>

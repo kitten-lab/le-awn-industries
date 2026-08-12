@@ -1,0 +1,12 @@
+<!-- chipper.set · clipper that stamps clipboard cite codes -->
+<div class="tool-chipper" data-tool="chipper" data-drag-chrome>
+  <div class="tool-chipper-body">
+    <div class="tool-chipper-clip" aria-hidden="true"></div>
+    <div class="tool-chipper-jaw" aria-hidden="true"></div>
+    <div class="tool-chipper-plate tool-stamper-plate">
+      <span class="tool-chipper-plate-rim" aria-hidden="true"></span>
+      <span class="tool-chipper-label" data-stamp-label>copy a chip</span>
+    </div>
+  </div>
+  <div class="tool-chipper-meta" data-stamp-meta>chipper</div>
+</div>

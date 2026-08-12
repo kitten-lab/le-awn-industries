@@ -1,0 +1,76 @@
+/* chipper.kit · stamps clipboard tree cites (OT-001.T02.B014) onto leaves */
+/* Cite.* is separate from Mark.* so DRAFT/URGENT can coexist on the same paper */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  var CITE_RE =
+    /\b([A-Za-z]{1,6}-\d{1,4}(?:\.T\d{1,3})?(?:\.B\d{1,5})?(?:\.L\d{1,3})?)\b/g;
+
+  function extractCite(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return "";
+    var best = "";
+    var m;
+    CITE_RE.lastIndex = 0;
+    while ((m = CITE_RE.exec(s))) {
+      var cand = m[1];
+      if (cand.indexOf(".B") >= 0 || cand.indexOf(".T") >= 0 || cand.length > best.length) {
+        best = cand;
+      }
+    }
+    return best;
+  }
+
+  api.register("chipper", {
+    id: "chipper",
+    packageId: "chipper",
+    canMark: true,
+    extractCite: extractCite,
+    applyToLeaf: function (toolWin, leafWin, pos) {
+      if (!toolWin || !leafWin || !leafWin.data) return null;
+      var prop = toolWin.data.prop || {};
+      if (!prop.canMark && prop.canMark !== true && prop.canMark !== "yes") {
+        return { ok: false, error: "this tool cannot mark" };
+      }
+      var leafProp0 = leafWin.data.prop || {};
+      var markable = leafProp0.isMarkable;
+      if (
+        markable === false ||
+        markable === "no" ||
+        markable === "false" ||
+        markable === 0
+      ) {
+        return { ok: false, error: "leaf is not markable" };
+      }
+      var du = toolWin.data.dressup || {};
+      var plate = String(
+        prop["Cite.code"] || prop["Mark.type"] || prop["Mark.label"] || ""
+      ).trim();
+      plate = extractCite(plate) || plate;
+      if (!plate || plate === "copy a chip" || /^OT-000/i.test(plate)) {
+        return {
+          ok: false,
+          error: "chipper empty · copy a code from Nim first",
+        };
+      }
+      var style = du.mark || prop["Cite.style"] || prop["Mark.style"] || "ticket";
+      // ONLY Cite.* — never clobber Mark.type (DRAFT etc.)
+      var leafProp = {
+        isMarkable: true,
+        isCited: true,
+        "Cite.code": plate,
+        "Cite.style": String(style),
+      };
+      if (pos && pos.x != null && pos.y != null) {
+        leafProp["Cite.pos.x"] = pos.x;
+        leafProp["Cite.pos.y"] = pos.y;
+      }
+      return { ok: true, leafProp: leafProp };
+    },
+    cycleLabel: function () {
+      return null;
+    },
+  });
+})();

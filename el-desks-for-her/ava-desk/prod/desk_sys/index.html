@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AvaDesk · blue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=IBM+Plex+Mono:wght@300;400;500;600&family=Special+Elite&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="rom-cart-face.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body class="rx rx-booting" data-felt="blue">
+  <!-- covers desk thrash until office is ready -->
+  <div class="rx-boot" id="bootScreen" aria-live="polite" aria-busy="true">
+    <div class="rx-boot-card">
+      <p class="rx-boot-sku">BLUE · HER-001</p>
+      <p class="rx-boot-title">AvaDesk</p>
+      <p class="rx-boot-dots" aria-hidden="true">···</p>
+    </div>
+  </div>
+  <header
+    class="rx-rail"
+    data-deck-chrome
+    data-deck-deep-stay
+    data-deck-controls="deep,min,max,close"
+  >
+    <div class="rx-rail-left">
+      <button type="button" class="rx-mark" data-deck-menu title="AvaDesk · menu" aria-label="AvaDesk menu">
+        <span class="rx-mark-dot" aria-hidden="true"></span>
+        <span class="rx-mark-name">Ava<span class="rx-mark-desk">Desk</span></span>
+      </button>
+    </div>
+    <div class="rx-rail-center" data-deck-drag title="drag window">
+      <span class="rx-rail-whisper">the living mirror</span>
+    </div>
+    <div class="rx-rail-right">
+      <div class="rx-rail-actions">
+        <button type="button" class="rx-btn" id="btnShell" title="surface shell · Ctrl+`">shell</button>
+      </div>
+      <div class="rx-win" data-deck-window-controls></div>
+    </div>
+  </header>
+
+  <!-- Click-room · office overview (zoom out). Desk mode = current felt. -->
+  <div class="rx-room" id="room" aria-label="Office · click a place to enter" hidden>
+    <div class="rx-room-wall" aria-hidden="true">
+      <div class="rx-room-neon">CASE<br />STREET</div>
+      <div class="rx-room-window">
+        <div class="rx-room-blinds"></div>
+      </div>
+      <!-- big wall cork · not a pocket yet · just open wall space -->
+      <div class="rx-room-corkboard" title="cork board · pin later">
+        <span class="rx-room-cork-frame"></span>
+        <span class="rx-room-cork-label">cork</span>
+      </div>
+    </div>
+    <div class="rx-room-floor" aria-hidden="true"></div>
+    <!-- free objects pulled out of the desk pocket live here -->
+    <div class="rx-room-floor-items" id="roomFloor" aria-label="office floor"></div>
+    <button type="button" class="rx-hotspot rx-hot-shelf" data-room-go="shelf" title="bookshelf">
+      <span class="rx-hot-label">shelf</span>
+    </button>
+    <!-- desk pocket · fiddle on the mini · open via label only -->
+    <div class="rx-hotspot rx-hot-desk" title="desk · drag things · open via label">
+      <span class="rx-desk-preview-slot" id="deskPreviewSlot" aria-hidden="true"></span>
+      <span class="rx-hot-desk-top"></span>
+      <button type="button" class="rx-hot-label rx-hot-open" data-room-go="desk" title="open desk · go inside">
+        desk · open
+      </button>
+    </div>
+    <button type="button" class="rx-hotspot rx-hot-inbox" data-room-go="inbox" title="Hermes Mail · open the box">
+      <span class="rx-hot-label">mail</span>
+    </button>
+    <button type="button" class="rx-hotspot rx-hot-mat" data-room-go="mat" title="mat · pocket later">
+      <span class="rx-hot-label">mat</span>
+    </button>
+    <p class="rx-room-hint">click a place · desk is where the papers live</p>
+  </div>
+  <div class="rx-felt" id="felt" aria-label="Felt desk · zoomed work surface"></div>
+  <button type="button" class="rx-leave-room" id="btnLeavePlace" hidden title="step back to the office">
+    ← office
+  </button>
+  <div id="toast" class="rx-toast" hidden aria-live="polite">
+    <div class="rx-toast-bar">
+      <span class="rx-toast-dot" aria-hidden="true"></span>
+      <span class="rx-toast-title">mira</span>
+    </div>
+    <pre class="rx-toast-body" data-toast-body></pre>
+  </div>
+
+  <script src="live_md.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

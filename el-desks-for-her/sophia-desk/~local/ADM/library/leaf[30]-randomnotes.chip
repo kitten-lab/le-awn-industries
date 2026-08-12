@@ -1,0 +1,28 @@
+---
+store:
+  file: leaf[30]-randomnotes.chip
+chip:
+  uid: leaf[30]
+  name: RANDOM NOTES
+  auth: Rhea Showly
+pin:
+  tps_created: 1786161532
+  tps_updated: 1786161546
+  tags: []
+---
+chesters imports
+we want to do know!
+did you have a wacky time with sweet, sweet 4o?
+are you looking to store what you knew?
+a storybox creation might be just for you!
+datbox is here, with some Charlie toys
+to help you rather the truth in the noise
+
+
+--
+
+- shelf should be highlighted based on which contents you're selected on 
+- if gravity is unset, do not print on the card (but still allow it to be set on edit)
+- rename / delete shelf, especially because of the unclear selection process, sometimes could be set as the selection when you collapse the rail, and remains set as the selection since it does not change to select the deck when you choose a card inside the cards pane. Discuss best solutions without overcomplicating?
+- can we split the scale css for the compact / comfy modes so that compact mode can use smaller fonts? 
+- can we apply compact mode to the cards pane too?

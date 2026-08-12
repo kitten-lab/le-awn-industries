@@ -1,0 +1,22 @@
+---
+store:
+  file: leaf[49]-untitlednote.chip
+chip:
+  uid: leaf[49]
+  name: Untitled Note
+  auth: import·evernote
+pin:
+  tps_created: 1609079255
+  tps_updated: 1743941072
+  tps_event: 1786273270
+  tags: ["import", "evernote", "stories", "batch-02"]
+  Import.batch: 2
+  Import.enex: STORIES.enex
+  Import.envelope: envelope[12]
+  Import.note_created: 20201227T142735Z
+  Import.note_index: 12
+  Import.note_updated: 20250406T120432Z
+  Import.notebook: STORIES
+  Import.source: evernote
+---
+A religious family that you assume is toxic but turns out the world really is awful

@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[10]-drxfiles.bin
+  type: bin
+  bit_count: 2
+bin:
+  uid: envelope[10]
+  type: envelope
+  name: DRX Files
+  auth: unknown
+  class: envelope
+  chips: ["leaf[37]", "card[0]"]
+pin:
+  tps_created: 1786207552
+  tps_updated: 1786208085
+  tags: []
+---

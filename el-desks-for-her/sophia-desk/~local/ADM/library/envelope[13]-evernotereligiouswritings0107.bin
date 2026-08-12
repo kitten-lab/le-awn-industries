@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[13]-evernotereligiouswritings0107.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: envelope[13]
+  type: envelope
+  name: Evernote · RELIGIOUS WRITINGS · 01/07
+  auth: import·evernote
+  class: envelope
+  chips: []
+pin:
+  tps_created: 1786273789
+  tps_updated: 1786274388
+  tags: []
+---

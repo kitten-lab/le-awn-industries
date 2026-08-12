@@ -1,0 +1,30 @@
+---
+store:
+  file: leaf[11]-whatisioxos.chip
+chip:
+  uid: leaf[11]
+  name: what is IOX OS?
+  auth: AUORI
+pin:
+  tps_created: 1785964424
+  tps_updated: 1785966829
+  tags: []
+---
+# what is **IOX OS**?
+IOX OS is an open source operating system built entirely on web technology, driven by composable assets which may be modified, created, and shared by the community.
+
+Launchable from any device, IOX functions as a thin common core vessel capable of exploring, producing, and sharing a broad range of usable surface environments and their subsequent tools and toys.
+
+## what is a **surface**?
+A surface is a state of environment capable of being set in any way needed for the work that will be carried out within that environment.
+
+A surface may be a desk, a room, a website, a tavern. If you can imagine it, it can be constructed inside of IOX.
+
+Since the product is open source and produced to support community modders and creators, an easily accessible master marketplace will provide access to generators, toys, tools, and prefabricated surface designs the user may download directly into their ~local space.
+
+Utilizing components from the marketplace, a surface may be sculpted in any form that the user designs. Since material is locally accessed, going offline does not remove access to your marketplace items, and you are free to modify your instance of any material without impacting the greater store.
+
+## the core intention
+Current computing is ruled by the window format. Each product is an isolated island, locked in design and keeping custody of its contents in inaccessible ways. It is not possible to pull a file out of Word and drop it into Confluence. It is not possible to pull a journal entry from a random website and place the request in your journal. 
+
+The core intention of IOX OS is the allowance for everything to be controllable and customizable for the user while still providing a deeply organized, highly stable user experience.

@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[18]-deweycatalogco.bin
+  type: bin
+  bit_count: 3
+bin:
+  uid: envelope[18]
+  type: envelope
+  name: dewey catalog co
+  auth: ROM CAT
+  class: envelope
+  chips: ["card[12]", "card[13]", "card[14]"]
+pin:
+  tps_created: 1786308941
+  tps_updated: 1786395507
+  tags: []
+---

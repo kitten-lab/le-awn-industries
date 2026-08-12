@@ -1,0 +1,23 @@
+---
+store:
+  file: card.manifest
+  type: package
+  subtype: chip
+package:
+  uid: card
+  name: Chip Card
+  auth: marketplace
+  src: marketplace
+  note: store vend · index face · not a leaf · not core-baked
+pin:
+  tps_created: 1786021000
+  tps_updated: 1786021000
+  tags: [card, chip, filing]
+prop:
+  canMark: yes
+  isMarkable: yes
+  bodyMax: 520
+  Dressup.types: ["face"]
+  Dressup.face.dscs: ["plain", "ruled"]
+  Dressup.face.default: plain
+---

@@ -1,0 +1,130 @@
+/* card.kit · chip card face paint (store package) */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  function paint(w) {
+    if (!w || !w.el || !w.data) return;
+    var d = w.data;
+    var root = w.el.querySelector("[data-tool=card]");
+    if (!root) return;
+    var dress =
+      (d.dressup && (d.dressup.face || d.dressup.style || d.dressup.tool)) ||
+      d.paper ||
+      "plain";
+    root.setAttribute("data-tool-dress", dress);
+    var uid = root.querySelector("[data-card-uid]");
+    var title = root.querySelector("[data-card-title]");
+    var by = root.querySelector("[data-card-by]");
+    var deckEl = root.querySelector("[data-card-deck]");
+    var body = root.querySelector("[data-card-body]");
+    var mark = root.querySelector("[data-card-mark]");
+    var citeEl = root.querySelector("[data-card-cite]");
+    var unfile = root.querySelector("[data-card-unfile]");
+    var putaway = root.querySelector("[data-card-putaway]");
+    // bottom rail · living id (card[0])
+    if (uid) uid.textContent = d.uid || d.id || "";
+    if (title) title.textContent = d.title || d.name || "untitled card";
+    if (by) {
+      var a = d.author || d.auth || "";
+      by.textContent = a ? "by " + a : "";
+    }
+    // bottom rail · home deck (not "re:") · unfiled when free
+    if (deckEl) {
+      var filing = d.filingRe;
+      var unfiled = !!d.filingUnfiled;
+      if (filing == null || filing === "") {
+        filing = "unfiled";
+        unfiled = true;
+      }
+      deckEl.textContent = filing;
+      deckEl.hidden = false;
+      if (unfiled) deckEl.classList.add("is-unfiled");
+      else deckEl.classList.remove("is-unfiled");
+      if (d.filingOut) deckEl.classList.add("is-out");
+      else deckEl.classList.remove("is-out");
+    }
+    if (body) body.textContent = d.body || "";
+    // put away + unfile when out of box but still home (checked out)
+    var showCheckout = !!d.filingOut && !d.filingUnfiled;
+    if (putaway) putaway.hidden = !showCheckout;
+    if (unfile) unfile.hidden = !showCheckout;
+
+    var prop = d.prop || {};
+    var markClass = String(prop["Mark.class"] || "stamp").toLowerCase();
+    var citeWord = String(prop["Cite.code"] || "").trim();
+    var cited =
+      prop.isCited === true ||
+      prop.isCited === "yes" ||
+      prop.isCited === "true" ||
+      !!citeWord ||
+      markClass === "cite";
+    if (!citeWord && markClass === "cite") {
+      citeWord = String(prop["Mark.type"] || prop["Mark.label"] || "").trim();
+    }
+
+    // rubber stamp only when Mark is not a cite-class scar
+    var stampWord = "";
+    var stamped =
+      (prop.isMarked === true ||
+        prop.isMarked === "yes" ||
+        prop.isMarked === "true" ||
+        !!prop["Mark.type"] ||
+        !!prop["Mark.label"]) &&
+      markClass !== "cite";
+    if (stamped) {
+      stampWord = String(
+        prop["Mark.type"] || prop["Mark.label"] || "marked"
+      ).trim();
+      // if stamp word is only the cite code, don't double-paint as stamp
+      if (
+        citeWord &&
+        stampWord &&
+        stampWord.toLowerCase() === citeWord.toLowerCase()
+      ) {
+        stamped = false;
+        stampWord = "";
+      }
+    }
+
+    // two badges: stamp stays red, cite stays blue (never merge into one blue line)
+    if (mark) {
+      if (stamped && stampWord) {
+        mark.hidden = false;
+        mark.textContent = stampWord.toUpperCase();
+        mark.classList.remove("is-cite");
+      } else {
+        mark.hidden = true;
+        mark.textContent = "";
+        mark.classList.remove("is-cite");
+      }
+    }
+    if (citeEl) {
+      if (cited && citeWord) {
+        citeEl.hidden = false;
+        citeEl.textContent = citeWord;
+      } else {
+        citeEl.hidden = true;
+        citeEl.textContent = "";
+      }
+    } else if (mark && cited && citeWord && !stamped) {
+      // fallback if old .set without data-card-cite
+      mark.hidden = false;
+      mark.textContent = citeWord;
+      mark.classList.add("is-cite");
+    }
+  }
+
+  function mount(w) {
+    paint(w);
+  }
+
+  api.register("card", {
+    id: "card",
+    packageId: "card",
+    canMark: true,
+    paint: paint,
+    mount: mount,
+  });
+})();

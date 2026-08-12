@@ -1,0 +1,57 @@
+---
+store:
+  file: leaf[33]-admchpl38cdat.chip
+chip:
+  uid: leaf[33]
+  name: ADM_CHP_L38.cdat
+  auth: unknown
+pin:
+  tps_created: 1786163213
+  tps_updated: 1786283068
+  tags: []
+---
+# The CHIP Data Format - Main Data
+```
+# CHARLIE ROSEWOOD CHIP DATA FORMAT
+# Basic Chip Storage Mockup v1
+#
+# Example chip paper for ADM_CHP_L38 
+# Currently stored as ~local/ADM/library/leaf[38]-beauandcrimsonrayne.chip
+---
+CHIP DATA FOR lib: 
+  store: ~l ADM
+  call: ADM_CHP_L38 [beauandcrimsonrayne]
+
+  type: chip
+  class: leaf
+  paper: cdat
+---
+tps:
+  changebook: ADM_CHP_L38.chbk
+  event: 1786273269 
+  ingest: 1755177488
+  modified: 1785586900
+---
+connectors:
+  threadbook: ADM_CHP_L38.thbk
+  cite: none
+  pins: none
+---
+chip:
+  cuid: ADM_CHP_L38
+  name: Beau and Crimson Rayne
+  auth: import·evernote
+===
+It’s late, but not so late the streets are empty. The air is warm and restless, a faint scent of rain 
+lingering like a promise. Lanterns swing in the breeze, their light catching on the slick cobblestones. 
+Somewhere down the block, music spills from an open doorway — low, rough, and threaded with laughter.
+
+You’re standing in the mouth of a narrow side street, half in shadow, watching the main square. People pass 
+in pairs and clusters, their boots clicking, voices rising and falling. The world feels like it’s on the 
+cusp of something — that charged stillness before the first drop of a storm.
+
+And there — leaning against the stone wall opposite the tavern’s entrance — is him.
+
+Not staring at you, not yet. But you know he knows you’re there.
+===
+---

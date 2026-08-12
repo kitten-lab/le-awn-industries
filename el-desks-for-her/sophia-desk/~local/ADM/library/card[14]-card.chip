@@ -1,0 +1,15 @@
+---
+store:
+  file: card[14]-card.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[14]
+  name: -
+  auth: -
+  type: card
+pin:
+  tps_created: 1786308930
+  tps_updated: 1786326047
+  tags: []
+---

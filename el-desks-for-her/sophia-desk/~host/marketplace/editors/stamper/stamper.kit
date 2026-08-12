@@ -1,0 +1,85 @@
+/* stamper.kit · guest kit (JS) — loaded after install; not core forever */
+/* registers with window.PocketTools if present */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  api.register("stamper", {
+    id: "stamper",
+    packageId: "stamper",
+    canMark: true,
+    /**
+     * Apply current plate to a leaf.
+     * pos = { x, y } percent of paper (optional) — where the ink lands
+     */
+    applyToLeaf: function (toolWin, leafWin, pos) {
+      if (!toolWin || !leafWin || !leafWin.data) return null;
+      var prop = toolWin.data.prop || {};
+      if (!prop.canMark && prop.canMark !== true && prop.canMark !== "yes") {
+        return { ok: false, error: "this tool cannot mark" };
+      }
+      // leaf must accept marks (isMarkable; missing = yes base rule)
+      var leafProp0 = leafWin.data.prop || {};
+      var markable = leafProp0.isMarkable;
+      if (
+        markable === false ||
+        markable === "no" ||
+        markable === "false" ||
+        markable === 0
+      ) {
+        return { ok: false, error: "leaf is not markable" };
+      }
+      var du = toolWin.data.dressup || {};
+      // instance Mark.type = current plate word; Mark.class = scar kind (stamp)
+      var plate =
+        prop["Mark.type"] || prop["Mark.label"] || prop.Mark_label || "urgent";
+      var style = du.mark || prop["Mark.style"] || "classic";
+      var klass = prop["Mark.class"] || "stamp";
+      // rubber stamp only — never write Cite.* (chipper owns those)
+      var leafProp = {
+        isMarkable: true,
+        isMarked: true,
+        "Mark.class": "stamp",
+        "Mark.type": String(plate),
+        "Mark.style": String(style),
+      };
+      if (pos && pos.x != null && pos.y != null) {
+        leafProp["Mark.pos.x"] = pos.x;
+        leafProp["Mark.pos.y"] = pos.y;
+      }
+      return { ok: true, leafProp: leafProp };
+    },
+    cycleLabel: function (toolWin) {
+      if (!toolWin || !toolWin.data) return null;
+      var prop = toolWin.data.prop || {};
+      // options live on package → runtime Mark.labels; plate is Mark.type
+      var labels = prop["Mark.labels"] || prop["Mark.types"] || prop.Mark_labels || [];
+      if (typeof labels === "string") {
+        try {
+          labels = JSON.parse(labels);
+        } catch (e) {
+          labels = String(labels)
+            .split(",")
+            .map(function (s) {
+              return s.trim();
+            });
+        }
+      }
+      if (!labels.length) return null;
+      var cur = String(
+        prop["Mark.type"] || prop["Mark.label"] || labels[0]
+      ).toLowerCase();
+      var i = labels
+        .map(function (x) {
+          return String(x).toLowerCase();
+        })
+        .indexOf(cur);
+      var next = labels[(i + 1) % labels.length];
+      prop["Mark.type"] = next;
+      prop["Mark.label"] = next; // mirror for older UI bits
+      toolWin.data.prop = prop;
+      return next;
+    },
+  });
+})();

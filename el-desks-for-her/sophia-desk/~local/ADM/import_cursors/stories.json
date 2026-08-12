@@ -1,0 +1,41 @@
+{
+  "offset": 17,
+  "batches": [
+    {
+      "batch": 1,
+      "envelope": "envelope[11]",
+      "leaves": [
+        "leaf[38]",
+        "leaf[39]",
+        "leaf[40]",
+        "leaf[41]",
+        "leaf[42]",
+        "leaf[43]",
+        "leaf[44]",
+        "leaf[45]",
+        "leaf[46]",
+        "leaf[47]"
+      ],
+      "offset_before": 0,
+      "offset_after": 10
+    },
+    {
+      "batch": 2,
+      "envelope": "envelope[12]",
+      "leaves": [
+        "leaf[48]",
+        "leaf[49]",
+        "leaf[50]",
+        "leaf[51]",
+        "leaf[52]",
+        "leaf[53]",
+        "leaf[54]"
+      ],
+      "offset_before": 10,
+      "offset_after": 17
+    }
+  ],
+  "batch_num": 2,
+  "enex": "C:\\Builds\\_VAULTS\\evernote\\STORIES.enex",
+  "total": 17
+}

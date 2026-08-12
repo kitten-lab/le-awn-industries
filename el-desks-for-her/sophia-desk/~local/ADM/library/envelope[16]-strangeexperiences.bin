@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[16]-strangeexperiences.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: envelope[16]
+  type: envelope
+  name: strange experiences
+  auth: unknown
+  class: envelope
+  chips: []
+pin:
+  tps_created: 1786293127
+  tps_updated: 1786464030
+  tags: []
+---

@@ -1,0 +1,7 @@
+﻿MOVED 2026-08-10
+
+SophiaDesk now lives at:
+  C:\ALICE_BOX\le-awn-industries\el-desks-for-her\sophia-desk\
+
+Quit any running Sophia / desk-server using this old path, then delete this folder.
+Launcher: sophia-desk → el-desks-for-her/sophia-desk/prod/run-in-deck-host.py

@@ -1,0 +1,16 @@
+---
+store:
+  file: card[1]-gretareflotilla.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[1]
+  name: "Greta (re: flotilla)"
+  auth: AGENT K
+  type: card
+pin:
+  tps_created: 1786463986
+  tps_updated: 1786464045
+  tags: ["mail", "shipped-instance"]
+---
+I RECALL BEING HORRIFIED. TERRIBLE THINGS HAPPENED TO HER, AND SHE SEEMED ALMOST.. PROUD? I WANTED TO FEEL IMPRESSED THAT SHE WAS WILLING TO ENSURE HORRORS FOR HER CAUSE, BUT SOMETHING EVEN THEN FELT WRONG ABOUT IT.

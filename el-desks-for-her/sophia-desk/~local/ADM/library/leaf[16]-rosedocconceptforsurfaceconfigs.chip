@@ -1,0 +1,59 @@
+---
+store:
+  file: leaf[16]-rosedocconceptforsurfaceconfigs.chip
+chip:
+  uid: leaf[16]
+  name: Rosedoc Concept for Surface Configs
+  auth: AUORI ROSEWOOD
+pin:
+  tps_created: 1785984798
+  tps_updated: 1786017196
+  tags: []
+---
+# WORKSHOP: Surface Configs
+
+```
+### ROSEDOC FORMAT 0.01v
+### CLASSIFICATION config
+---
+OIX_ID|SURF_DESK[0]-[ArchivistDesk]
+---
+@ query:
+
+? WHAT IS THIS
+   from: homebrew
+   type: surface
+   by: ADM-013
+   inst: 0
+
+? PROPERTIES OF THIS
+   isModdable: yes
+   isModded: no
+
+   canChange: yes
+   Change.type: DressUp
+   DressUp.type: Shell
+   Shell.class: felt
+   Shell.color: green
+
+? WHERE IS THIS
+   inside: *
+
+? WHAT IS HERE
+  # HERE IS leaf[16]
+   x: 1761
+   y: 152.594
+
+   openW: 786
+   openH: 668
+   termW: 396
+   termH: 489
+
+  
+# HERE IS shelf[0]
+   x: 2122
+   y: 16
+   openW: 420
+   openH: 520
+
+```

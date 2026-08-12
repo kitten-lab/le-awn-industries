@@ -1,0 +1,18 @@
+---
+store:
+  file: card[13]-producerdeweycatalogco.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[13]
+  name: "PRODUCER: Dewey Catalog Co."
+  auth: ROM CAT
+  type: card
+pin:
+  tps_created: 1786307323
+  tps_updated: 1786307424
+  tags: []
+---
+NO NAME CHANGE
+
+Dewey's Catalog Co. ROM producer manufactures catalog systems for other ROMS producers and applicational uses. Catalogs manage the properties and recipes for launching the catalog materials in other spaces.

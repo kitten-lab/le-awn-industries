@@ -1,0 +1,23 @@
+---
+store:
+  file: envelope.manifest
+  type: package
+  subtype: chip
+package:
+  uid: envelope
+  name: Case Packet
+  auth: marketplace
+  src: marketplace
+  note: black velvet packet + paper label · holds leaf + card · face dresses plain|oak|case
+pin:
+  tps_created: 1786029000
+  tps_updated: 1786209000
+  tags: [envelope, parcel, leaf, card, bin, filing]
+prop:
+  accepts: ["card", "leaf"]
+  maxLoad: 40
+  isTardis: no
+  Dressup.types: ["face"]
+  Dressup.face.dscs: ["plain", "oak", "case"]
+  Dressup.face.default: plain
+---

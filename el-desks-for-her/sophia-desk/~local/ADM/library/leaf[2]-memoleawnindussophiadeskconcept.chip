@@ -1,0 +1,24 @@
+---
+store:
+  file: leaf[2]-memoleawnindussophiadeskconcept.chip
+chip:
+  uid: leaf[2]
+  name: "MEMO: L.E. AWN INDUS. SOPHIADESK CONCEPT"
+  auth: AUORI
+pin:
+  tps_created: 1785935551
+  tps_updated: 1785935767
+  tags: []
+---
+## concept sheet for different parse approach
+
+posit: SUPER FRAGMENT
+
+then: fragment by line, concept, paragraph
+now: fragment by WORD.
+
+point-self: jacks concord functional layout
+
+idea: import log. tag each word to a page pooling all instances of that exact word. this is the weak concord. inside each word, a page like an entity report. list all instances of the word.
+
+v0 slice: click any word, see all instances of that word, click through to other instances.

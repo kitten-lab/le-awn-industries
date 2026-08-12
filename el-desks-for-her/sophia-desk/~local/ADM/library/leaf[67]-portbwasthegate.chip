@@ -1,0 +1,98 @@
+---
+store:
+  file: leaf[67]-portbwasthegate.chip
+chip:
+  uid: leaf[67]
+  name: PORT B WAS THE GATE
+  auth: A-US
+pin:
+  tps_created: 1786307318
+  tps_updated: 1786325992
+  tags: []
+---
+Port B as the gate
+
+http://b/{sys}/…
+
+• b/index.php — lists every folder that has an index.php as a surface system
+• b/.htaccess — all paths rewrite into that SYS’s index.php (URI preserved for keyMaker)
+• One host, many surfaces — no new vhost per room
+
+Live under b/: terminal, starline, www, mailroom, mythleak, nim, backrooms, book, interra — each the same two papers:
+
+┌─────────────────────┬────────────────────────────────────────────────────────────────────────────┐
+│ File                │ Job                                                                        │
+├─────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+│ -SKY_SIG-{sys}.php  │ Who am I? SYS_ID, display tags, $GLOBALS[SITE]…                            │
+├─────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+│ -SKY_AUTH-{sys}.php │ Boot chain: routes → SIG → invokeSky → env → local config c/{sys}/--SIG--… │
+├─────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+│ index.php           │ Enter ritual: AUTH → keyMaker() → lockAndKey() → getSkyAUTH(shell)         │
+└─────────────────────┴────────────────────────────────────────────────────────────────────────────┘
+
+The enter ritual (every surface)
+
+require_once __DIR__ . '/-SKY_AUTH-{sys}.php';
+keyMaker();
+lockAndKey();
+getSkyAUTH(ROUTE_TO_SHELL);
+
+1. keyMaker() (getROOMKEY.skyLINE.php)
+Parse path into room + key:
+
+/{SYS}/{DOM}/{KEY}     unified port b
+/{DOM}/{KEY}           dedicated vhost
+
+Strips the SYS segment when present → $_GET[DOM] = KEY.
+
+2. lockAndKey()
+• Reads allowed doors from $GLOBALS[SITE]['tDOM'] (from c/{sys}/-FIG--nav.php)
+• Room must be a known DOM
+• Key file must exist:
+  m/doors/{SYS}/{DOM}/{KEY}.php
+• Missing room → No Room Found
+• Room without key → Room Without Key
+• Bad key → No Key Found
+• Hit → require that room file, then shell
+
+3. Room file (e.g. m/doors/terminal/io/login.php)
+Calls SKY__AUTH(mod, display, dom, …, room, …) then draws the room (tools, sky, etc.).
+
+4. Terminal network example of multi-“surface” inside one SYS
+
+c/terminal/-FIG--nav.php:
+
+tDOM = base, io, ab, icu, rx   // future: jx, cu…
+
+Rooms on disk:
+
+m/doors/terminal/
+  base/login.php
+  io/login.php, files.php, import.php, …
+  ab/…  icu/…  rx/…
+
+So enter/leave = change path → new DOM/KEY → auth against tDOM → load room paper → shell. Not “one app.js tab.”
+
+Layers (map to PORT-EDN / XOS)
+
+┌───────────────────────────┬───────────────────────────────┬───────────────────────────────┐
+│ myPI B-chain              │ Meaning                       │ EDN-ish name (your place doc) │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ SYS (b/terminal)          │ Surface system / destination  │ surface / destination         │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ DOM (io, ab)              │ District / station face       │ district or place segment     │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ KEY / ROOM (files, login) │ Room inside that face         │ room                          │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ SIG                       │ Identity of the system        │ surface.cfg identity          │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ AUTH chain                │ Boot + package routes         │ hollow core boot              │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ tDOM                      │ Allow-list of doors           │ surface/room registry         │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ m/doors/…                 │ Actual room implementations   │ room packages / configs       │
+├───────────────────────────┼───────────────────────────────┼───────────────────────────────┤
+│ shell (a/{sys}/)          │ Render vessel after key works │ surface shell dressup         │
+└───────────────────────────┴───────────────────────────────┴───────────────────────────────┘
+
+PLACE-AND-NAMING already says: drop domination vocabulary in new language; path is what matters.

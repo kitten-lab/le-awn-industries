@@ -1,0 +1,26 @@
+---
+store:
+  file: eraser.manifest
+  type: package
+  subtype: editor
+package:
+  uid: eraser
+  name: Eraser
+  auth: marketplace
+  src: marketplace
+pin:
+  tps_created: 1786000000
+  tps_updated: 1786000000
+  tags: []
+prop:
+  canMark: yes
+  canDressup: yes
+  canErase: yes
+
+  Mark.class: erase
+  Mark.type.default: wipe
+
+  Dressup.types: ["tool"]
+  Dressup.tool.dscs: ["pink", "plain"]
+  Dressup.tool.default: pink
+---

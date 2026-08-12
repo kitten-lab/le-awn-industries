@@ -3,23 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nim Bench · cut</title>
+  <title>Glass Compost · Terminal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/app.css" />
 </head>
-<body class="bench">
+<body class="bench" data-house="green">
   <header class="b-chrome" data-deck-chrome>
-    <span class="b-chip" data-deck-menu title="Nim Bench">JX·<strong>CUT</strong></span>
-    <span class="b-drag" data-deck-drag>NIM BENCH · hand branches</span>
+    <span class="b-chip" data-deck-menu title="Glass Compost">IO·<strong>GLASS</strong></span>
+    <span class="b-drag" data-deck-drag>GLASS COMPOST · terminal cut room</span>
+    <div class="b-house" title="House phosphor · each girl runs compost in her color">
+      <span class="b-house-lab">house</span>
+      <button type="button" class="b-house-btn is-on" data-house="green" title="Archivist · Terminal IO green">GRN</button>
+      <button type="button" class="b-house-btn" data-house="red" title="Detective · KME red">RED</button>
+      <button type="button" class="b-house-btn" data-house="blue" title="Lover · HER blue">BLU</button>
+    </div>
     <span class="b-meta" id="metaLine">—</span>
     <div class="b-win" data-deck-window-controls></div>
   </header>
 
   <main class="b-main">
     <aside class="b-side">
-      <div class="b-side-h">Logs</div>
+      <div class="b-side-h">LOGS</div>
       <div class="b-side-sub" id="logCount">lived order · OT-001 style</div>
       <input id="logFilter" class="b-input" type="search" placeholder="filter OT-012 · title…" autocomplete="off" />
       <div id="logList" class="b-list"></div>
@@ -27,9 +33,11 @@
 
     <section class="b-stage">
       <div id="emptyState" class="b-empty">
+        <div class="b-empty-banner">— GLASS COMPOST —</div>
         Pick a log. Place a cut to split a new <strong>trunk</strong>.
         Each message is a <strong>branch</strong> with a stable chip
         (<span class="mono">OT-001.T01.B000</span>) — click to copy.
+        House color is phosphor only · same cut room for every girl.
       </div>
       <div id="logView" class="b-log" hidden>
         <header class="b-log-head">
@@ -49,12 +57,12 @@
           <div class="b-branches" id="branchPills"></div>
         </header>
         <div class="b-hint">
-          Tree: <strong>log → trunk → branch</strong> ·
+          Tree: <strong>log → trunk → branch → leaf</strong> ·
           chip e.g. <strong>OT-001.T02.B014</strong> (click to copy) ·
-          <strong>▸ / ▾</strong> = collapse rail · click header ·
+          <strong>✂</strong> = split message by blank lines / newlines ·
+          <strong>↺</strong> = undo leaf cuts ·
           <strong>Cut</strong> = new trunk ·
-          <strong>▴ / ▾</strong> = gravity ·
-          place is remembered when you return.
+          place remembered (local + bench.db).
         </div>
         <div id="msgStream" class="b-stream"></div>
       </div>

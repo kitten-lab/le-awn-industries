@@ -1,20 +1,71 @@
-/* Nim Bench · quiet cutting room */
-:root {
-  --bg: #12151a;
-  --panel: #1a1e26;
-  --panel2: #222832;
-  --line: #2e3542;
-  --text: #b8c0cc;
-  --dim: #7a8494;
-  --accent: #c4a060;
-  --you: #c8a8b4;
-  --asst: #8eb0ac;
-  --cut: #e0a050;
-  --branch: #6a8a9e;
-  --select: #2a303c;
-  --sans: "IBM Plex Sans", system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, monospace;
-  --radius: 4px;
+/* Glass Compost · Terminal IO phosphor · house color switch (green/red/blue) */
+/* Reference: Chester TERMINAL IO green inventory — monochrome CRT, not soft gray bench */
+
+:root,
+body.bench[data-house="green"] {
+  /* TERMINAL IO · green house · archivist */
+  --bg: #020802;
+  --panel: #061206;
+  --panel2: #0a1a0a;
+  --line: #1a4a1a;
+  --text: #33ff33;
+  --dim: #1a991a;
+  --accent: #44ff44;
+  --you: #66ff66;
+  --asst: #2acc2a;
+  --cut: #88ff44;
+  --branch: #3dcc3d;
+  --select: #0d280d;
+  --glow: rgba(51, 255, 51, 0.12);
+  --chrome: #041004;
+  --scroll: rgba(51, 255, 51, 0.35);
+  --scroll-hi: rgba(80, 255, 80, 0.55);
+  --sans: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
+  --mono: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
+  --radius: 0;
+  --house-label: "GREEN · TERMINAL IO";
+}
+
+body.bench[data-house="red"] {
+  /* KME · detective · oxblood phosphor */
+  --bg: #0a0204;
+  --panel: #140608;
+  --panel2: #1c0a0e;
+  --line: #5a1820;
+  --text: #ff4a55;
+  --dim: #a02030;
+  --accent: #ff6a75;
+  --you: #ff8a90;
+  --asst: #cc3040;
+  --cut: #ffaa66;
+  --branch: #e05060;
+  --select: #2a0c12;
+  --glow: rgba(255, 60, 70, 0.14);
+  --chrome: #100408;
+  --scroll: rgba(255, 70, 80, 0.35);
+  --scroll-hi: rgba(255, 100, 110, 0.55);
+  --house-label: "RED · DETECTIVE";
+}
+
+body.bench[data-house="blue"] {
+  /* HER · lover · deep channel blue */
+  --bg: #020610;
+  --panel: #061018;
+  --panel2: #0a1828;
+  --line: #1a4060;
+  --text: #5ab0ff;
+  --dim: #3060a0;
+  --accent: #7ec8ff;
+  --you: #a0d8ff;
+  --asst: #4080c8;
+  --cut: #90e0c0;
+  --branch: #60a0e0;
+  --select: #0c2038;
+  --glow: rgba(80, 160, 255, 0.14);
+  --chrome: #040c18;
+  --scroll: rgba(90, 160, 255, 0.35);
+  --scroll-hi: rgba(120, 190, 255, 0.55);
+  --house-label: "BLUE · LOVER";
 }
 
 * { box-sizing: border-box; }
@@ -24,21 +75,27 @@ html, body {
   overflow: hidden;
 }
 body.bench {
-  font-family: var(--sans);
-  font-size: 0.82rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
   color: var(--text);
   background: var(--bg);
   display: flex;
   flex-direction: column;
   line-height: 1.45;
+  /* soft CRT wash */
+  background-image:
+    radial-gradient(ellipse at 50% 0%, var(--glow) 0%, transparent 55%),
+    linear-gradient(180deg, transparent 0%, transparent 50%, rgba(0, 0, 0, 0.12) 50%, transparent 51%);
+  background-size: 100% 100%, 100% 4px;
+  text-shadow: 0 0 8px var(--glow);
   scrollbar-width: thin;
-  scrollbar-color: rgba(180, 160, 120, 0.35) transparent;
+  scrollbar-color: var(--scroll) transparent;
 }
-/* themed scrollbars · bench ink */
+/* themed scrollbars · terminal ink */
 .bench,
 .bench * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(180, 160, 120, 0.35) transparent;
+  scrollbar-color: var(--scroll) transparent;
 }
 .bench *::-webkit-scrollbar {
   width: 9px;
@@ -49,13 +106,13 @@ body.bench {
   border: none;
 }
 .bench *::-webkit-scrollbar-thumb {
-  background: rgba(180, 160, 120, 0.32);
-  border-radius: 99px;
+  background: var(--scroll);
+  border-radius: 0;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 .bench *::-webkit-scrollbar-thumb:hover {
-  background: rgba(210, 185, 130, 0.55);
+  background: var(--scroll-hi);
   background-clip: padding-box;
 }
 .bench *::-webkit-scrollbar-corner {
@@ -66,37 +123,83 @@ body.bench {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.3rem 0.55rem;
-  background: #1a1e28;
+  padding: 0.28rem 0.5rem;
+  background: var(--chrome);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 25%, transparent);
   flex-shrink: 0;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
+  font-family: var(--mono);
 }
 .b-chip {
   font-family: var(--mono);
-  font-size: 0.68rem;
-  padding: 0.15rem 0.4rem;
+  font-size: 0.65rem;
+  padding: 0.12rem 0.4rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--panel2);
   color: var(--accent);
+  letter-spacing: 0.04em;
 }
-.b-chip strong { color: #e8e4dc; }
+.b-chip strong { color: var(--text); font-weight: 600; }
 .b-drag {
   flex: 1;
   color: var(--dim);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   min-width: 0;
+  font-size: 0.65rem;
 }
 .b-meta {
   color: var(--dim);
-  font-size: 0.68rem;
-  max-width: 40%;
+  font-size: 0.65rem;
+  max-width: 32%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .b-win { display: flex; gap: 0.15rem; }
+
+/* house switch · each girl runs compost in her phosphor */
+.b-house {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+.b-house-lab {
+  font-size: 0.58rem;
+  color: var(--dim);
+  letter-spacing: 0.06em;
+  margin-right: 0.15rem;
+  text-transform: uppercase;
+}
+.b-house-btn {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--dim);
+  cursor: pointer;
+  border-radius: 0;
+  text-transform: uppercase;
+}
+.b-house-btn:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+}
+.b-house-btn.is-on {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--glow);
+}
+.b-house-btn[data-house="green"].is-on { background: #33ff33; color: #020802; }
+.b-house-btn[data-house="red"].is-on { background: #ff4a55; color: #0a0204; }
+.b-house-btn[data-house="blue"].is-on { background: #5ab0ff; color: #020610; }
 
 .b-main {
   flex: 1;
@@ -113,30 +216,50 @@ body.bench {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  box-shadow: inset -1px 0 0 color-mix(in srgb, var(--accent) 15%, transparent);
 }
 .b-side-h {
   font-weight: 600;
-  font-size: 0.78rem;
-  color: var(--text);
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--mono);
 }
 .b-side-sub {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--dim);
   margin-bottom: 0.15rem;
+  font-family: var(--mono);
 }
 .b-input {
   width: 100%;
   background: var(--bg);
   border: 1px solid var(--line);
   color: var(--text);
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 0.35rem 0.45rem;
   font: inherit;
   font-size: 0.72rem;
+  font-family: var(--mono);
+  caret-color: var(--accent);
 }
 .b-input:focus {
   outline: none;
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.b-input::placeholder {
+  color: var(--dim);
+  opacity: 0.75;
+}
+.b-empty-banner {
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 0.85rem;
+  text-shadow: 0 0 12px var(--glow);
 }
 .b-list {
   display: flex;
@@ -206,15 +329,17 @@ body.bench {
 }
 .b-done-btn,
 .b-hide-down-btn {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
   padding: 0.2rem 0.55rem;
-  border-radius: 99px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: var(--panel2);
   color: var(--dim);
   cursor: pointer;
   white-space: nowrap;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .b-done-btn:hover {
   border-color: color-mix(in srgb, #7aab7e 50%, var(--line));
@@ -636,9 +761,32 @@ body.bench {
 .b-msg.grav-up.role-assistant { border-left-color: var(--cut); }
 .b-msg.grav-down {
   opacity: 0.42;
+  border-color: var(--line);
+  border-left-color: var(--dim);
+  background: var(--panel);
 }
 .b-msg.grav-down:hover {
-  opacity: 0.7;
+  opacity: 0.62;
+  border-color: var(--line);
+}
+/* don't-care must never read as "high value" (no phosphor flash) */
+.b-msg.grav-down .b-msg-chip {
+  color: var(--dim);
+  border-color: var(--line);
+  background: var(--panel2);
+  box-shadow: none;
+  text-shadow: none;
+}
+.b-msg.grav-down .b-msg-chip:hover {
+  color: var(--dim);
+  border-color: color-mix(in srgb, var(--dim) 50%, var(--line));
+  background: var(--panel2);
+}
+.b-msg.grav-down .who,
+.b-msg.grav-down .br,
+.b-msg.grav-down .b-leaf-count {
+  color: var(--dim);
+  opacity: 0.85;
 }
 .b-msg-h {
   display: flex;
@@ -779,6 +927,43 @@ body.bench {
   opacity: 1;
   border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
 }
+/* collapsed ▾ = single quiet rail · no green "value" bar · leaf bucket hidden */
+.b-msg.grav-down.is-collapsed {
+  opacity: 0.36;
+  border-color: var(--line);
+  border-left-color: color-mix(in srgb, var(--dim) 60%, var(--line));
+  background: var(--bg);
+  outline: none;
+  box-shadow: none;
+  text-shadow: none;
+}
+.b-msg.grav-down.is-collapsed:hover {
+  opacity: 0.5;
+  border-color: var(--line);
+  background: var(--panel);
+}
+.b-msg.grav-down.is-collapsed .b-msg-h {
+  background: transparent;
+  border-bottom: none;
+}
+.b-msg.grav-down.is-collapsed .b-msg-expand {
+  color: var(--dim);
+  border-color: var(--line);
+  background: transparent;
+}
+.b-msg.grav-down.is-collapsed .b-msg-expand:hover {
+  color: var(--dim);
+  border-color: var(--line);
+  background: var(--panel2);
+}
+.b-msg.grav-down.is-collapsed .b-msg-body {
+  display: none !important;
+}
+.b-msg.grav-down.is-collapsed .b-msg-peek {
+  opacity: 0.55;
+  color: var(--dim);
+  max-width: min(50vw, 36rem);
+}
 .b-msg-peek {
   font-size: 0.62rem;
   color: var(--dim);
@@ -796,6 +981,15 @@ body.bench {
 .b-msg.is-open {
   outline: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
   background: color-mix(in srgb, var(--accent) 4%, var(--panel));
+}
+/* open don't-care: still muted · no phosphor "selected value" wash */
+.b-msg.grav-down.is-open {
+  outline: 1px solid var(--line);
+  background: var(--panel);
+  opacity: 0.55;
+}
+.b-msg.grav-down.is-open:hover {
+  opacity: 0.7;
 }
 .b-msg.is-open .b-msg-body {
   max-height: min(70vh, 36rem);
@@ -822,6 +1016,22 @@ body.bench {
   gap: 0.35rem;
   flex-shrink: 0;
   margin-left: auto;
+}
+.b-leaf-auto {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0.12rem 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--dim);
+  cursor: pointer;
+}
+.b-leaf-auto:hover {
+  color: var(--cut);
+  border-color: var(--cut);
+  background: color-mix(in srgb, var(--cut) 12%, transparent);
 }
 .b-msg-parsed {
   font-family: var(--mono);
@@ -924,17 +1134,83 @@ body.bench {
 .b-leaf-grav {
   margin-left: auto;
 }
+/* leaf gravity: only ▴ uses "important" cut gold — default is quiet branch */
 .b-leaf-block.grav-up {
-  border-color: color-mix(in srgb, var(--cut) 45%, var(--line));
-  background: color-mix(in srgb, var(--cut) 10%, var(--panel));
+  border-color: color-mix(in srgb, var(--cut) 45%, var(--line)) !important;
+  border-left-color: var(--cut) !important;
+  background: color-mix(in srgb, var(--cut) 10%, var(--panel)) !important;
 }
 .b-leaf-block.grav-down {
-  opacity: 0.55;
+  opacity: 0.42;
+  border-color: var(--line) !important;
+  border-left-color: var(--dim) !important;
+  background: var(--bg) !important;
 }
 .b-leaf-block.grav-down:hover {
-  opacity: 0.8;
+  opacity: 0.58;
 }
-/* leaf = real chunk of the branch/message body (highlighted section) */
+.b-leaf-block.grav-down .b-leaf-block-h {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+}
+.b-leaf-block.grav-down .b-leaf-badge {
+  background: color-mix(in srgb, var(--dim) 18%, transparent) !important;
+  color: var(--dim) !important;
+}
+.b-leaf-block.grav-down .b-leaf-chip {
+  border-color: var(--line) !important;
+  background: var(--panel2) !important;
+  color: var(--dim) !important;
+}
+.b-leaf-block.grav-down .b-leaf-chip-full {
+  color: var(--dim) !important;
+  opacity: 0.7;
+}
+/* leaf ▾ = thin rail only · hide body text (still expandable later if we wire click) */
+.b-leaf-block.grav-down .b-leaf-block-body {
+  display: none !important;
+}
+.b-leaf-block.grav-down.is-leaf-open .b-leaf-block-body {
+  display: block !important;
+  color: var(--dim);
+  opacity: 0.85;
+  max-height: 8rem;
+  overflow: auto;
+}
+.b-leaf-block.grav-down .b-leaf-block-h {
+  cursor: pointer;
+}
+.b-leaf-block.grav-down .b-leaf-range {
+  opacity: 0.65;
+}
+/* parent message ▾ — mute every leaf unless that leaf is explicitly ▴ */
+.b-msg.grav-down .b-leaf-block:not(.grav-up) {
+  opacity: 0.48;
+  border-color: var(--line) !important;
+  border-left-color: var(--dim) !important;
+  background: var(--panel) !important;
+}
+.b-msg.grav-down .b-leaf-block:not(.grav-up) .b-leaf-block-h {
+  background: var(--panel2) !important;
+  border-bottom-color: var(--line) !important;
+}
+.b-msg.grav-down .b-leaf-block:not(.grav-up) .b-leaf-chip {
+  border-color: var(--line) !important;
+  background: var(--panel) !important;
+  color: var(--dim) !important;
+}
+.b-msg.grav-down .b-leaf-block:not(.grav-up) .b-leaf-chip-full {
+  color: var(--dim) !important;
+  opacity: 0.65;
+}
+.b-msg.grav-down .b-leaf-block:not(.grav-up) .b-leaf-badge {
+  background: color-mix(in srgb, var(--dim) 18%, transparent) !important;
+  color: var(--dim) !important;
+}
+.b-msg.grav-down .b-leaf-block.grav-up {
+  opacity: 1;
+}
+/* leaf = real chunk of the branch/message body */
 .b-msg.is-split .b-msg-body {
   max-height: none;
   mask-image: none;
@@ -945,20 +1221,25 @@ body.bench {
   gap: 0.4rem;
 }
 .b-leaf-block {
-  border: 1px solid color-mix(in srgb, var(--branch) 45%, var(--line));
-  border-left: 3px solid var(--branch);
+  border: 1px solid color-mix(in srgb, var(--branch) 35%, var(--line));
+  border-left: 3px solid color-mix(in srgb, var(--branch) 70%, var(--dim));
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--branch) 10%, var(--panel));
+  background: color-mix(in srgb, var(--branch) 6%, var(--panel));
   overflow: hidden;
 }
+/* chipped = partitioned, NOT "important" — important is only grav-up */
 .b-leaf-block.is-chipped {
-  border-left-color: var(--cut);
-  background: color-mix(in srgb, var(--cut) 12%, var(--panel));
+  border-left-color: color-mix(in srgb, var(--branch) 70%, var(--dim));
+  background: color-mix(in srgb, var(--branch) 7%, var(--panel));
+}
+.b-leaf-block.is-chipped.grav-up {
+  border-left-color: var(--cut) !important;
+  background: color-mix(in srgb, var(--cut) 12%, var(--panel)) !important;
 }
 .b-leaf-block.is-remainder {
   border-left-color: var(--dim);
   background: var(--panel);
-  opacity: 0.95;
+  opacity: 0.85;
 }
 .b-leaf-badge {
   font-family: var(--mono);
@@ -967,6 +1248,10 @@ body.bench {
   text-transform: uppercase;
   padding: 0.06rem 0.28rem;
   border-radius: 2px;
+  background: color-mix(in srgb, var(--branch) 18%, transparent);
+  color: var(--branch);
+}
+.b-leaf-block.grav-up .b-leaf-badge:not(.is-open-bit) {
   background: color-mix(in srgb, var(--cut) 22%, transparent);
   color: var(--cut);
 }
@@ -980,9 +1265,13 @@ body.bench {
   align-items: center;
   gap: 0.35rem 0.5rem;
   padding: 0.28rem 0.45rem;
-  background: color-mix(in srgb, var(--branch) 14%, var(--panel2));
-  border-bottom: 1px solid color-mix(in srgb, var(--branch) 30%, var(--line));
+  background: color-mix(in srgb, var(--branch) 8%, var(--panel2));
+  border-bottom: 1px solid color-mix(in srgb, var(--branch) 20%, var(--line));
   font-size: 0.65rem;
+}
+.b-leaf-block.grav-up .b-leaf-block-h {
+  background: color-mix(in srgb, var(--cut) 14%, var(--panel2));
+  border-bottom-color: color-mix(in srgb, var(--cut) 30%, var(--line));
 }
 .b-leaf-block-body {
   padding: 0.45rem 0.55rem 0.55rem;
@@ -992,15 +1281,16 @@ body.bench {
   line-height: 1.5;
   color: var(--text);
 }
+/* leaf chip label: quiet by default; gold only when leaf is ▴ */
 .b-leaf-chip {
   font-family: var(--mono);
   font-size: 0.62rem;
   font-weight: 600;
   padding: 0.12rem 0.4rem;
   border-radius: 3px;
-  border: 1px solid color-mix(in srgb, var(--cut) 40%, var(--line));
-  background: color-mix(in srgb, var(--cut) 14%, var(--panel));
-  color: var(--cut);
+  border: 1px solid color-mix(in srgb, var(--branch) 40%, var(--line));
+  background: color-mix(in srgb, var(--branch) 10%, var(--panel));
+  color: var(--branch);
   cursor: pointer;
   max-width: 100%;
 }
@@ -1008,8 +1298,17 @@ body.bench {
   border-color: var(--accent);
   color: var(--text);
 }
+.b-leaf-block.grav-up .b-leaf-chip {
+  border-color: color-mix(in srgb, var(--cut) 45%, var(--line));
+  background: color-mix(in srgb, var(--cut) 14%, var(--panel));
+  color: var(--cut);
+}
 .b-leaf-chip-full {
   font-size: 0.58rem;
+  color: var(--dim);
+  opacity: 0.9;
+}
+.b-leaf-block.grav-up .b-leaf-chip-full {
   color: var(--accent);
   opacity: 0.95;
 }
@@ -1021,6 +1320,9 @@ body.bench {
 }
 .b-msg.grav-down .b-msg-body {
   color: var(--dim);
+}
+.b-msg.grav-down .b-leaf-block.grav-up .b-leaf-block-body {
+  color: var(--text);
 }
 
 .b-toast {

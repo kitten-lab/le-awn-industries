@@ -1,7 +1,9 @@
-/* Nim Bench · hand-cut branches */
+/* Glass Compost · Terminal IO phosphor · house switch · hand-cut branches */
 (() => {
   const $ = (id) => document.getElementById(id);
   const PLACE_KEY = "nim-bench-place-v1";
+  const HOUSE_KEY = "glass-compost-house-v1";
+  const HOUSES = ["green", "red", "blue"];
 
   let logs = [];
   let openFaceId = null;
@@ -12,6 +14,64 @@
   let savedBodySel = null;
   let scrollSaveT = null;
   let restoringPlace = false;
+
+  /** House phosphor · green Terminal IO · red detective · blue lover */
+  function houseFromQuery() {
+    try {
+      const q = new URLSearchParams(window.location.search || "");
+      const h = (q.get("house") || q.get("color") || "").toLowerCase().trim();
+      if (HOUSES.indexOf(h) >= 0) return h;
+      // desk-ish aliases
+      if (h === "archivist" || h === "adm" || h === "sophia") return "green";
+      if (h === "detective" || h === "kme" || h === "cassandra") return "red";
+      if (h === "lover" || h === "her" || h === "ava") return "blue";
+    } catch (e) {}
+    return null;
+  }
+
+  function getHouse() {
+    const fromQ = houseFromQuery();
+    if (fromQ) return fromQ;
+    try {
+      const h = (localStorage.getItem(HOUSE_KEY) || "").toLowerCase();
+      if (HOUSES.indexOf(h) >= 0) return h;
+    } catch (e) {}
+    return "green";
+  }
+
+  function applyHouse(house, persist) {
+    const h = HOUSES.indexOf(house) >= 0 ? house : "green";
+    document.body.classList.add("bench");
+    document.body.setAttribute("data-house", h);
+    document.querySelectorAll(".b-house-btn").forEach((btn) => {
+      btn.classList.toggle("is-on", btn.getAttribute("data-house") === h);
+    });
+    if (persist !== false) {
+      try {
+        localStorage.setItem(HOUSE_KEY, h);
+      } catch (e) {}
+      // remember with place so Deck Host restarts keep house
+      try {
+        const cur = JSON.parse(localStorage.getItem(PLACE_KEY) || "{}");
+        cur.house = h;
+        localStorage.setItem(PLACE_KEY, JSON.stringify(cur));
+      } catch (e) {}
+    }
+    return h;
+  }
+
+  function wireHouseSwitch() {
+    document.querySelectorAll(".b-house-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const h = btn.getAttribute("data-house");
+        applyHouse(h, true);
+        toast("house · " + h + " phosphor");
+      });
+    });
+  }
+
+  // apply before first paint of lists (body already has default green in HTML)
+  applyHouse(getHouse(), false);
 
   function esc(s) {
     return String(s ?? "")
@@ -39,7 +99,35 @@
     } catch (e) {
       /* quota / private mode */
     }
+    // also bench.db so Deck Host restarts keep log + scroll
+    api("/api/place", {
+      method: "POST",
+      body: JSON.stringify({ key: "bench", place: next }),
+    }).catch(() => {});
     return next;
+  }
+
+  async function loadPlaceMerged() {
+    let local = loadPlace();
+    try {
+      const j = await api("/api/place", {
+        method: "POST",
+        body: JSON.stringify({ key: "bench", get: true }),
+      });
+      if (j && j.ok && j.place && typeof j.place === "object") {
+        const remote = j.place;
+        // newer at wins
+        if ((remote.at || 0) >= (local.at || 0)) {
+          local = Object.assign({}, local, remote);
+          try {
+            localStorage.setItem(PLACE_KEY, JSON.stringify(local));
+          } catch (e) {}
+        }
+      }
+    } catch (e) {
+      /* offline */
+    }
+    return local;
   }
 
   function facePlace(faceId) {
@@ -103,6 +191,9 @@
   }
 
   function defaultCollapsedForMsg(m) {
+    // don't-care · especially when fully leaf-chipped · single quiet rail (no bucket)
+    const g = Number(m && m.gravity) || 0;
+    if (g < 0) return true;
     const chars =
       m && m.char_count != null
         ? m.char_count
@@ -593,6 +684,11 @@
         .replace(/\s+/g, " ")
         .trim()
         .slice(0, 96);
+      // don't-care + leaf-chipped: single row label (bucket hidden while collapsed)
+      const bagBit =
+        g < 0 && split
+          ? ` · bag ${leafN}L`
+          : "";
       html +=
         `<article class="b-msg role-${esc(m.role)}${gClass}${downHidMsg}${
           parsed ? " is-parsed" : ""
@@ -602,7 +698,11 @@
         `<div class="b-msg-h" data-rail-toggle="${seq}" title="Click rail to expand / collapse">` +
         `<span class="b-msg-h-left">` +
         `<button type="button" class="b-msg-expand" data-expand="${seq}" title="${
-          collapsed ? "Expand message" : "Collapse to rail"
+          collapsed
+            ? g < 0 && split
+              ? "Expand leaf bag (don't care · quiet)"
+              : "Expand message"
+            : "Collapse to rail"
         }">${collapsed ? "▸" : "▾"}</button>` +
         `<button type="button" class="b-msg-parsed${
           parsed ? " is-on" : ""
@@ -625,12 +725,19 @@
           ? ` <span class="b-chars" title="character count">${chars}c</span>`
           : "") +
         ` <span class="b-leaf-count" title="${
-          split
-            ? "split into leaf chunks"
-            : "unsplit · whole turn is L01"
+          g < 0 && split
+            ? "don't care · leaf bag collapsed to one row"
+            : split
+              ? "split into leaf chunks"
+              : "unsplit · whole turn is L01"
         }">${
-          split ? leafN + " leaves" : "L01 whole"
+          g < 0 && split && collapsed
+            ? "▾ bag · " + leafN + "L"
+            : split
+              ? leafN + " leaves"
+              : "L01 whole"
         }</span>` +
+        bagBit +
         (collapsed && peek
           ? ` <span class="b-msg-peek" title="${esc(peek)}">${esc(peek)}${
               text.length > 96 ? "…" : ""
@@ -638,6 +745,9 @@
           : "") +
         `</span>` +
         `<span class="b-msg-actions">` +
+        (split
+          ? `<button type="button" class="b-leaf-auto" data-leaf-reset="${seq}" title="Undo leaf cuts · whole turn L01">↺</button>`
+          : `<button type="button" class="b-leaf-auto" data-leaf-auto="${seq}" title="Cut into leaves by paragraph / line breaks">✂</button>`) +
         `<span class="b-grav" data-grav-wrap="${seq}">` +
         `<button type="button" class="b-grav-btn${
           g < 0 ? " is-on" : ""
@@ -651,7 +761,6 @@
         `<div class="b-msg-body" data-body-seq="${seq}"${
           collapsed ? " hidden" : ""
         }>${bodyHtml}</div>` +
-        // leaf-cut tools parked — not using the cutter right now
         `</article>`;
     });
     stream.innerHTML = html;
@@ -729,16 +838,13 @@
         toggleMsgExpand(seq);
       };
     });
-    stream.querySelectorAll("[data-leaf-cut]").forEach((btn) => {
-      // Keep the text selection alive — button focus would collapse it
-      btn.onmousedown = (ev) => {
-        ev.preventDefault();
-      };
+    // one-click auto leaf cut (paragraph / line breaks) — no manual select
+    stream.querySelectorAll("[data-leaf-auto]").forEach((btn) => {
       btn.onclick = (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        const seq = parseInt(btn.getAttribute("data-leaf-cut"), 10);
-        cutLeafFromSelection(seq);
+        const seq = parseInt(btn.getAttribute("data-leaf-auto"), 10);
+        autoCutLeaves(seq);
       };
     });
     stream.querySelectorAll("[data-leaf-reset]").forEach((btn) => {
@@ -796,6 +902,15 @@
         setLeafGravity(seq, ln, cur < 0 ? 0 : -1);
       };
     });
+    // ▾ leaf rail: click header (not buttons) to peek / re-hide body
+    stream.querySelectorAll(".b-leaf-block.grav-down .b-leaf-block-h").forEach((h) => {
+      h.onclick = (ev) => {
+        if (ev.target.closest("button")) return;
+        const block = h.closest(".b-leaf-block");
+        if (!block || !block.classList.contains("grav-down")) return;
+        block.classList.toggle("is-leaf-open");
+      };
+    });
 
     // place: restore scroll after paint, or keep position across re-paints
     if (opts.restoreScroll && openFaceId) {
@@ -820,8 +935,9 @@
       const a = Math.max(0, Number(lf.start_off) || 0);
       const b = Math.max(a, Number(lf.end_off) || 0);
       const chunk = full.slice(a, b);
-      if (!chunk && b > a) {
-        /* still show empty? skip */
+      // never paint dead \n\n ships (server should scrub these too)
+      if (!String(chunk).trim()) {
+        return;
       }
       const ln = Number(lf.leaf_n) || i + 1;
       const lchip =
@@ -841,11 +957,14 @@
       const lg = Number(lf.gravity) || 0;
       const gClass =
         lg > 0 ? " grav-up" : lg < 0 ? " grav-down" : "";
+      // don't-care leaf → thin rail (body hidden via CSS)
       html +=
         `<section class="b-leaf-block${
           chipped && !remainder ? " is-chipped" : ""
-        }${remainder ? " is-remainder" : ""}${gClass}" data-leaf-seq="${seq}" data-leaf-n="${ln}" data-leaf-gravity="${lg}">` +
-        `<div class="b-leaf-block-h">` +
+        }${remainder ? " is-remainder" : ""}${gClass}" data-leaf-seq="${seq}" data-leaf-n="${ln}" data-leaf-gravity="${lg}" title="${
+          lg < 0 ? "Leaf · don't care · body hidden · click rail to peek" : ""
+        }">` +
+        `<div class="b-leaf-block-h" data-leaf-rail="${seq}" data-leaf-n="${ln}">` +
         `<button type="button" class="b-leaf-chip" data-copy-chip="${esc(
           lchip
         )}" data-leaf-seq="${seq}" data-leaf-n="${ln}" title="Copy ${esc(
@@ -949,6 +1068,20 @@
     if (payload && payload.messages) {
       const m = payload.messages.find((x) => x.seq === seq);
       if (m) m.gravity = g;
+    }
+    // don't-care → fold to single quiet rail (hides leaf bag)
+    if (g < 0) {
+      setSeqCollapsed(seq, true);
+      const art = document.querySelector(`.b-msg[data-seq="${seq}"]`);
+      if (art) {
+        art.classList.add("is-collapsed");
+        art.classList.remove("is-open");
+        const exp = art.querySelector(`[data-expand="${seq}"]`);
+        if (exp) {
+          exp.textContent = "▸";
+          exp.title = "Expand leaf bag (don't care · quiet)";
+        }
+      }
     }
     paintGravityQuiet();
     paintHideDownBtn();
@@ -1354,6 +1487,30 @@
     await openLog(openFaceId);
   }
 
+  /** ✂ one click: split message on blank lines, else single newlines */
+  async function autoCutLeaves(seq) {
+    if (!openFaceId) return;
+    const j = await api("/api/msg/leaf/auto", {
+      method: "POST",
+      body: JSON.stringify({ face_id: openFaceId, seq }),
+    });
+    if (!j.ok) {
+      toast(j.error || "auto cut fail");
+      return;
+    }
+    const n = j.count != null ? j.count : (j.leaves || []).length;
+    if (!j.split || n <= 1) {
+      toast("no breaks to cut · still L01 whole");
+    } else {
+      toast("cut · " + n + " leaves · by paragraph/line");
+    }
+    await openLog(openFaceId);
+    requestAnimationFrame(() => {
+      const art = document.querySelector(`.b-msg[data-seq="${seq}"]`);
+      if (art && art.classList.contains("is-collapsed")) toggleMsgExpand(seq);
+    });
+  }
+
   async function clearLeaves(seq) {
     if (!openFaceId) return;
     const j = await api("/api/msg/leaf/clear", {
@@ -1382,6 +1539,14 @@
     block.setAttribute("data-leaf-gravity", String(g));
     block.classList.toggle("grav-up", g > 0);
     block.classList.toggle("grav-down", g < 0);
+    // don't-care leaf → fold body; clear peek when leaving ▾
+    if (g < 0) {
+      block.classList.remove("is-leaf-open");
+      block.title = "Leaf · don't care · body hidden · click rail to peek";
+    } else {
+      block.classList.remove("is-leaf-open");
+      block.title = "";
+    }
     const up = block.querySelector(`[data-leaf-grav-up="${seq}"][data-leaf-n="${leafN}"]`);
     const down = block.querySelector(
       `[data-leaf-grav-down="${seq}"][data-leaf-n="${leafN}"]`
@@ -1734,21 +1899,29 @@
   const hideDownBtn = $("hideDownBtn");
   if (hideDownBtn) hideDownBtn.onclick = () => toggleHideDown();
 
-  // Boot: prefs + last log you were in
-  const boot = loadPlace();
-  if (typeof boot.hideDown === "boolean") hideDown = boot.hideDown;
-  if (boot.filter && $("logFilter")) $("logFilter").value = boot.filter;
+  wireHouseSwitch();
 
-  api("/api/health")
-    .then((h) => {
-      if (!h.ok || !h.yard_exists) {
-        $("metaLine").textContent = "yard.db missing";
-        toast("yard.db not found — ingest Nim Yard first");
+  // Boot: prefs + last log (localStorage + bench.db)
+  loadPlaceMerged()
+    .then((boot) => {
+      // query ?house= wins; else place.house; else localStorage
+      if (!houseFromQuery() && boot && boot.house) {
+        applyHouse(boot.house, false);
+      } else {
+        applyHouse(getHouse(), false);
       }
-      return loadLogs(boot.filter || "");
+      if (typeof boot.hideDown === "boolean") hideDown = boot.hideDown;
+      if (boot.filter && $("logFilter")) $("logFilter").value = boot.filter;
+      return api("/api/health").then((h) => {
+        if (!h.ok || !h.yard_exists) {
+          $("metaLine").textContent = "yard.db missing";
+          toast("yard.db not found — ingest Nim Yard first");
+        }
+        return loadLogs(boot.filter || "").then(() => boot);
+      });
     })
-    .then(() => {
-      const want = boot.faceId;
+    .then((boot) => {
+      const want = boot && boot.faceId;
       if (!want) return;
       const hit = logs.find((L) => L.face_id === want);
       if (hit) return openLog(want, { restoreScroll: true });

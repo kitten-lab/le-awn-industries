@@ -1,0 +1,29 @@
+---
+store:
+  file: stamper.manifest
+  type: package
+  subtype: editor
+package:
+  uid: stamper
+  name: Stamper
+  auth: marketplace
+  src: marketplace
+pin:
+  tps_created: 1785868000
+  tps_updated: 1785874000
+  tags: []
+prop:
+  canMark: yes
+  canDressup: yes
+
+  Mark.class: stamp
+  Mark.types: ["urgent", "draft", "outdated", "cancelled", "misinformed"]
+  Mark.type.default: urgent
+  Mark.style.default: classic
+
+  Dressup.types: ["tool", "mark"]
+  Dressup.tool.dscs: ["brass", "plain"]
+  Dressup.tool.default: brass
+  Dressup.mark.dscs: ["classic"]
+  Dressup.mark.default: classic
+---

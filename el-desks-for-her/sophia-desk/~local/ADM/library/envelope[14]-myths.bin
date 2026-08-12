@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[14]-myths.bin
+  type: bin
+  bit_count: 2
+bin:
+  uid: envelope[14]
+  type: envelope
+  name: MYTHS
+  auth: unknown
+  class: envelope
+  chips: ["leaf[59]", "leaf[31]"]
+pin:
+  tps_created: 1786274345
+  tps_updated: 1786300664
+  tags: []
+---

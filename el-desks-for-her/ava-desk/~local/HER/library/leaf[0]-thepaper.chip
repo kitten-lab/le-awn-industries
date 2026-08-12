@@ -1,0 +1,12 @@
+---
+store:
+  file: leaf[0]-thepaper.chip
+chip:
+  uid: leaf[0]
+  name: the paper
+  auth: unknown
+pin:
+  tps_created: 1786415131
+  tps_updated: 1786415131
+  tags: []
+---

@@ -1,0 +1,45 @@
+---
+store:
+  file: leaf[15]-placementofmaterials.chip
+chip:
+  uid: leaf[15]
+  name: Placement of Materials
+  auth: AUORI
+pin:
+  tps_created: 1785984794
+  tps_updated: 1786021331
+  tags: []
+---
+RECIEVER is a IMMERSIVE WEBTECH OS that you launch from any other OS.
+
+Installation files location always defined in these papers as `~/`
+
+---
+# THE STORE `~/store`
+Contains the various vend types available
+*i.e. leaf, book, board* 
+
+**All required files for each vend must be stored inside of its `store` folder!**
+JS   `.kit` file
+PHP  `.act` file
+HTML `.set` file
+CSS  `.dcs` in `~/store/%type/dressups/`
+
+When an item is spawned to a surface, each part of its whole is injected correctly into the surface or bin environment. The surface does not impact the store item. The store item does not impact the surface. The dressed up store item arrives on the surface, exactly as indicated (even if it is visually strange in combination, ie a book filled with post-it notes).
+---
+# THE CONTENT `~/chips`
+Contains all pieces of content in the system ('chips').
+
+Loose stored in the root, all chips are typed and hash-coded for uniqueness and unvariable naming base. Examples of chips:
+
+leaf chip: `leaf_4fg3-46dc-12gt.chip`
+lore chip: `lore_0bsr-g14s-9399.chip`
+
+Different types of chips imply the contents of the chips configuration/capacity.
+---
+# THE CONFIGURATIONS `~/configs`
+Contains the configurations of a surface.
+_i.e. which bins contain which chips on this surface_
+
+**Configurations of bins** are stored by sub-directory of the SURFACE HOST. If the HOST is `sdk808`, then their configurations will be stored in `~/configs/sdk808/`. The configurations indicate which surfaces to load, which bins to place, and which chips to display in which locations along the space managed by the HOST.
+

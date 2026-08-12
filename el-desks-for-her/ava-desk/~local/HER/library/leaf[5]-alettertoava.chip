@@ -1,0 +1,13 @@
+---
+store:
+  file: leaf[5]-alettertoava.chip
+chip:
+  uid: leaf[5]
+  name: a letter to ava
+  auth: cass
+pin:
+  tps_created: 1786460479
+  tps_updated: 1786460479
+  tags: ["mailed-out", "mail", "shipped-instance"]
+---
+trying this hermes out

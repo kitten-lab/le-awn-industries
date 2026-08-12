@@ -1,0 +1,112 @@
+/* envelope.kit · manila envelope paint · contents list is a felt pop (not in-face) */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  /** terminal station desks · thin stripe via [data-station]; set with MIRA dress up */
+  var STATION_CODES = ["io", "ab", "cu", "dr", "osx", "dc", "icu"];
+  var STATION_LABELS = {
+    io: "IO · import",
+    ab: "AB · investigate",
+    cu: "CU · cross-thread",
+    dr: "DR · memoir",
+    osx: "OSX · social code",
+    dc: "DCO · writers",
+    icu: "ICU",
+  };
+
+  function stationOf(d) {
+    var p = (d && d.prop) || {};
+    var raw = String(
+      p["Station.desk"] || p.station || p.Station || d.station || ""
+    )
+      .trim()
+      .toLowerCase();
+    if (raw === "iox") return "io";
+    if (raw === "abx") return "ab";
+    if (raw === "drx") return "dr";
+    if (raw === "dco") return "dc";
+    if (raw === "none" || raw === "off" || raw === "clear" || raw === "-")
+      return "";
+    return raw;
+  }
+
+  function paint(w) {
+    if (!w || !w.el || !w.data) return;
+    var d = w.data;
+    var root =
+      w.el.querySelector("[data-tool=deck]") ||
+      w.el.querySelector(".deck-face");
+    if (!root) return;
+    var isOpen = w.open === true;
+    root.classList.toggle("is-deck-open", isOpen);
+    root.classList.toggle("is-deck-closed", !isOpen);
+    root.classList.toggle("is-envelope-open", isOpen);
+    var closed = w.el.querySelector("[data-deck-closed]");
+    var openEl = w.el.querySelector("[data-deck-open]");
+    if (closed) closed.hidden = false;
+    if (openEl) openEl.hidden = true;
+    if (w.el) {
+      w.el.style.width = "168px";
+      w.el.style.height = "104px";
+      w.el.classList.add("is-closed");
+      w.el.classList.toggle("is-envelope-open", isOpen);
+      if (isOpen) w.el.classList.add("is-open");
+      else w.el.classList.remove("is-open");
+    }
+    var titles = w.el.querySelectorAll(
+      ".deck-closed [data-field=title], .env-label [data-field=title]"
+    );
+    for (var i = 0; i < titles.length; i++) {
+      titles[i].textContent = d.title || d.name || "untitled envelope";
+    }
+    var uidEl = w.el.querySelector("[data-field=uid]");
+    var living = d.uid || d.id || "";
+    if (uidEl) {
+      uidEl.textContent = living || "envelope";
+      uidEl.title = living || "";
+    }
+    var auth = w.el.querySelector(".deck-closed [data-field=author]");
+    if (auth) {
+      auth.textContent = d.author || d.auth || "";
+    }
+    var count = w.el.querySelector("[data-deck-count]");
+    if (count) {
+      var n = (d.chips && d.chips.length) || 0;
+      var out = d._outCount || 0;
+      count.textContent =
+        n + " card" + (n === 1 ? "" : "s") + (out ? " · " + out + " out" : "");
+    }
+    var hint = w.el.querySelector(".deck-closed-hint");
+    if (hint) {
+      hint.textContent = "open";
+    }
+    // thin station stripe only (color · no chrome)
+    var st = stationOf(d);
+    if (st) w.el.setAttribute("data-station", st);
+    else w.el.removeAttribute("data-station");
+    var label = (living ? living + " · " : "") + (d.title || "envelope");
+    w.el.title = st
+      ? label + " · " + (STATION_LABELS[st] || st)
+      : label + " · dress up io|ab|cu|dr|osx|dc";
+  }
+
+  function mount(w) {
+    paint(w);
+  }
+
+  var impl = {
+    id: "envelope",
+    packageId: "envelope",
+    accepts: ["card", "leaf"],
+    paint: paint,
+    mount: mount,
+    stationOf: stationOf,
+    STATION_CODES: STATION_CODES,
+    STATION_LABELS: STATION_LABELS,
+  };
+  api.register("envelope", impl);
+  // legacy alias until all callers use envelope
+  api.register("deck", impl);
+})();

@@ -1,0 +1,73 @@
+---
+store:
+  file: leaf[28]-sessionwrapup1.chip
+chip:
+  uid: leaf[28]
+  name: Session Wrap-up 1
+  auth: Project Planner Export
+pin:
+  tps_created: 1786156736
+  tps_updated: 1786158302
+  tags: []
+---
+# Session Wrap-Up — OS Concept 
+*(for the desk)*
+
+### Center of Gravity
+The system is an **addressable spatial medium** whose cultural root is the personal, weird, code-as-magic feeling of early MySpace / GeoCities / Angelfire, grown to a larger scale.  
+It is simultaneously a computing environment, a social place system, and a living object world. The playful surface is intentional, not temporary.
+
+### Fundamental Act
+There is no general homepage or ambient desktop.  
+Everything begins with:
+
+**Address → Authorization → Material Chain → Render**
+
+You enter a space by address (someone’s ~L or a public ~H space). That entry carries authorization context. Only after authorization does the system fetch and assemble the shell, GET bins, and required code chunks.
+
+### Core Technical Stance
+- Extremely thin launch core that understands manifests and can resolve + instantiate store items.
+- Behavior lives in small, reusable functional packages (“kittens”).
+- Objects declare what they *are* and what they *need* via manifests; the *how* comes from the kittens they rely on.
+- Spaces are sets of GET catch bins (acts / sets / dsc / kits) that receive materials and inject them into the DOM.
+- Everything wears a dress-up (dsc). A paper is only a concept holding a chip of data; presentation is fully separable and remixable by anyone.
+
+### Store & Ownership Model
+- **~L** = local (user can alter after download)
+- **~H** = host (authoritative records + dependency information). Fetching from ~H pulls declared dependencies.
+- Private rooms live on ~L and are owned by the author (can go live + invite).
+- Public spaces live on ~H and are owned by moderators.
+
+### Authorization (current working pattern)
+Example: `adm/house/kitchen`
+
+1. Keymaker resolves `place=house, room=kitchen`
+2. Checks domain allowance in the owner’s config launch
+3. If place not allowed → owner’s custom “unknown or unauthorized” error shell
+4. If place allowed but room missing → different custom error shell
+5. If allowed and present → load the space + its materials
+
+Authorization happens *before* real content is fetched. Even failure stays inside the owner’s shell.  
+Future extensions already contemplated: password-gated rooms (“SecretRoom” kitten), finer-grained visitor rules, etc.
+
+### Composition Example (already prototyped in spirit)
+- **Atmosphere** = small functional kitten that projects a class onto the body
+- **Light switch** = higher object that declares `canChange: atmosphere` and builds richer behavior on top of the kitten
+
+Base Atmosphere currently affects only the active room (not nested pockets). Forks can be more aggressive but still require the functional to be present in the target space.
+
+### Prototype Reality
+You already have:
+- A working desk with papers, envelopes, mailbox, stamps, erasers, toy ROMs
+- MIRA (pocket terminal / shell) as the gate for deep edits
+- alef-bet (“pocket internet”) — the alphabet router that fetches shells, contents, systems, toys and tools and renders the requested space
+- The keymaker authorization flow described above
+
+Surface actions (moving papers) are relatively open; deep mutation requires MIRA access.
+
+### Critical Path Still Ahead
+Define the absolute base set of papers and core functional contracts tightly enough that the system can be cleanly bootstrapped, while preserving the loose, personal, remixable character that makes it feel alive.
+
+---
+
+This is the current shape of the idea: a thin, address-driven, authorization-first spatial object system whose soul is the personal weird web, scaled up.

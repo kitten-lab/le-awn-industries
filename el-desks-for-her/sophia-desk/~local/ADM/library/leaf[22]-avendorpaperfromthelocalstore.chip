@@ -1,0 +1,69 @@
+---
+store:
+  file: leaf[22]-avendorpaperfromthelocalstore.chip
+chip:
+  uid: leaf[22]
+  name: A VENDOR PAPER FROM THE LOCAL STORE
+  auth: AIDM & MIRA
+pin:
+  tps_created: 1786058096
+  tps_updated: 1786123286
+  tags: []
+---
+```
+>| ~L VEND card papers pls
+```
+The agent or player requests the local papers for the vendable object 'card'
+```
+E C H O : printing papers for ~local stored card
+located at ~local\store\writables\card\
+
+PAPERS AVAILABE FOR VEN CARD IN LOCAL STORAGE
+
+1. vend      Vendor Master Documents
+2. dscs      Master List of Dressups for Vended
+3. cfgs      Record of Spawned Instances
+4. gens      Record of the instances of this ven on ~local
+6. all       Print all papers, please
+```
+The MIRA ECHO system responds by informing you there are options that can be taken by this point. You can skip this by adding the type at the end of our call
+```
+>| 1
+
+E C H O : printing vend papers for ~l card
+```
+---
+**MANIFEST PAPERS**
+_~local\ADM\chips\card\manifest.ins_
+---
+```
+ven: card
+vendor: ADMRA
+vendorVers: 1
+source: marketplace
+--
+vendor description:
+CARD is a basic index card shaped flat object that 
+can contain chip data and simple marks and citations.
+--
+vend contents:
+card.set
+card.kit
+card.dsc
+--
+prop:
+  isContainer: yes
+  canContain: chip
+
+  isSpawnable: yes
+  isSpawned: yes
+  spawnInstances: 7
+
+  hasSurface: yes
+  surfaceType: flat plane
+
+  canChange: yes
+  changeType: mark, fold
+  markType: ink, tag
+```
+---

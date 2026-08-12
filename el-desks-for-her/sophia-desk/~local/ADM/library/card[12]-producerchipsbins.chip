@@ -1,0 +1,18 @@
+---
+store:
+  file: card[12]-producerchipsbins.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[12]
+  name: "PRODUCER: Chips & Bins"
+  auth: ROM CAT
+  type: card
+pin:
+  tps_created: 1786306943
+  tps_updated: 1786307270
+  tags: []
+---
+WAS DATBOX STUDIO -> CHIPS & BINS
+
+Chips & Bins ROM producer manufactures simple box apps which allow users to insert their data into specalized software which makes managing it and exporting the data simple to do. All data is stored as chips inside specalized bins. These materials work both locally in your CB tools, and later in larger import productions. 

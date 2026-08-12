@@ -1,0 +1,39 @@
+/* fax.kit · Chester's Imports fax machine */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  api.register("fax", {
+    id: "fax",
+    packageId: "fax",
+    canFax: true,
+    paint: function (toolWin) {
+      if (!toolWin || !toolWin.el) return;
+      var prop = toolWin.data && toolWin.data.prop ? toolWin.data.prop : {};
+      var label =
+        prop["Fax.destLabel"] ||
+        prop["Fax.dest"] ||
+        prop["Fax.dest.default"] ||
+        "Port QXA";
+      var el = toolWin.el.querySelector("[data-fax-dest]");
+      if (el) el.textContent = String(label);
+    },
+    mount: function (toolWin) {
+      if (!toolWin || !toolWin.el) return;
+      var self = this;
+      self.paint(toolWin);
+      var btn = toolWin.el.querySelector("[data-fax-cycle]");
+      if (btn && !btn._faxBound) {
+        btn._faxBound = true;
+        btn.addEventListener("click", function (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (typeof window.cycleFaxDestination === "function") {
+            window.cycleFaxDestination(toolWin);
+          }
+        });
+      }
+    },
+  });
+})();

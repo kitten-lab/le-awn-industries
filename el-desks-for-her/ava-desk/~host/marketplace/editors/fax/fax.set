@@ -1,0 +1,12 @@
+<!-- fax.set · CHESTER'S IMPORTS fax — drop leaf to copy clean MD to docks -->
+<div class="tool-fax" data-tool="fax" data-drag-chrome title="Chester's Imports Fax · click dest · drop leaf to copy MD">
+  <div class="tool-fax-shell">
+    <div class="tool-fax-brand">CHESTER'S</div>
+    <div class="tool-fax-word">FAX</div>
+    <div class="tool-fax-sub">IMPORTS</div>
+    <button type="button" class="tool-fax-dest" data-fax-dest data-fax-cycle title="click to change destination">
+      Port QXA
+    </button>
+    <div class="tool-fax-hint" data-fax-hint>drop paper</div>
+  </div>
+</div>

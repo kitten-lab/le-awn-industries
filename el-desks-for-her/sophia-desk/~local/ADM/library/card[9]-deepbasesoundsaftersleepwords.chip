@@ -1,0 +1,16 @@
+---
+store:
+  file: card[9]-deepbasesoundsaftersleepwords.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[9]
+  name: deep base sounds after sleep words
+  auth: dw
+  type: card
+pin:
+  tps_created: 1786293299
+  tps_updated: 1786464033
+  tags: ["mailed-out"]
+---
+Then new sounds started. Deeep deeep deep drum hits like a bass drum, only one at a time spaced apart. Thud. These were hard to not get a pang of anxiety from 

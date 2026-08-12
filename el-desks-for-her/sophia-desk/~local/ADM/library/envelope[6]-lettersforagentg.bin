@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[6]-lettersforagentg.bin
+  type: bin
+  bit_count: 1
+bin:
+  uid: envelope[6]
+  type: envelope
+  name: LETTERS FOR AGENT G
+  auth: AUORI
+  class: envelope
+  chips: ["leaf[12]"]
+pin:
+  tps_created: 1786151038
+  tps_updated: 1786208085
+  tags: []
+---

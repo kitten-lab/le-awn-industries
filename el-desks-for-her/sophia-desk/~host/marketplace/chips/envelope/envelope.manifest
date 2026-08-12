@@ -1,0 +1,23 @@
+---
+store:
+  file: envelope.manifest
+  type: package
+  subtype: chip
+package:
+  uid: envelope
+  name: Manila Envelope
+  auth: marketplace
+  src: marketplace
+  note: manila parcel · holds leaf + card · not a card deck · not a pin board
+pin:
+  tps_created: 1786029000
+  tps_updated: 1786209000
+  tags: [envelope, parcel, leaf, card, bin, filing]
+prop:
+  accepts: ["card", "leaf"]
+  maxLoad: 40
+  isTardis: no
+  Dressup.types: ["face"]
+  Dressup.face.dscs: ["plain", "oak"]
+  Dressup.face.default: plain
+---

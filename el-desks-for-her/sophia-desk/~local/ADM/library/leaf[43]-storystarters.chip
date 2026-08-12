@@ -1,0 +1,24 @@
+---
+store:
+  file: leaf[43]-storystarters.chip
+chip:
+  uid: leaf[43]
+  name: story starters
+  auth: import·evernote
+pin:
+  tps_created: 1594850591
+  tps_updated: 1751369659
+  tps_event: 1786273269
+  tags: ["import", "evernote", "stories", "batch-01"]
+  Import.batch: 1
+  Import.enex: STORIES.enex
+  Import.envelope: envelope[11]
+  Import.note_created: 20200715T220311Z
+  Import.note_index: 6
+  Import.note_updated: 20250701T113419Z
+  Import.notebook: STORIES
+  Import.source: evernote
+---
+Atomic quantum based clock shows time doesn't time at all how it should
+
+Time travel has unexpected consequences

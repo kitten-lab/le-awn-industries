@@ -1,0 +1,55 @@
+---
+store:
+  file: leaf[32]-admchpl38chbk.chip
+chip:
+  uid: leaf[32]
+  name: ADM_CHP_L38.chbk
+  auth: unknown
+pin:
+  tps_created: 1786163210
+  tps_updated: 1786282951
+  tags: []
+  cites: []
+---
+# The CHIP Data Format - Change Logs
+```
+# CHARLIE ROSEWOOD CHIP DATA FORMAT
+# Basic Chip Storage Mockup v1
+#
+# Example changebook for chip ADM_CHP_L38
+---
+CHANGEBOOK FOR lib: 
+  store: ~l ADM
+  call: ADM_CHP_L38
+
+  type: chip
+  class: leaf
+  paper: chbk
+---
+imported:
+  title: Beau and Crimson Rayne
+  created: 20250814T131808Z
+  updated: 20260801T122140Z
+  from: 
+    source: evernote
+    id: STORIES.enex
+    batch: 1
+---
+records:
+=== 0
+tps:
+  block: tpset-178627
+  time: 1786273269 
+  type: imported
+  log: imported
+  loc: ArchivistDesk
+  tool: grok envelope
+=== 1
+tps:
+  block: tpset-178558
+  time: 1785586900
+  type: modified
+  log: edit body
+  loc: ArchivistDesk
+  tool: md MIRA Terminal
+=== END

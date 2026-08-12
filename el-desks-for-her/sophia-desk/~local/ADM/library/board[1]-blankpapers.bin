@@ -1,0 +1,17 @@
+---
+store:
+  file: board[1]-blankpapers.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: board[1]
+  type: board
+  name: Blank Papers
+  auth: POCKETDESK
+  class: box
+  chips: []
+pin:
+  tps_created: 1785941300
+  tps_updated: 1786325971
+  tags: []
+---

@@ -1,0 +1,18 @@
+---
+store:
+  file: card[0]-releasedfrommisery.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[0]
+  name: Released from MISERY
+  auth: AGENT K
+  type: card
+pin:
+  tps_created: 1786463959
+  tps_updated: 1786464043
+  tags: ["mail", "shipped-instance"]
+---
+She felt that Misery was ruining her life. Everyone had told her so. A monster, the thing that made everything go wrong. She felt free from it, but feared its return.
+
+Through her whole life - that she has been a growing weight on her heart and mind and felt she finally left her 

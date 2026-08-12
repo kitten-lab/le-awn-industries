@@ -1,0 +1,30 @@
+---
+store:
+  file: card[7]-xincrease.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[7]
+  name: X INCREASE
+  auth: Rhea Showly
+  type: card
+pin:
+  tps_created: 1786161233
+  tps_updated: 1786200353
+  tags: ["mail", "hermes", "casestreet"]
+---
+from:verified min_faves:5
+
+AI agents OR "pocket OS" OR "personal computing" OR "agentic systems"
+"building in public" (AI OR software OR OS)
+Grok OR xAI (agent OR tool OR experiment)
+"consciousness" OR recursive OR "strange loops" (AI OR mind)
+"experimental software" OR "creative coding" OR "weird tech"
+@karpathy 
+"local AI" OR "personal AI" OR "desktop AI"
+"build log" OR "devlog" (AI OR OS OR agent)
+
+"I built" 
+prompt engineering OR "system prompt"
+"fractal" OR nested OR composable (software OR system)
+

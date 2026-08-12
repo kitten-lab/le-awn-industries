@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[17]-cluesandkeys.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: envelope[17]
+  type: envelope
+  name: clues and keys
+  auth: dw
+  class: envelope
+  chips: []
+pin:
+  tps_created: 1786293372
+  tps_updated: 1786463996
+  tags: []
+---

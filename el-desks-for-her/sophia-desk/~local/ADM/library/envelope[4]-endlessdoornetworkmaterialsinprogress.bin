@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[4]-endlessdoornetworkmaterialsinprogress.bin
+  type: bin
+  bit_count: 4
+bin:
+  uid: envelope[4]
+  type: envelope
+  name: ENDLESS DOOR NETWORK Materials In Progress
+  auth: unknown
+  class: envelope
+  chips: ["leaf[17]", "leaf[9]", "leaf[29]", "leaf[23]"]
+pin:
+  tps_created: 1786150749
+  tps_updated: 1786465800
+  tags: []
+---

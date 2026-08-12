@@ -1,0 +1,33 @@
+---
+store:
+  file: inbox.manifest
+  type: package
+  subtype: receiver
+package:
+  uid: inbox
+  name: Inbox
+  auth: marketplace
+  src: marketplace/receivers
+pin:
+  tps_created: 1785891000
+  tps_updated: 1785891000
+  tags: [hermes, mail, foundation]
+prop:
+  canReceive: yes
+  canDressup: no
+  canMark: no
+
+  Receive.kinds: [chip]
+  Receive.kind.default: chip
+
+  Dressup.types: [tool]
+  Dressup.tool.dscs: [plain, green, red, blue]
+  Dressup.tool.default: plain
+---
+
+# Inbox · receiver package
+
+Install on a desk surface (`-ins inbox`). Mints a **Receive.address** on the instance.
+Hermes (later) mails **chips** to that address. Listener (later) paints you've-got-mail.
+
+Foundation props only — wording may grow (mail, letters, leaves).

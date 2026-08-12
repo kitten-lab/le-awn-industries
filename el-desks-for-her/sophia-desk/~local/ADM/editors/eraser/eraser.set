@@ -1,0 +1,11 @@
+<!-- eraser.set · rubber that wipes stamp + cite scars -->
+<div class="tool-eraser" data-tool="eraser" data-drag-chrome>
+  <div class="tool-eraser-body">
+    <div class="tool-eraser-band" aria-hidden="true"></div>
+    <div class="tool-eraser-block">
+      <span class="tool-eraser-label" data-stamp-label>ERASE</span>
+    </div>
+    <div class="tool-eraser-edge" aria-hidden="true"></div>
+  </div>
+  <div class="tool-eraser-meta" data-stamp-meta>eraser</div>
+</div>

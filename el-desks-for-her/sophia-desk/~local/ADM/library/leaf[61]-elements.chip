@@ -1,0 +1,25 @@
+---
+store:
+  file: leaf[61]-elements.chip
+chip:
+  uid: leaf[61]
+  name: Elements
+  auth: import·evernote
+pin:
+  tps_created: 1660820306
+  tps_updated: 1696207281
+  tps_event: 1786273789
+  tags: ["import", "evernote", "religious-writings", "batch-01"]
+  Import.batch: 1
+  Import.enex: RELIGIOUS WRITINGS.enex
+  Import.envelope: envelope[13]
+  Import.note_created: 20220818T105826Z
+  Import.note_index: 6
+  Import.note_updated: 20231002T004121Z
+  Import.notebook: RELIGIOUS WRITINGS
+  Import.source: evernote
+---
+Adam - hydrogen
+Eve- helium
+Cain - lithium
+Abel - sodium

@@ -1,0 +1,33 @@
+---
+store:
+  file: fax.manifest
+  type: package
+  subtype: editor
+package:
+  uid: fax
+  name: Chester's Imports Fax
+  auth: Chester's Imports
+  src: marketplace/editors
+pin:
+  tps_created: 1786300000
+  tps_updated: 1786300000
+  tags: [chester, fax, docks, export]
+prop:
+  canMark: no
+  canDressup: yes
+  canFax: yes
+
+  Fax.dest.default: port-qxa
+  Dressup.types: [tool]
+  Dressup.tool.dscs: [plain, brass]
+  Dressup.tool.default: brass
+---
+
+# Chester's Imports · Fax Machine
+
+Desk object. Click the plate to cycle **where** you are faxing.
+Drop a **leaf** (or card) on it — **copies** out as clean Markdown into that
+destination's docks folder. Original stays on the desk.
+
+Foundation destinations live in desk store (`FAX_DESTINATIONS`).
+First line: **Port QXA** → `C:\ALICE_REBORN\PORT-QXA\docks\`.

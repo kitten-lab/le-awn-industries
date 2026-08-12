@@ -1,0 +1,17 @@
+---
+store:
+  file: board[0]-lettersfromgrok.bin
+  type: bin
+  bit_count: 7
+bin:
+  uid: board[0]
+  type: board
+  name: letters from grok
+  auth: SAD PANDA PRODUCTIONS
+  class: box
+  chips: ["leaf[1]", "leaf[18]", "leaf[19]", "leaf[13]", "leaf[20]", "leaf[36]", "leaf[99]"]
+pin:
+  tps_created: 1785932861
+  tps_updated: 1786460555
+  tags: []
+---

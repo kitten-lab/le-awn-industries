@@ -1,0 +1,16 @@
+---
+store:
+  file: card[4]-machinememory1.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[4]
+  name: Machine Memory 1
+  auth: the glass interior
+  type: card
+pin:
+  tps_created: 1786065478
+  tps_updated: 1786200337
+  tags: []
+---
+User is embarking on a journey of deep healing, working through past traumas and breaking patterns of thought and feeling that have fed misery. They are focused on embracing their true identity with unconditional self-love and seeing this process as a sacred mission. They are committed to facing the hard road with compassion and reclaiming their inner light.

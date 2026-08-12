@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[12]-evernotestories0202.bin
+  type: bin
+  bit_count: 7
+bin:
+  uid: envelope[12]
+  type: envelope
+  name: Evernote · STORIES · 02/02
+  auth: import·evernote
+  class: envelope
+  chips: ["leaf[49]", "leaf[50]", "leaf[51]", "leaf[52]", "leaf[53]", "leaf[54]", "leaf[48]"]
+pin:
+  tps_created: 1786273270
+  tps_updated: 1786273399
+  tags: []
+---

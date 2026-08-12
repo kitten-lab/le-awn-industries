@@ -1,0 +1,14 @@
+---
+store:
+  file: leaf[12]-versioningstrategies.chip
+chip:
+  uid: leaf[12]
+  name: versioning strategies
+  auth: AUORI
+pin:
+  tps_created: 1785964428
+  tps_updated: 1785966016
+  tags: []
+---
+# keeping up with changes
+The biggest failure throughout this project is its consistent and constant pressure to grow while it is being built. This pressure to grow creates an endless cycle of refactoring and data migration. Knowledge of this problem, that migrating and refactoring will keep taking place, we have avoided actually filling the product with materials.

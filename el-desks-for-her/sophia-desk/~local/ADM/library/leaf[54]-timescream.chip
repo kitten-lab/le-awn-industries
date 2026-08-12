@@ -1,0 +1,23 @@
+---
+store:
+  file: leaf[54]-timescream.chip
+chip:
+  uid: leaf[54]
+  name: Time scream
+  auth: import·evernote
+pin:
+  tps_created: 1605977144
+  tps_updated: 1673724616
+  tps_event: 1786273270
+  tags: ["import", "evernote", "stories", "batch-02"]
+  Import.batch: 2
+  Import.enex: STORIES.enex
+  Import.envelope: envelope[12]
+  Import.note_created: 20201121T164544Z
+  Import.note_index: 17
+  Import.note_updated: 20230114T193016Z
+  Import.notebook: STORIES
+  Import.source: evernote
+---
+Time scream
+Kid makes time machine ice cream

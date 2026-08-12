@@ -1,0 +1,31 @@
+/* inbox.kit · guest kit — register only; receive path later (Hermes) */
+(function () {
+  "use strict";
+  var api = window.PocketTools;
+  if (!api || !api.register) return;
+
+  api.register("inbox", {
+    id: "inbox",
+    packageId: "inbox",
+    canReceive: true,
+    paintAddress: function (toolWin) {
+      if (!toolWin || !toolWin.el) return;
+      var prop = toolWin.data.prop || {};
+      var addr =
+        prop["Receive.address"] ||
+        prop.address ||
+        "—";
+      var el = toolWin.el.querySelector("[data-inbox-address]");
+      if (el) el.textContent = String(addr);
+      var flag = toolWin.el.querySelector("[data-inbox-mail]");
+      if (flag) {
+        var got =
+          prop["Receive.hasMail"] === true ||
+          prop["Receive.hasMail"] === "yes" ||
+          prop.hasMail === true;
+        if (got) flag.removeAttribute("hidden");
+        else flag.setAttribute("hidden", "");
+      }
+    },
+  });
+})();

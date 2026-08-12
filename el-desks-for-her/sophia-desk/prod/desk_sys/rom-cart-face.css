@@ -1,0 +1,417 @@
+/**
+ * rom-cart-face.css — TEMPORARY shared paint for classicboi + julie shells.
+ *
+ * OWNERSHIP (honest, not finished architecture):
+ *   · ROM Cat owns catalog dress-up FIELDS on each ROM:
+ *       case_shell · julie_tint · plate_css
+ *   · This file is ONLY the two base shell paints so Cat + Launcher
+ *     do not fork pixel recipes while we talk about real installable
+ *     dress-up packs (per-style CSS you include only when needed).
+ *   · Size is NOT identity — rooms set --cart-w / --cart-h.
+ *     Launcher stays dense; Cat shelf stays smaller. Percentages inside.
+ *
+ * DO NOT turn this into "every dress-up ever loaded for every ROM."
+ * That model is wrong (user law). Future: load only the case CSS a ROM installs.
+ */
+
+/* ── footprint: room-owned size, % anatomy inside ─────────── */
+.rc-plate-preview-cart,
+.rl-case {
+  position: relative;
+  width: var(--cart-w, 5.8rem);
+  height: var(--cart-h, 6.6rem);
+  margin: 0 auto;
+  border: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Cat shelf: smaller install (does not dictate Launcher) */
+.rc-rom-face.rc-plate-preview-cart,
+.rc-rom-face {
+  --cart-w: 5.1rem;
+  --cart-h: 6rem;
+  filter: drop-shadow(1px 3px 4px rgba(40, 50, 90, 0.22));
+}
+
+/* Cat form preview: medium */
+.rc-plate-preview-wrap .rc-plate-preview-cart {
+  --cart-w: 5.8rem;
+  --cart-h: 6.6rem;
+  filter: none;
+}
+
+.rl-case {
+  max-width: 100%;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  filter: drop-shadow(1px 3px 4px rgba(0, 0, 0, 0.45));
+  transition: transform 0.1s ease;
+}
+.rl-case:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.rl-case:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.rl-case:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+/* ── shell body ──────────────────────────────────────────── */
+.rc-prev-shell,
+.rl-case-shell {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px 10px 2px 10px;
+  border: none;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 70%,
+    rgb(88, 88, 88),
+    rgb(66, 66, 66)
+  );
+  /* soft translucent bevels — not hard white 1px bricks */
+  box-shadow:
+    3px 3px 0 rgba(5, 6, 8, 0.18),
+    2px 2px 3px rgba(0, 0, 0, 0.35),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.28),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.35),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.28);
+}
+
+.rc-plate-preview-cart.shell-classicboi .rc-prev-shell,
+.rl-case.shell-classicboi .rl-case-shell,
+.rl-case:not(.shell-julie) .rl-case-shell {
+  background: radial-gradient(
+    circle at 50% 70%,
+    rgb(88, 88, 88),
+    rgb(66, 66, 66)
+  );
+}
+
+/*
+ * Julie — same cartridge GEOMETRY as classicboi (hard corners / 1px rims).
+ * Candy tint + layered plastic are paint only — Photoshop “nudge 1px” bevels,
+ * not soft blob iMac silhouette.
+ *
+ * Illusion stack (outer → inner):
+ *   drop offset · outer hard rim · light rim (TL) · dark rim (BR)
+ *   · second plastic layer · deep well
+ */
+.rc-plate-preview-cart.shell-julie .rc-prev-shell,
+.rl-case.shell-julie .rl-case-shell {
+  /* SAME footprint language as classicboi — jewel case, not melted G3 */
+  border-radius: 2px 10px 2px 10px;
+  background:
+    /* false highlight blob inside the plastic (not a new shape) */
+    radial-gradient(
+      circle at 32% 22%,
+      color-mix(in srgb, var(--julie, #c01830) 25%, rgba(255, 255, 255, 0.65)) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 50% 70%,
+      color-mix(in srgb, var(--julie, #c01830) 75%, #ffffff) 0%,
+      var(--julie, #c01830) 48%,
+      color-mix(in srgb, var(--julie, #c01830) 55%, #12060a) 100%
+    ) !important;
+  /* hard 1px rims — Alt+nudge style, not blurry soft bevels */
+  box-shadow:
+    /* cast */
+    3px 3px 0 rgba(5, 6, 8, 0.2),
+    2px 2px 3px rgba(0, 0, 0, 0.35),
+    /* outer shell edge */
+    inset 0 0 0 1px color-mix(in srgb, var(--julie, #c01830) 35%, #0a0a0c),
+    /* rim light TL (1px up-left) */
+    inset 1px 1px 0 color-mix(in srgb, var(--julie, #c01830) 30%, rgba(255, 255, 255, 0.75)),
+    /* rim shadow BR (1px down-right) */
+    inset -1px -1px 0 color-mix(in srgb, var(--julie, #c01830) 40%, rgba(0, 0, 0, 0.65)),
+    /* second plastic layer (2px) — nested tray illusion */
+    inset 2px 2px 0 color-mix(in srgb, var(--julie, #c01830) 55%, rgba(255, 255, 255, 0.2)),
+    inset -2px -2px 0 color-mix(in srgb, var(--julie, #c01830) 45%, rgba(0, 0, 0, 0.45)),
+    /* deep well (3px) */
+    inset 3px 3px 0 rgba(0, 0, 0, 0.12),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.22) !important;
+  opacity: 1;
+}
+/* no ::after chin — shape stays the cartridge */
+.rc-plate-preview-cart.shell-julie .rc-prev-shell::after,
+.rl-case.shell-julie .rl-case-shell::after {
+  content: none;
+  display: none;
+}
+/* plate: same hard inset rims, slight tint bleed at the edge */
+.rc-plate-preview-cart.shell-julie .rc-plate-preview-plate,
+.rl-case.shell-julie .rl-case-label {
+  border-radius: 1px;
+  background: #0a1018;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 1px 1px 0 rgba(0, 0, 0, 0.75),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.1),
+    inset 2px 2px 0 rgba(0, 0, 0, 0.35),
+    inset -2px -2px 0 color-mix(in srgb, var(--julie, #c01830) 15%, rgba(255, 255, 255, 0.06));
+}
+/* notch: still a hard metal lip, lightly tinted — not a soft brow */
+.rc-plate-preview-cart.shell-julie .rc-prev-notch,
+.rl-case.shell-julie .rl-case-notch {
+  height: 0.3rem;
+  left: 16%;
+  right: 16%;
+  border-radius: 0 0 2px 2px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--julie, #c01830) 22%, #9aa0ac) 0%,
+    color-mix(in srgb, var(--julie, #c01830) 18%, #5a606c) 40%,
+    #2a2e36 75%,
+    #121418 100%
+  );
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.28),
+    inset -1px 0 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(0, 0, 0, 0.25);
+}
+.rc-plate-preview-cart.shell-julie .rc-prev-pins,
+.rl-case.shell-julie .rl-case-pins {
+  bottom: 0;
+  height: 14%;
+  opacity: 0.95;
+  border-radius: 0;
+}
+
+.rc-plate-preview-cart.shell-julie.tint-red,
+.rl-case.shell-julie.tint-red { --julie: #c01830; }
+.rc-plate-preview-cart.shell-julie.tint-crimson,
+.rl-case.shell-julie.tint-crimson { --julie: #7a0018; }
+.rc-plate-preview-cart.shell-julie.tint-pink,
+.rl-case.shell-julie.tint-pink { --julie: #d02878; }
+.rc-plate-preview-cart.shell-julie.tint-purple,
+.rl-case.shell-julie.tint-purple { --julie: #5a18b8; }
+.rc-plate-preview-cart.shell-julie.tint-mint,
+.rl-case.shell-julie.tint-mint { --julie: #189878; }
+.rc-plate-preview-cart.shell-julie.tint-clear,
+.rl-case.shell-julie.tint-clear { --julie: #6a90b0; }
+.rc-plate-preview-cart.shell-julie.tint-blue,
+.rl-case.shell-julie.tint-blue { --julie: #1858c8; }
+.rc-plate-preview-cart.shell-julie.tint-amber,
+.rl-case.shell-julie.tint-amber { --julie: #c87810; }
+.rc-plate-preview-cart.shell-julie.tint-smoke,
+.rl-case.shell-julie.tint-smoke { --julie: #4a5058; }
+
+/* ── top lip: gray metal edged bar (not flat black brick) ─── */
+.rc-prev-notch,
+.rl-case-notch {
+  position: absolute;
+  top: 0;
+  left: 16%;
+  right: 16%;
+  height: 0.3rem;
+  z-index: 1;
+  border-radius: 0 0 2px 2px;
+  pointer-events: none;
+  display: block;
+  background: linear-gradient(
+    180deg,
+    #8a909c 0%,
+    #5a606c 35%,
+    #2a2e36 70%,
+    #121418 100%
+  );
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.28),
+    inset -1px 0 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* ── short plate badge (SKU fragment from ROM identity) ──── */
+.rc-prev-badge,
+.rl-case-badge {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.3rem;
+  z-index: 2;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.38rem;
+  letter-spacing: 0.05em;
+  padding: 0.06rem 0.18rem;
+  background: #0a0c10;
+  color: #eef;
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.14),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.6);
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── logo plate — % of cart so size can differ by room ───── */
+.rc-plate-preview-plate,
+.rl-case-label {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 14%;
+  height: 48%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.22rem;
+  text-align: center;
+  font-family: "Special Elite", "Courier New", ui-monospace, monospace;
+  /* readable at Launcher pack density; still proportional */
+  font-size: 0.58rem;
+  letter-spacing: 0.03em;
+  color: #e8d8b0;
+  background: #0a1018;
+  border: none;
+  border-radius: 1px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    inset 1px 1px 0 rgba(0, 0, 0, 0.7),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.08),
+    inset 2px 2px 0 rgba(0, 0, 0, 0.3);
+  word-break: break-word;
+  overflow: hidden;
+}
+
+.rl-case-label-main {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: inherit;
+  color: inherit;
+  line-height: 1.15;
+  word-break: break-word;
+  max-width: 100%;
+  max-height: 3.6em;
+  overflow: hidden;
+}
+
+.rl-case-label.has-custom-plate {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    inset 1px 1px 0 rgba(0, 0, 0, 0.65),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Cat mini shelf: slightly denser type, still legible */
+.rc-rom-face .rc-plate-preview-plate,
+.rc-rom-face-plate {
+  font-size: 0.55rem;
+  line-height: 1.15;
+}
+
+/* ── SKU ─────────────────────────────────────────────────── */
+.rc-prev-sku,
+.rl-case-sku {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 70%;
+  bottom: auto;
+  z-index: 4;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.36rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: rgba(220, 230, 240, 0.72);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.rc-rom-face .rc-prev-sku {
+  font-size: 0.3rem;
+}
+
+/* ── pins ────────────────────────────────────────────────── */
+.rc-prev-pins,
+.rl-case-pins {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 14%;
+  min-height: 0.55rem;
+  max-height: 1.05rem;
+  z-index: 3;
+  border-radius: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    #d8d0b0 0 2px,
+    #2a2820 2px 3.5px
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.rl-case-status {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.28rem;
+  z-index: 2;
+  font-size: 0.34rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c8a060;
+  pointer-events: none;
+}
+.rl-case.is-broken .rl-case-status {
+  color: #e07070;
+}
+/* green pin · server listening (launcher parity) */
+.rl-case-warm {
+  position: absolute;
+  top: 0.28rem;
+  right: 0.28rem;
+  z-index: 6;
+  font-size: 0.55rem;
+  line-height: 1;
+  color: #3dcf7a;
+  text-shadow: 0 0 6px rgba(61, 207, 122, 0.85);
+  pointer-events: none;
+}
+.rl-case.is-warm .rl-case-warm {
+  display: inline;
+}
+.rl-case.is-warm .rl-case-shell {
+  box-shadow:
+    3px 3px 0 rgba(5, 6, 8, 0.18),
+    2px 2px 3px rgba(0, 0, 0, 0.35),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.28),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.35),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(60, 200, 120, 0.5);
+}
+.rl-case.is-warm .rl-case-pins {
+  background: repeating-linear-gradient(
+    90deg,
+    #c8f8d8 0 2px,
+    #1a3828 2px 3.5px
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(220, 255, 230, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+  opacity: 1;
+}

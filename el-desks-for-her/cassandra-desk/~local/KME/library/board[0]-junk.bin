@@ -1,0 +1,17 @@
+---
+store:
+  file: board[0]-junk.bin
+  type: bin
+  bit_count: 2
+bin:
+  uid: board[0]
+  type: board
+  name: junk
+  auth: unknown
+  class: box
+  chips: ["leaf[5]", "leaf[0]"]
+pin:
+  tps_created: 1786462836
+  tps_updated: 1786462873
+  tags: []
+---

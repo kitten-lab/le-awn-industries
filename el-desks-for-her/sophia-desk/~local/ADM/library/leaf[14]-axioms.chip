@@ -1,0 +1,24 @@
+---
+store:
+  file: leaf[14]-axioms.chip
+chip:
+  uid: leaf[14]
+  name: Axioms
+  auth: O. RIMER
+pin:
+  tps_created: 1785984790
+  tps_updated: 1786163307
+  tags: []
+  cites: []
+---
+# AXIOMS
+## if it isn't a VEN, it should be
+## if it effects, its a PROPERTY
+## it comes from the store, it's not built into the core
+
+PROPERTIES are the defining factor of VEN in the environment.
+
+PROPERTIES are, in and of themselves, EMERGENT from the VEN which required them first.
+
+Properties are defined first by whether or not an object is capable of that property.
+---

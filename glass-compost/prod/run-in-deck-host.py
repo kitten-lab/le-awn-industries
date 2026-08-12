@@ -11,7 +11,14 @@ PROD = Path(__file__).resolve().parent
 SYS = PROD / "bench_sys"
 DECK = PROD.parents[2] / "the-deck-host" / "shell" / "deck_host.py"
 PORT = os.environ.get("GLASS_COMPOST_PORT", os.environ.get("NIM_BENCH_PORT", "43182"))
-URL = f"http://127.0.0.1:{PORT}/"
+# house phosphor: green | red | blue (or archivist/detective/lover)
+HOUSE = (
+    os.environ.get("GLASS_COMPOST_HOUSE")
+    or os.environ.get("COMPOST_HOUSE")
+    or ""
+).strip().lower()
+_q = f"?house={HOUSE}" if HOUSE else ""
+URL = f"http://127.0.0.1:{PORT}/{_q}"
 HEALTH = f"http://127.0.0.1:{PORT}/api/health"
 
 
@@ -23,11 +30,14 @@ def main() -> int:
         print(f"Deck Host missing: {DECK}", file=sys.stderr)
         return 1
     os.environ.setdefault("DECK_HOST_WINDOW_MODE", "maximized")
+    title = "The Glass Compost"
+    if HOUSE in ("green", "red", "blue", "archivist", "detective", "lover", "adm", "kme", "her"):
+        title = f"Glass Compost · {HOUSE}"
     cmd = [
         sys.executable,
         str(DECK),
         "--title",
-        "The Glass Compost",
+        title,
         "--profile",
         "bench",
         "--window-mode",
@@ -41,7 +51,12 @@ def main() -> int:
         "--spawn-cwd",
         str(SYS),
     ]
-    print("The Glass Compost · CO.LEA-003-GLASS · hand-cut branches · port", PORT)
+    print(
+        "The Glass Compost · CO.LEA-003-GLASS · terminal phosphor · port",
+        PORT,
+        "· house",
+        HOUSE or "green(default)",
+    )
     return subprocess.call(cmd)
 
 

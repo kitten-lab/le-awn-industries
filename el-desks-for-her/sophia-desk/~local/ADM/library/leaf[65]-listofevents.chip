@@ -1,0 +1,14 @@
+---
+store:
+  file: leaf[65]-listofevents.chip
+chip:
+  uid: leaf[65]
+  name: list of events
+  auth: dw
+pin:
+  tps_created: 1786293796
+  tps_updated: 1786293888
+  tags: []
+---
+**june 2025**
+09 | jamie schedule pickup syd things [OT-093.T01.B000]

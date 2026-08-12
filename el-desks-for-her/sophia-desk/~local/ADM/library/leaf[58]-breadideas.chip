@@ -1,0 +1,26 @@
+---
+store:
+  file: leaf[58]-breadideas.chip
+chip:
+  uid: leaf[58]
+  name: BREAD IDEAS
+  auth: import·evernote
+pin:
+  tps_created: 1623952832
+  tps_updated: 1695260644
+  tps_event: 1786273789
+  tags: ["import", "evernote", "religious-writings", "batch-01"]
+  Import.batch: 1
+  Import.enex: RELIGIOUS WRITINGS.enex
+  Import.envelope: envelope[13]
+  Import.note_created: 20210617T180032Z
+  Import.note_index: 3
+  Import.note_updated: 20230921T014404Z
+  Import.notebook: RELIGIOUS WRITINGS
+  Import.source: evernote
+---
+- Break bread: to share the lesson you have learned
+
+- Breadcrumbs: small parts of the lesson lead you back home
+
+-

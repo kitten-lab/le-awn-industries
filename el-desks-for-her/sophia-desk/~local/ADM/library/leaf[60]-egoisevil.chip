@@ -1,0 +1,22 @@
+---
+store:
+  file: leaf[60]-egoisevil.chip
+chip:
+  uid: leaf[60]
+  name: ego Is רה (evil)
+  auth: import·evernote
+pin:
+  tps_created: 1598958379
+  tps_updated: 1673724266
+  tps_event: 1786273789
+  tags: ["import", "evernote", "religious-writings", "batch-01"]
+  Import.batch: 1
+  Import.enex: RELIGIOUS WRITINGS.enex
+  Import.envelope: envelope[13]
+  Import.note_created: 20200901T110619Z
+  Import.note_index: 5
+  Import.note_updated: 20230114T192426Z
+  Import.notebook: RELIGIOUS WRITINGS
+  Import.source: evernote
+---
+ego Is רה (evil)

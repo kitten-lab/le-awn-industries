@@ -129,6 +129,12 @@ def init_bench(con: sqlite3.Connection) -> None:
             PRIMARY KEY (face_id, seq, leaf_n)
         );
         CREATE INDEX IF NOT EXISTS idx_leaves_msg ON msg_leaves(face_id, seq);
+
+        -- UI resume (survives Deck Host restarts better than browser memory alone)
+        CREATE TABLE IF NOT EXISTS ui_place (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL DEFAULT ''
+        );
         """
     )
     # migrate: branch flags / process tags (your vocabulary)
@@ -283,26 +289,124 @@ def set_msg_parsed(face_id: str, seq: int, parsed: bool) -> dict[str, Any]:
     return {"face_id": face_id, "seq": seq, "parsed": parsed}
 
 
-def _msg_text_len(face_id: str, seq: int) -> int:
-    """Length of yard message text (for partitioning)."""
+def _msg_text(face_id: str, seq: int) -> str:
+    """Yard message body text (for partitioning / blank-leaf scrub)."""
     try:
         row = yard().execute(
             "SELECT text FROM messages WHERE face_id=? AND seq=?",
             (face_id, seq),
         ).fetchone()
-        return len((row["text"] if row else "") or "")
+        return str((row["text"] if row else "") or "")
     except Exception:
-        return 0
+        return ""
+
+
+def _msg_text_len(face_id: str, seq: int) -> int:
+    """Length of yard message text (for partitioning)."""
+    return len(_msg_text(face_id, seq))
+
+
+def _absorb_blank_leaves(
+    parts: list[dict[str, Any]], text: str
+) -> list[dict[str, Any]]:
+    """
+    Fold whitespace-only leaves into neighbors so L02/L04 never exist as
+    empty '\\n\\n' ships. Content leaves keep gravity/title/note.
+    """
+    text = text or ""
+    n = len(text)
+    items: list[dict[str, Any]] = []
+    for lf in parts or []:
+        a = max(0, min(int(lf.get("start_off") or 0), n))
+        b = max(a, min(int(lf.get("end_off") or 0), n))
+        if b <= a and n > 0:
+            continue
+        chunk = text[a:b] if n else ""
+        blank = bool(n and not chunk.strip())
+        g = int(lf.get("gravity") or 0)
+        if g < -1:
+            g = -1
+        if g > 1:
+            g = 1
+        items.append(
+            {
+                "start_off": a,
+                "end_off": b if n else 0,
+                "title": (lf.get("title") or "").strip(),
+                "note": (lf.get("note") or "").strip(),
+                "created": lf.get("created"),
+                "gravity": g,
+                "chipped": bool(
+                    lf.get("chipped")
+                    or (lf.get("title") or "").strip()
+                    or (lf.get("note") or "").strip()
+                    or not lf.get("implicit")
+                ),
+                "implicit": bool(lf.get("implicit")),
+                "_blank": blank,
+            }
+        )
+    if not items:
+        return []
+    if all(it["_blank"] for it in items):
+        return [
+            {
+                "start_off": 0,
+                "end_off": n,
+                "title": "",
+                "note": "",
+                "created": None,
+                "gravity": 0,
+                "chipped": False,
+                "implicit": True,
+            }
+        ]
+    out: list[dict[str, Any]] = []
+    lead_start: int | None = None  # first blank start before any content
+    for it in items:
+        if it["_blank"]:
+            if out:
+                out[-1]["end_off"] = max(out[-1]["end_off"], it["end_off"])
+            elif lead_start is None:
+                lead_start = it["start_off"]
+            continue
+        p = {k: v for k, v in it.items() if k != "_blank"}
+        if lead_start is not None and not out:
+            p["start_off"] = min(p["start_off"], lead_start)
+            lead_start = None
+        out.append(p)
+    if not out:
+        return [
+            {
+                "start_off": 0,
+                "end_off": n,
+                "title": "",
+                "note": "",
+                "created": None,
+                "gravity": 0,
+                "chipped": False,
+                "implicit": True,
+            }
+        ]
+    last_end = max(it["end_off"] for it in items)
+    if out[-1]["end_off"] < last_end:
+        out[-1]["end_off"] = last_end
+    return out
 
 
 def fill_leaf_gaps(
-    parts: list[dict[str, Any]], text_len: int
+    parts: list[dict[str, Any]], text_len: int, text: str | None = None
 ) -> list[dict[str, Any]]:
     """
     Ensure leaves cover 0..text_len with no holes.
-    Missing spans become unchipped remainder leaves (title empty).
+    Whitespace-only leaves are absorbed (no dead empty ships).
     """
     text_len = max(0, int(text_len))
+    body = text if text is not None else ""
+    if body and len(body) != text_len:
+        text_len = len(body)
+    if body:
+        parts = _absorb_blank_leaves(parts, body)
     if text_len == 0:
         return parts or [
             {
@@ -312,6 +416,7 @@ def fill_leaf_gaps(
                 "note": "",
                 "created": None,
                 "chipped": False,
+                "gravity": 0,
             }
         ]
     cleaned: list[dict[str, Any]] = []
@@ -319,6 +424,9 @@ def fill_leaf_gaps(
         a = max(0, min(int(lf.get("start_off") or 0), text_len))
         b = max(a, min(int(lf.get("end_off") or 0), text_len))
         if b <= a:
+            continue
+        # never keep a pure-whitespace leaf when we have the body
+        if body and not body[a:b].strip():
             continue
         g = int(lf.get("gravity") or 0)
         if g < -1:
@@ -361,33 +469,31 @@ def fill_leaf_gaps(
     cursor = 0
     for p in merged:
         if p["start_off"] > cursor:
+            # gap → absorb into previous (or pull this leaf left). Never mint
+            # a remainder ship for \n\n holes between real cuts.
+            if filled:
+                filled[-1]["end_off"] = p["start_off"]
+            else:
+                p = dict(p)
+                p["start_off"] = cursor
+        filled.append(p)
+        cursor = max(cursor, p["end_off"])
+    if cursor < text_len:
+        if filled:
+            filled[-1]["end_off"] = text_len
+        else:
             filled.append(
                 {
-                    "start_off": cursor,
-                    "end_off": p["start_off"],
+                    "start_off": 0,
+                    "end_off": text_len,
                     "title": "",
                     "note": "",
                     "created": None,
                     "chipped": False,
-                    "remainder": True,
+                    "implicit": True,
                     "gravity": 0,
                 }
             )
-        filled.append(p)
-        cursor = max(cursor, p["end_off"])
-    if cursor < text_len:
-        filled.append(
-            {
-                "start_off": cursor,
-                "end_off": text_len,
-                "title": "",
-                "note": "",
-                "created": None,
-                "chipped": False,
-                "remainder": True,
-                "gravity": 0,
-            }
-        )
     if not filled:
         filled = [
             {
@@ -415,10 +521,11 @@ def ensure_message_leaves(
     """
     Leaves partition a message body.
     No rows yet → whole turn is implicit L01 (0..len).
-    Stored rows are gap-filled so remainder text never disappears.
+    Stored rows are gap-filled; blank \n\n leaves are scrubbed and re-saved.
     """
+    body = _msg_text(face_id, seq)
     if text_len is None:
-        text_len = _msg_text_len(face_id, seq)
+        text_len = len(body)
     text_len = max(0, int(text_len))
     existing = leaves_map(face_id).get(seq) or []
     if not existing:
@@ -432,9 +539,11 @@ def ensure_message_leaves(
                 "created": None,
                 "implicit": True,
                 "chipped": False,
+                "gravity": 0,
             }
         ]
     parts = []
+    had_blank = False
     for lf in existing:
         a = max(0, min(int(lf["start_off"]), text_len))
         b = max(a, min(int(lf["end_off"]), text_len))
@@ -443,6 +552,8 @@ def ensure_message_leaves(
             g = -1
         if g > 1:
             g = 1
+        if body and a < b and not body[a:b].strip():
+            had_blank = True
         parts.append(
             {
                 "start_off": a,
@@ -455,41 +566,90 @@ def ensure_message_leaves(
                 "chipped": True,  # user-stored cut
             }
         )
-    return fill_leaf_gaps(parts, text_len)
+    filled = fill_leaf_gaps(parts, text_len, body)
+    # persist scrub when dead ships existed or ranges renumbered/merged
+    old_key = [(int(x["start_off"]), int(x["end_off"])) for x in existing]
+    new_key = [(int(x["start_off"]), int(x["end_off"])) for x in filled]
+    if had_blank or old_key != new_key:
+        # rewrite without re-entering ensure (replace writes cleaned ranges)
+        return replace_message_leaves(face_id, seq, filled)
+    return filled
 
 
 def replace_message_leaves(
     face_id: str, seq: int, parts: list[dict[str, Any]]
 ) -> list[dict[str, Any]]:
     """Write a full partition set for one message (renumbered L01..)."""
-    text_len = _msg_text_len(face_id, seq)
+    body = _msg_text(face_id, seq)
+    text_len = len(body)
     # keep gravity by exact range when renumbering
     prev_g: dict[tuple[int, int], int] = {}
     for old in leaves_map(face_id).get(seq) or []:
         prev_g[(int(old["start_off"]), int(old["end_off"]))] = int(
             old.get("gravity") or 0
         )
+    # also map gravity by start for after-merge recovery
+    prev_g_start: dict[int, int] = {}
+    for old in leaves_map(face_id).get(seq) or []:
+        prev_g_start[int(old["start_off"])] = int(old.get("gravity") or 0)
+
+    # absorb blanks before write
+    prepped = fill_leaf_gaps(
+        [
+            {
+                "start_off": p.get("start_off"),
+                "end_off": p.get("end_off"),
+                "title": p.get("title") or "",
+                "note": p.get("note") or "",
+                "gravity": p.get("gravity"),
+                "chipped": p.get("chipped", True),
+                "implicit": p.get("implicit", False),
+            }
+            for p in (parts or [])
+        ],
+        text_len,
+        body,
+    )
+
     cleaned: list[dict[str, Any]] = []
-    for p in parts:
+    for p in prepped:
         a = max(0, min(int(p.get("start_off") or 0), text_len))
         b = max(a, min(int(p.get("end_off") or 0), text_len))
         if b <= a and text_len > 0:
             continue
-        g = int(p.get("gravity") or prev_g.get((a, b), 0) or 0)
+        if body and not body[a:b].strip() and text_len > 0:
+            continue
+        # preserve -1 (don't use `or 0` — falsy would clobber ▾)
+        if p.get("gravity") is not None:
+            g = int(p.get("gravity"))
+        elif (a, b) in prev_g:
+            g = int(prev_g[(a, b)])
+        elif a in prev_g_start:
+            g = int(prev_g_start[a])
+        else:
+            g = 0
         if g < -1:
             g = -1
         if g > 1:
             g = 1
+        title = str(p.get("title") or "").strip()[:120]
+        # if title was empty because leaf was blank-adjacent, keep content first line
+        if not title and body and body[a:b].strip():
+            title = body[a:b].strip().split("\n")[0].strip()[:48]
         cleaned.append(
             {
                 "start_off": a,
-                "end_off": b if text_len == 0 else b,
-                "title": str(p.get("title") or "").strip()[:120],
+                "end_off": b,
+                "title": title,
                 "note": str(p.get("note") or "").strip()[:400],
                 "gravity": g,
             }
         )
     cleaned.sort(key=lambda p: (p["start_off"], p["end_off"]))
+    if not cleaned and text_len >= 0:
+        # unsplit write = no rows (implicit L01). Caller may want rows though.
+        # keep empty list → message becomes unsplit.
+        pass
     con = bench()
     con.execute(
         "DELETE FROM msg_leaves WHERE face_id=? AND seq=?",
@@ -525,6 +685,7 @@ def replace_message_leaves(
                 "created": t,
                 "gravity": int(p.get("gravity") or 0),
                 "implicit": False,
+                "chipped": True,
             }
         )
     con.commit()
@@ -669,6 +830,96 @@ def delete_msg_leaf(face_id: str, seq: int, leaf_n: int) -> bool:
     )
     con.commit()
     return cur.rowcount > 0
+
+
+def _break_spans(text: str) -> list[tuple[int, int]]:
+    """
+    Partition message text into leaf spans by line breaks.
+
+    Prefer blank lines (two or more \\n / \\r\\n / \\r).
+    If that yields a single block, fall back to single newlines.
+
+    Returns a full cover of 0..len(text): content paragraphs absorb
+    surrounding newline-only gaps so we never store empty "dead" leaves.
+    """
+    if not text:
+        return [(0, 0)]
+    # find non-empty content islands
+    multi = list(re.finditer(r"(?:\r\n|\n|\r){2,}", text))
+    raw: list[tuple[int, int]] = []
+    if multi:
+        last = 0
+        for m in multi:
+            if m.start() > last:
+                raw.append((last, m.start()))
+            last = m.end()
+        if last < len(text):
+            raw.append((last, len(text)))
+    if len(raw) <= 1:
+        raw = []
+        last = 0
+        for m in re.finditer(r"\r\n|\n|\r", text):
+            if m.start() > last:
+                raw.append((last, m.start()))
+            last = m.end()
+        if last < len(text):
+            raw.append((last, len(text)))
+    content = [(a, b) for a, b in raw if b > a and text[a:b].strip()]
+    if not content:
+        return [(0, len(text))]
+    if len(content) == 1:
+        return [(0, len(text))]
+    # absorb leading/trailing breaks into neighbors — full cover, no holes
+    covered: list[tuple[int, int]] = []
+    cursor = 0
+    for i, (a, b) in enumerate(content):
+        end = content[i + 1][0] if i + 1 < len(content) else len(text)
+        # this leaf owns from cursor through end of this content (and
+        # following whitespace until next content starts)
+        covered.append((cursor, end if i + 1 < len(content) else len(text)))
+        # actually: leaf should end at `b` for content but include trailing
+        # ws until next `a`. So end = next a, or len.
+        covered[-1] = (cursor, content[i + 1][0] if i + 1 < len(content) else len(text))
+        cursor = covered[-1][1]
+    # ensure last reaches end
+    if covered and covered[-1][1] < len(text):
+        a0, _ = covered[-1]
+        covered[-1] = (a0, len(text))
+    if covered and covered[0][0] != 0:
+        covered[0] = (0, covered[0][1])
+    return covered
+
+
+def auto_split_message_by_breaks(face_id: str, seq: int) -> list[dict[str, Any]]:
+    """
+    One-click leaf cut: split whole message on blank lines / newlines.
+    Replaces any prior leaf partition for this turn.
+    No empty remainder leaves for lone newlines.
+    """
+    row = yard().execute(
+        "SELECT text FROM messages WHERE face_id=? AND seq=?",
+        (face_id, seq),
+    ).fetchone()
+    text = str(row["text"] or "") if row else ""
+    spans = _break_spans(text)
+    if len(spans) <= 1:
+        # nothing to cut — clear to implicit L01
+        clear_message_leaves(face_id, seq)
+        return ensure_message_leaves(face_id, seq, len(text))
+    parts: list[dict[str, Any]] = []
+    for a, b in spans:
+        chunk = text[a:b]
+        title = chunk.strip().split("\n")[0].strip()[:48]
+        parts.append(
+            {
+                "start_off": a,
+                "end_off": b,
+                "title": title,
+                "note": "",
+                "chipped": True,
+            }
+        )
+    return replace_message_leaves(face_id, seq, parts)
 
 
 def clear_message_leaves(face_id: str, seq: int) -> int:
@@ -1425,8 +1676,36 @@ class Handler(SimpleHTTPRequestHandler):
             mark = set_msg_parsed(face_id, seq, bool(parsed))
             return jsend(self, 200, {"ok": True, **mark})
 
-        if path == "/api/msg/leaf":
-            # split fat message: char range becomes ….Bn.Lm
+        if path == "/api/place":
+            # GET-like via POST body {get:1} or put {faceId, scroll, …}
+            key = str(body.get("key") or "bench").strip() or "bench"
+            if body.get("get") or body.get("load"):
+                row = bench().execute(
+                    "SELECT value FROM ui_place WHERE key=?", (key,)
+                ).fetchone()
+                val = {}
+                if row and row["value"]:
+                    try:
+                        val = json.loads(row["value"])
+                    except json.JSONDecodeError:
+                        val = {}
+                return jsend(self, 200, {"ok": True, "place": val or {}})
+            place = body.get("place") if isinstance(body.get("place"), dict) else body
+            # strip meta
+            clean = {
+                k: v
+                for k, v in (place or {}).items()
+                if k not in ("get", "load", "key") and v is not None
+            }
+            bench().execute(
+                "INSERT OR REPLACE INTO ui_place(key, value) VALUES (?,?)",
+                (key, json.dumps(clean, ensure_ascii=False)),
+            )
+            bench().commit()
+            return jsend(self, 200, {"ok": True, "place": clean})
+
+        if path == "/api/msg/leaf/auto":
+            # one-click: split message on blank lines / newlines (no manual select)
             face_id = (body.get("face_id") or "").strip()
             if not face_id:
                 return jsend(
@@ -1436,6 +1715,100 @@ class Handler(SimpleHTTPRequestHandler):
                 seq = int(body.get("seq"))
             except (TypeError, ValueError):
                 return jsend(self, 400, {"ok": False, "error": "seq required"})
+            try:
+                parts = auto_split_message_by_breaks(face_id, seq)
+            except ValueError as e:
+                return jsend(self, 400, {"ok": False, "error": str(e)})
+            try:
+                y = yard()
+                face = y.execute(
+                    "SELECT testament, face_serial FROM faces WHERE face_id=?",
+                    (face_id,),
+                ).fetchone()
+                code = (
+                    log_code(face["testament"], face["face_serial"])
+                    if face
+                    else "??"
+                )
+            except Exception:
+                code = "??"
+            max_row = yard().execute(
+                "SELECT MAX(seq) m FROM messages WHERE face_id=?",
+                (face_id,),
+            ).fetchone()
+            max_seq = int(max_row["m"] or 0) if max_row else 0
+            branches = branches_for(face_id, max_seq)
+            tn = 1
+            for b in branches:
+                if b["start_seq"] <= seq <= b["end_seq"]:
+                    tn = int(b.get("trunk_n") or b.get("branch_n") or 1)
+                    break
+            for lf in parts:
+                lf["chip"] = leaf_chip(code, tn, seq, int(lf["leaf_n"]))
+                lf["chip_short"] = f"L{int(lf['leaf_n']):02d}"
+            return jsend(
+                self,
+                200,
+                {
+                    "ok": True,
+                    "leaves": parts,
+                    "split": len(parts) > 1,
+                    "count": len(parts),
+                    "trunk_n": tn,
+                },
+            )
+
+        if path == "/api/msg/leaf":
+            # legacy manual range cut (optional) · prefer /api/msg/leaf/auto
+            face_id = (body.get("face_id") or "").strip()
+            if not face_id:
+                return jsend(
+                    self, 400, {"ok": False, "error": "face_id required"}
+                )
+            try:
+                seq = int(body.get("seq"))
+            except (TypeError, ValueError):
+                return jsend(self, 400, {"ok": False, "error": "seq required"})
+            # mode=auto also accepted here
+            if str(body.get("mode") or "").lower() in ("auto", "paragraphs", "breaks"):
+                parts = auto_split_message_by_breaks(face_id, seq)
+                try:
+                    y = yard()
+                    face = y.execute(
+                        "SELECT testament, face_serial FROM faces WHERE face_id=?",
+                        (face_id,),
+                    ).fetchone()
+                    code = (
+                        log_code(face["testament"], face["face_serial"])
+                        if face
+                        else "??"
+                    )
+                except Exception:
+                    code = "??"
+                max_row = yard().execute(
+                    "SELECT MAX(seq) m FROM messages WHERE face_id=?",
+                    (face_id,),
+                ).fetchone()
+                max_seq = int(max_row["m"] or 0) if max_row else 0
+                branches = branches_for(face_id, max_seq)
+                tn = 1
+                for b in branches:
+                    if b["start_seq"] <= seq <= b["end_seq"]:
+                        tn = int(b.get("trunk_n") or b.get("branch_n") or 1)
+                        break
+                for lf in parts:
+                    lf["chip"] = leaf_chip(code, tn, seq, int(lf["leaf_n"]))
+                return jsend(
+                    self,
+                    200,
+                    {
+                        "ok": True,
+                        "leaves": parts,
+                        "split": len(parts) > 1,
+                        "count": len(parts),
+                        "trunk_n": tn,
+                    },
+                )
             try:
                 start_off = int(body.get("start_off") if body.get("start_off") is not None else body.get("start") or 0)
                 end_off = int(body.get("end_off") if body.get("end_off") is not None else body.get("end") or 0)

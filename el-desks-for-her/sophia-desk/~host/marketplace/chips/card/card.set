@@ -1,0 +1,24 @@
+<!-- card.set · index chip card (store package · not leaf) -->
+<!-- drag chrome = rail + foot only · title/body stay selectable for copy -->
+<div class="tool-card" data-tool="card">
+  <div class="tool-card-rail" data-drag-chrome title="drag card from here">
+    <span class="tool-card-marks">
+      <span class="tool-card-mark" data-card-mark hidden></span>
+      <span class="tool-card-cite" data-card-cite hidden></span>
+    </span>
+    <span class="tool-card-kind">card</span>
+  </div>
+  <div class="tool-card-title" data-card-title data-select-text></div>
+  <div class="tool-card-by" data-card-by data-select-text></div>
+  <div class="tool-card-body" data-card-body data-select-text></div>
+  <div class="tool-card-foot" data-drag-chrome>
+    <span class="tool-card-uid" data-card-uid></span>
+    <span class="tool-card-deck" data-card-deck></span>
+    <button type="button" class="tool-card-putaway" data-card-putaway hidden title="put back in home deck">
+      put away
+    </button>
+    <button type="button" class="tool-card-unfile" data-card-unfile hidden title="leave this deck forever">
+      unfile
+    </button>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[15]-wordplays.bin
+  type: bin
+  bit_count: 1
+bin:
+  uid: envelope[15]
+  type: envelope
+  name: WORD PLAYS
+  auth: unknown
+  class: envelope
+  chips: ["leaf[58]"]
+pin:
+  tps_created: 1786274368
+  tps_updated: 1786274391
+  tags: []
+---

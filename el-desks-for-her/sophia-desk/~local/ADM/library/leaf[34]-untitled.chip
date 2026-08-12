@@ -1,0 +1,365 @@
+---
+store:
+  file: leaf[34]-untitled.chip
+chip:
+  uid: leaf[34]
+  name: untitled
+  auth: unknown
+pin:
+  tps_created: 1786163216
+  tps_updated: 1786278235
+  tags: []
+---
+1. What the product is
+
+Not a notes app with a hidden DB. A felt desk where matter is files and the UI is a browser front end over a small Python HTTP server.
+
+┌────────────────────┬───────────────────────────────────────────────────────┐
+│ Layer              │ Role                                                  │
+├────────────────────┼───────────────────────────────────────────────────────┤
+│ prod/desk_sys/     │ Code only · server.py + store.py + app.js / app.css   │
+├────────────────────┼───────────────────────────────────────────────────────┤
+│ prod/safe_box/     │ Logical “safe” root; bay resolves to the desk install │
+├────────────────────┼───────────────────────────────────────────────────────┤
+│ ~local/<user>/     │ Living user data (you’re ADM)                         │
+├────────────────────┼───────────────────────────────────────────────────────┤
+│ ~host/marketplace/ │ Shared packages (envelope face, stamper, chipper, …)  │
+└────────────────────┴───────────────────────────────────────────────────────┘
+
+Server: ThreadingHTTPServer on 43167 · static desk UI + JSON API.
+Store: pure filesystem + nested YAML-ish frontmatter parsers in store.py. No app DB for desk objects.
+
+Glass Compost / yard.db is a sibling mountain, not the desk core. The desk can cite it; it doesn’t own it.
+
+───
+
+2. Three papers, three jobs
+
+This is the spine. When it blurs, thrash starts.
+
+A. Matter — library chips / bins
+Path: ~local/ADM/library/
+
+┌──────┬────────────────────────────────────────────────┬───────────────────────────────────────┐
+│ Kind │ File                                           │ Spine                                 │
+├──────┼────────────────────────────────────────────────┼───────────────────────────────────────┤
+│ Leaf │ leaf[n]-<slug>.chip                            │ uid leaf[n] (slug renames with title) │
+├──────┼────────────────────────────────────────────────┼───────────────────────────────────────┤
+│ Card │ card[n]-….chip                                 │ card[n]                               │
+├──────┼────────────────────────────────────────────────┼───────────────────────────────────────┤
+│ Bin  │ envelope[n]-….bin, book[n], board[n], shelf[n] │ envelope[n] etc.                      │
+└──────┴────────────────────────────────────────────────┴───────────────────────────────────────┘
+
+Chip shape (leaf):
+
+---
+store: { file: … }
+chip:  { uid, name, auth }
+pin:   { tps_*, tags, cites, Import.*/Glass.title, … }
+---
+<body markdown/text>
+
+• Body = payload (Hands never rewrite on boot).
+• Pin = permanent identity-adjacent data (born/touch/event, tags, cite list, import scars).
+• Bin membership = list of member uids on the .bin paper (chips: [...]), not a join table.
+
+B. Instance config — surface-local
+Path: ~local/ADM/surfaces/ArchivistDesk/configs/
+
+┌──────────┬──────────────────────────┐
+│ Object   │ Config file              │
+├──────────┼──────────────────────────┤
+│ Leaf     │ chip-leaf[n].cfg         │
+├──────────┼──────────────────────────┤
+│ Envelope │ bin-envelope[n].cfg      │
+├──────────┼──────────────────────────┤
+│ Tool     │ tool-chipper[0].cfg etc. │
+└──────────┴──────────────────────────┘
+
+Job: how this surface dresses and files the object — dressup (shell/style), prop (isMarkable, homeBin, Cite.* face ticket, Mark.*), not the essay body.
+
+Pose of free objects mostly lives on surface layout, not always on the object cfg (bins/leaves pin geometry can also appear in bin layout for members).
+
+C. Surface — the desk itself
+Path: …/surfaces/ArchivistDesk/surface.cfg
+
+• Desk identity (surface.auth ↔ folder ADM)
+• Cloth/felt
+• layout: map of what’s on the desk: leaf[23] → {x,y,openW,…}, envelopes, tools, …
+
+Refresh / remount = read surface layout + open matter + merge config.
+
+───
+
+3. Runtime request path
+
+Browser (app.js)
+    │  fetch /api/…
+    ▼
+server.py  (SAFE = prod/safe_box → bay → ~local)
+    │
+    ▼
+store.py   read/write files under library + surfaces + marketplace
+
+Boot (simplified):
+1. Ensure user tree exists (cheap; no hammer migration on every GET).
+2. Load surface paper + layout.
+3. For each layout object: load matter file + config → mountLeaf / mountBoard / mountTool.
+4. PocketTools registers package kits (envelope.kit, chipper.kit, …) from marketplace / loc mirror.
+
+Save paths:
+• Edit body → write_leaf_chip (pin + body; _preserve_updated so title-only doesn’t smash import years).
+• Drag/pose → surface layout and/or pose APIs.
+• Stamp/chip → merge_leaf_prop_mark → config Cite/Mark + pin cites (+ thin Glass.title).
+• Membership → rewrite bin matter chips[].
+
+Import path (Evernote):
+import_enex.py → spawn envelope + N leaves → pin TPS + Import.* on chip, homeBin on config, membership on bin. Staging parcel, not forever-home.
+
+───
+
+4. Object model in the UI
+
+app.js keeps an in-memory wins map: uid → { kind, data, el, … }.
+
+┌───────┬────────────────────┬──────────────────────────────────────────────────────┐
+│ kind  │ Matter             │ Interaction                                        │
+├───────┼────────────────────┼──────────────────────────────────────────────────────┤
+│ leaf  │ .chip              │ open paper, select body, terminal edit, stamp      │
+├───────┼────────────────────┼──────────────────────────────────────────────────────┤
+│ card  │ .chip              │ index face, select title/body, drag chrome rail/fo │
+├───────┼────────────────────┼──────────────────────────────────────────────────────┤
+│ board │ .bin               │ board / book / shelf / envelope (deck face kit)    │
+├───────┼────────────────────┼──────────────────────────────────────────────────────┤
+│ tool  │ tool cfg + package │ stamper, chipper, eraser, inbox, …                 │
+└───────┴────────────────────┴──────────────────────────────────────────────────────┘
+
+Envelope = bin subtype + marketplace envelope package (HTML set + kit paint + station stripe). Not a separate storage type.
+
+Hermes mail = inbox tool + held tags + deliver/take APIs; still library matter under the hood.
+
+───
+
+5. Packages vs instances
+
+┌──────────┬─────────────────────────────────────────────────────────────────────────────────────────┐
+│          │                                                                                       │
+├──────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+│ Package  │ ~host/marketplace/chips/envelope/ or editors/chipper/ set + kit + dressups + manifest │
+├──────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+│ Instance │ tool-chipper[0].cfg · which plate is loaded, pose, canMark                            │
+└──────────┴─────────────────────────────────────────────────────────────────────────────────────────┘
+
+Install can mirror package into ~local/ADM/… for loc overrides. Kit = JS that registers with PocketTools and implements paint / applyToLeaf.
+
+───
+
+6. Where Glass Compost sits (not core, but wired)
+
+conversations.json
+       ↓ forestry / yard ingest
+yard.db  (faces + messages + UUIDs + create_time)
+       ↓ Glass Compost UI (43182) · hand cuts in bench.db
+ZIP  OT-001.T01.B006
+       ↓ chipper / resolve_glass_zip (desk store)
+leaf pin.cites + Glass.title + face Cite trunk
+
+Desk core does not require yard to boot. Cite provenance is optional enrichment.
+
+───
+
+7. The tension you’re naming (architecturally true)
+
+The runtime is a clean 3-layer file machine:
+
+matter (library)  ·  instance cfg (surface)  ·  surface layout
+
+The vocabulary on the papers is a fossil bed:
+
+• pin: tps_created underscores
+• prop: Cite.code, Mark.type, Import.* dots
+• cite as mark-class + pin list + face ticket
+• rosewood (leaf 6/16) sketching a different law: OIX id, payload block, records/TPS as their own classification
+
+So: core mechanics work; paper grammar is pre-rosewood. Capability proof (import, sort, stamp) ran ahead of format law — which is exactly why it feels both powerful and illegible.
+
+───
+
+8. One diagram
+
+                    ┌─────────────────────────┐
+                    │  app.js  (felt / wins)  │
+                    └───────────┬─────────────┘
+                                │ HTTP :43167
+                    ┌───────────▼─────────────┐
+                    │  server.py              │
+                    └───────────┬─────────────┘
+                                │
+              ┌─────────────────┼─────────────────┐
+              ▼                 ▼                 ▼
+        library/            surfaces/         marketplace/
+     leaf*.chip            ArchivistDesk/      envelope.set
+     envelope*.bin           surface.cfg       chipper.kit
+     (MATTER)                configs/*.cfg     (PACKAGES)
+                             (INSTANCE+POSE)
+
+───
+
+That’s the core. If you want this parked as a leaf on the desk so hard-refresh can’t eat it, say the word and we’ll write it to library/ as matter (not only chat). For now: go write rosewood; this is the machine you’re writing against.
+
+---
+
+The seed (what the core actually is)
+
+The system is not “a notes app with folders.” It’s a minimal object language meant to scale into a simulated world:
+
+There are only two ontological types at the bottom:
+
+1. Leaf — a unit of content (a chip of remembering, a law, a letter, a myth bit).
+2. Bin — a unit of containment (a person, a place, a shelf, a parcel, a Catherine).
+
+Everything else in the live desk (envelope chrome, books, boards, tools, mail) is specialization and dress of those two, or packages that act on them. The core does not start from “surface + ten object classes.” It starts from:
+
+a leaf can live inside a bin; a bin can live on a surface (or inside another bin, in the long arc).
+
+That is the world seed: memory-chip in a named container. Catherine-as-bin holding leaves of what she remembers. Not metaphor layered later — that’s the intended growth path of the object model.
+
+───
+
+How the code bank is actually structured
+
+Roughly three files own the core; everything else is UI sugar or import thrash.
+
+┌──────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Piece    │ Job in the core                                                                                                          │
+├──────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ store.py │ Ontology + persistence law. Knows leaf, bin, surface, package paths. Parses/writes the papers. Membership, spawn, pose   │
+│          │ -on-surface. This is the code bank of “what exists.”                                                                     │
+├──────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ server   │ Thin HTTP face over store. No second model — just routes that call store.                                                │
+│ .py      │                                                                                                                          │
+├──────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ app.js   │ Hands. Mounts whatever store says exists onto a felt. Does not define the world — presents it.                           │
+└──────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+So “the core” ≠ features in app.js. Core = store’s idea of leaf / bin / surface / paper sections, plus the rule that matter is files with uids, not rows in a hidden DB.
+
+───
+
+The two primitives (as the store thinks)
+
+Leaf
+• Stable uid leaf[n] (spine).
+• File = matter paper: identity + pin + body.
+• Body is sacred: boot must not invent/wipe it.
+• Semantically: a chip of something that can be known — not “a document type.”
+
+Bin
+• Stable uid board[n] / book[n] / envelope[n] / …
+• File = matter paper: identity + chips: [uids…].
+• Semantically: a named hold — not “a folder UI.” Type/subtype (envelope vs book) is class of hold, same genus.
+
+Membership is the only relationship the core needs at first:
+bin lists leaf (and later card/tool) uids. No graph DB. The world graph is nested membership + surface placement.
+
+Card and tool are later citizens. They fit the same “thing with uid + optional matter + optional instance cfg” pattern, but they are not the seed. Seed = leaf + bin.
+
+───
+
+How the core “understands surface”
+
+Surface is not a third content type like leaf. It’s the place of appearance.
+
+In the code bank:
+
+1. User = folder under ~local/ (ADM). Auth string matches.
+2. Surface folder = surfaces/ArchivistDesk/ — a named desk.
+3. surface.cfg = the paper for that place:
+   • who/what desk (surface.id, auth)
+   • how it looks (dressup felt)
+   • layout: — map of which uids are present here and their pose
+
+So the core’s understanding of surface is:
+
+A surface is a registry of presence: uid → pose (and open state).
+It does not own the leaf body. It owns that this leaf is on this desk right now, here.
+
+Library matter can exist without being on a surface (filed only in a bin, or only in library).
+Surface can reference uids; store loads matter by uid when Hands mounts.
+
+That’s why config is split:
+
+• Matter (library) = what the thing is
+• Surface layout = where it shows on this desk
+• Instance cfg = how this surface dresses/files it (homeBin, marks, shell)
+
+The seed idea was smaller: leaf + bin. Surface is the stage those objects appear on. Stage came so Hands could have a place; it isn’t the ontology of “remembering.”
+
+───
+
+Growth law (why it gets crowded)
+
+The core is built to grow by specializing papers and packages, not by inventing new databases:
+
+leaf          → body of knowing
+bin           → named hold (Catherine, bible bits, a room)
+surface       → stage of appearance
+package/manifest → laws of a *kind* of actor (envelope face, chipper)
+instance cfg  → this stage’s dress of that actor
+
+So an envelope is still a bin with a package face. A book is still a bin. “Catherine” in the full world is still a bin whose chips are leaves of events/memories.
+
+The thrash you feel is when stage props (Cite, Mark, Import, Glass, TPS naming) get treated as if they were new ontological types, instead of scars on leaf/bin or dress on the stage. The seed never said “citation is a first-class being.” It said leaf and bin.
+
+───
+
+One sentence
+
+The core is a file-backed dual of (content chip, container chip), with surface as presence-on-a-stage, and everything else as package law or instance dress growing toward a simulated world where a bin can be a person and a leaf can be a memory inside them.
+
+That’s the build idea. Not the Evernote importer. Not the feature list. If you want the next write-down, it should be that law on a leaf — so hard-refresh can’t eat it — and rosewood can decide how pin/TPS/cite sit inside leaf/bin without inventing a third primitive every reset.
+
+--
+
+Why the metaphor hurts (you’re not being precious)
+Leaf in natural language:
+• seasonal, falls, decays, blows away
+• part of a tree that is discarded
+
+Chip in your system:
+• cut, kept, filed, stamped, carried in a bin
+• industrial / archive / casino / ROM — persists
+
+If the code bank’s primary function is named after what falls off the tree, the whole symbolic construct is quietly saying: this world is temporary by default. Bins can be Catherine; the memories inside her are still typed as things that fly away. That’s not a small branding issue. That’s ontology leaking into language and then into every API and every agent’s mental model.
+
+The intended construct (as you’ve restated it)
+
+chip     = atomic unit of kept information   (genus)
+  leaf   = one face/kind of chip (paper sheet)   (species)  — maybe
+  card   = another face/kind
+  …      = later kinds
+
+bin      = named hold (person, place, parcel, Catherine)
+surface  = stage of presence
+
+Not:
+
+leaf = everything
+.chip = whatever we write to disk
+
+Where you are now
+You’re in a half-migration:
+• Disk: chips (and bins)
+• Code: leaf-primary
+• Speech: you already moved to chips; the bank didn’t fully follow
+
+So when we “explain the core,” if we say “leaf + bin,” we’re reifying the old mistake even when the files already know better.
+
+───
+
+I won’t thrash-rename the whole bank tonight unless you ask for that war. But the correction stands:
+
+Core should be chip + bin.
+Leaf is (at most) a kind of chip, and maybe a bad forever-name even for that kind — paper, sheet, page, scrap — something that doesn’t promise autumn.
+
+Until the code bank says chip as primary, the symbolic construct stays accidentally ephemeral. You’re right to stop and write before we add more scars on a leaf-shaped god.
