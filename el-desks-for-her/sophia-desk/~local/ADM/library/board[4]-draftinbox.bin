@@ -9,9 +9,9 @@ bin:
   name: Draft Inbox
   auth: L.E. AWN INDUSTRIES
   class: box
-  chips: ["stamper[1]", "stamper[2]", "stamper[3]", "chipper[0]", "eraser[1]", "stamper[0]"]
+  chips: ["stamper[1]", "stamper[2]", "stamper[3]", "eraser[1]", "stamper[0]", "chipper[0]"]
 pin:
   tps_created: 1785988945
-  tps_updated: 1786481754
+  tps_updated: 1786552293
   tags: []
 ---

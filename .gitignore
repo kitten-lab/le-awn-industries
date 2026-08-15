@@ -26,7 +26,9 @@ emt-bench/prod/**/store/
 
 # Operator run disk is local clay (desk papers, surface poses).
 # Product code + ~host marketplace ship; un-ignore ~local slices later if you want.
-sophia-desk/~local/
+el-desks-for-her/sophia-desk/~local/ADM/library/
+el-desks-for-her/ava-desk/~local/HER/library/
+el-desks-for-her/cassandra-desk/~local/KME/library/
 
 # Operator mats / papers — local only for now
 safe_box/

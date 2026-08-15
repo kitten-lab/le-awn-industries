@@ -2,16 +2,16 @@
 store:
   file: board[0]-junk.bin
   type: bin
-  bit_count: 2
+  bit_count: 3
 bin:
   uid: board[0]
   type: board
   name: junk
   auth: unknown
   class: box
-  chips: ["leaf[5]", "leaf[0]"]
+  chips: ["leaf[5]", "leaf[0]", "chipper[0]"]
 pin:
   tps_created: 1786462836
-  tps_updated: 1786462873
+  tps_updated: 1786672700
   tags: []
 ---

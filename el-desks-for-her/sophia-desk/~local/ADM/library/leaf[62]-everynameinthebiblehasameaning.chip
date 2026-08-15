@@ -9,7 +9,7 @@ pin:
   tps_created: 1667474437
   tps_updated: 1670110895
   tps_event: 1786273789
-  tags: ["import", "evernote", "religious-writings", "batch-01"]
+  tags: ["import", "evernote", "religious-writings", "batch-01", "mailed-out"]
   Import.batch: 1
   Import.enex: RELIGIOUS WRITINGS.enex
   Import.envelope: envelope[13]

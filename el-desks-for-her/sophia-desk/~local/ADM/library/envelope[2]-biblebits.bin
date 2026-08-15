@@ -2,16 +2,16 @@
 store:
   file: envelope[2]-biblebits.bin
   type: bin
-  bit_count: 10
+  bit_count: 0
 bin:
   uid: envelope[2]
   type: envelope
   name: bible bits
   auth: unknown
   class: envelope
-  chips: ["card[6]", "leaf[24]", "leaf[55]", "leaf[56]", "leaf[60]", "leaf[61]", "leaf[62]", "leaf[64]", "leaf[57]", "card[5]"]
+  chips: []
 pin:
   tps_created: 1786114913
-  tps_updated: 1786282459
-  tags: []
+  tps_updated: 1786655709
+  tags: ["mailed-out"]
 ---

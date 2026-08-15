@@ -9,9 +9,9 @@ bin:
   name: CLUE CARDS 1
   auth: unknown
   class: envelope
-  chips: ["card[2]", "card[4]", "card[3]", "card[1]", "card[5]", "card[0]"]
+  chips: ["card[4]", "card[3]", "card[1]", "card[5]", "card[0]", "card[2]"]
 pin:
   tps_created: 1786464067
-  tps_updated: 1786468503
+  tps_updated: 1786637991
   tags: []
 ---

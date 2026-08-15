@@ -2,16 +2,16 @@
 store:
   file: envelope[5]-documentsofourpreferredpapersplease.bin
   type: bin
-  bit_count: 5
+  bit_count: 4
 bin:
   uid: envelope[5]
   type: envelope
   name: DOCUMENTS OF OUR Preferred Papers, Please
   auth: unknown
   class: envelope
-  chips: ["leaf[6]", "leaf[16]", "leaf[32]", "leaf[22]", "leaf[33]"]
+  chips: ["leaf[6]", "leaf[16]", "leaf[32]", "leaf[33]"]
 pin:
   tps_created: 1786150850
-  tps_updated: 1786481739
+  tps_updated: 1786655652
   tags: []
 ---

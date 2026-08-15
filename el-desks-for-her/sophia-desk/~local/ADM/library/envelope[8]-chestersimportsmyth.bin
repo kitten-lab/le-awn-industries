@@ -9,9 +9,9 @@ bin:
   name: Chester's Imports Myth
   auth: unknown
   class: envelope
-  chips: ["leaf[27]", "leaf[30]"]
+  chips: ["leaf[30]", "leaf[27]"]
 pin:
   tps_created: 1786152697
-  tps_updated: 1786464997
+  tps_updated: 1786653183
   tags: []
 ---

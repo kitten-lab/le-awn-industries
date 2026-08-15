@@ -2,16 +2,16 @@
 store:
   file: envelope[7]-plansforxos.bin
   type: bin
-  bit_count: 12
+  bit_count: 15
 bin:
   uid: envelope[7]
   type: envelope
   name: Plans for XOS
   auth: unknown
   class: envelope
-  chips: ["leaf[5]", "leaf[21]", "leaf[11]", "leaf[3]", "leaf[10]", "leaf[14]", "leaf[4]", "leaf[15]", "leaf[28]", "leaf[34]", "leaf[67]", "leaf[7]"]
+  chips: ["leaf[5]", "leaf[21]", "leaf[11]", "leaf[3]", "leaf[10]", "leaf[28]", "leaf[34]", "leaf[7]", "leaf[4]", "leaf[15]", "leaf[14]", "leaf[66]", "leaf[67]", "leaf[22]", "leaf[100]"]
 pin:
   tps_created: 1786152247
-  tps_updated: 1786395532
+  tps_updated: 1786655695
   tags: []
 ---
