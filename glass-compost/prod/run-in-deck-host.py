@@ -33,13 +33,15 @@ def main() -> int:
     title = "The Glass Compost"
     if HOUSE in ("green", "red", "blue", "archivist", "detective", "lover", "adm", "kme", "her"):
         title = f"Glass Compost · {HOUSE}"
+    # Window geometry — not product kind. "bench" is not a Deck Host profile.
+    profile = os.environ.get("DECK_HOST_PROFILE", "desk").strip() or "desk"
     cmd = [
         sys.executable,
         str(DECK),
         "--title",
         title,
         "--profile",
-        "bench",
+        profile,
         "--window-mode",
         os.environ.get("DECK_HOST_WINDOW_MODE", "maximized"),
         "--url",

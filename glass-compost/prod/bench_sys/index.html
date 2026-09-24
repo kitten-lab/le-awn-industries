@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- amb-bust 202609161516classic -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Glass Compost · Terminal</title>
+  <title>JX·NIM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/app.css?v=202609170930plates" />
 </head>
-<body class="bench" data-house="green">
+<body class="bench" data-skin="classic" data-tone="dark" data-house="bios">
   <header class="b-chrome" data-deck-chrome>
-    <span class="b-chip" data-deck-menu title="Glass Compost">IO·<strong>GLASS</strong></span>
-    <span class="b-drag" data-deck-drag>GLASS COMPOST · terminal cut room</span>
-    <div class="b-house" title="House phosphor · each girl runs compost in her color">
+    <button type="button" class="b-chip" data-deck-menu data-rail-toggle-chip title="Open / stow side rail (mobile) · JX·NIM">JX·<strong>NIM</strong></button>
+    <span class="b-drag" data-deck-drag>GLASS COMPOST · cut room</span>
+    <div class="b-seg" role="group" aria-label="skin">
+      <button type="button" class="b-seg-btn is-on" data-skin="classic" title="Classic · Cursor / GitHub reading">classic</button>
+      <button type="button" class="b-seg-btn" data-skin="terminal" title="Terminal · phosphor CRT">terminal</button>
+    </div>
+    <div class="b-house" data-for-skin="terminal" title="BIOS = work field (blue) · GRN/RED/AMB = costumes">
       <span class="b-house-lab">house</span>
-      <button type="button" class="b-house-btn is-on" data-house="green" title="Archivist · Terminal IO green">GRN</button>
+      <button type="button" class="b-house-btn is-on" data-house="bios" title="Work · VGA BIOS navy">BIOS</button>
+      <button type="button" class="b-house-btn" data-house="green" title="Archivist · Terminal IO green">GRN</button>
       <button type="button" class="b-house-btn" data-house="red" title="Detective · KME red">RED</button>
-      <button type="button" class="b-house-btn" data-house="blue" title="Lover · HER blue">BLU</button>
+      <button type="button" class="b-house-btn" data-house="amber" title="Amber lamp · warm phosphor">AMB</button>
+    </div>
+    <div class="b-seg b-tone" data-for-skin="classic" role="group" aria-label="tone">
+      <button type="button" class="b-seg-btn is-on" data-tone="dark" title="Classic dark">dark</button>
+      <button type="button" class="b-seg-btn" data-tone="light" title="Classic light">light</button>
     </div>
     <span class="b-meta" id="metaLine">—</span>
     <div class="b-win" data-deck-window-controls></div>
@@ -25,10 +35,49 @@
 
   <main class="b-main">
     <aside class="b-side">
-      <div class="b-side-h">LOGS</div>
-      <div class="b-side-sub" id="logCount">lived order · OT-001 style</div>
-      <input id="logFilter" class="b-input" type="search" placeholder="filter OT-012 · title…" autocomplete="off" />
-      <div id="logList" class="b-list"></div>
+      <div class="b-rail-tabs">
+        <button type="button" class="b-rail-tab is-on" data-rail="logs">LOGS</button>
+        <button type="button" class="b-rail-tab" data-rail="find">FIND</button>
+        <button type="button" class="b-rail-tab" data-rail="reports">CXR</button>
+      </div>
+
+      <div id="railLogs">
+        <div class="b-side-h">LOGS</div>
+        <div class="b-side-sub" id="logCount">lived order · OT-001 style</div>
+        <input id="logFilter" class="b-input" type="search" placeholder="filter OT-012 · title…" autocomplete="off" />
+        <div id="logList" class="b-list"></div>
+      </div>
+
+      <div id="railFind" hidden>
+        <div class="b-side-h">FIND</div>
+        <div class="b-side-sub" id="findCount">keyword on the mountain · around for neighbors</div>
+        <input id="findQ" class="b-input" type="search" placeholder="Elon · keyword…" autocomplete="off" />
+        <div class="b-find-row">
+          <button type="button" class="b-find-opt is-on" data-find-scope="forest" title="Search every bag">forest</button>
+          <button type="button" class="b-find-opt" data-find-scope="log" title="Clamp to the open log">this log</button>
+        </div>
+        <div class="b-find-row">
+          <button type="button" class="b-find-opt is-on" data-find-turn="all">all</button>
+          <button type="button" class="b-find-opt" data-find-turn="user">user</button>
+          <button type="button" class="b-find-opt" data-find-turn="assistant">asst</button>
+        </div>
+        <div class="b-find-row">
+          <button type="button" class="b-find-go" id="findGo">search</button>
+          <button type="button" class="b-find-go" id="findSeal" disabled>seal CXR</button>
+        </div>
+        <label class="b-find-fax">
+          <input type="checkbox" id="findFaxToo" checked />
+          fax to shards after seal
+        </label>
+        <div class="b-side-sub" id="findPicked">0 selected</div>
+      </div>
+
+      <div id="railReports" hidden>
+        <div class="b-side-h">REPORTS</div>
+        <div class="b-side-sub" id="reportCount">CXR seals</div>
+        <div id="reportList" class="b-list"></div>
+      </div>
+
     </aside>
 
     <section class="b-stage">
@@ -37,39 +86,99 @@
         Pick a log. Place a cut to split a new <strong>trunk</strong>.
         Each message is a <strong>branch</strong> with a stable chip
         (<span class="mono">OT-001.T01.B000</span>) — click to copy.
-        House color is phosphor only · same cut room for every girl.
+        A scene pass may mark a shift on the log — accept it to make a trunk,
+        or reject it. BIOS is the work field · GRN/RED/AMB are costumes.
+        <strong>FIND</strong> searches the forest. <strong>CXR</strong> seals and faxes.
       </div>
       <div id="logView" class="b-log" hidden>
-        <header class="b-log-head">
-          <div>
-            <div class="b-log-code-row">
+        <div id="trunkJump" class="b-trunk-jump" hidden></div>
+        <header class="b-log-card">
+          <div class="b-log-card-rail">
+            <div class="b-log-code-line">
               <div class="b-log-code" id="logCode">—</div>
-              <button type="button" class="b-hide-down-btn" id="hideDownBtn" title="Hide ▾ don't-care branches">
-                hide ▾
+              <div class="b-help" id="roomHelp">
+                <button type="button" class="b-help-btn" id="roomHelpBtn" aria-label="Cut room help" aria-expanded="false" aria-controls="roomHelpPop">?</button>
+                <div class="b-help-pop" id="roomHelpPop" role="tooltip">
+                  <div class="b-help-h">Cut room</div>
+                  <p>
+                    Tree: <strong>log → trunk → branch → leaf</strong>.
+                    Chip e.g. <strong>OT-001.T02.B014</strong> (click to copy).
+                  </p>
+                  <p>
+                    <strong>✂</strong> splits a message on blank-line paragraphs.
+                    Leftovers stay leaves, marked low.
+                    <strong>↺</strong> undoes leaf cuts.
+                    <strong>Cut</strong> starts a new trunk.
+                    A <strong>scene pass</strong> may mark a shift on the log — accept it to make a trunk, or reject it.
+                    <strong>export</strong> seals a CXR.
+                  </p>
+                  <div class="b-help-h">Reading</div>
+                  <p>
+                    <strong>cut done</strong> locks structure and prints the document.
+                    ▾ don't-care rows stay hidden. Unmark to recut.
+                  </p>
+                </div>
+              </div>
+              <div class="b-help" id="logWork" hidden>
+                <button type="button" class="b-help-btn b-work-btn" id="logWorkBtn" aria-label="Work history for this log" aria-expanded="false" aria-controls="logWorkPop">log</button>
+                <div class="b-help-pop b-work-pop" id="logWorkPop" role="tooltip">
+                  <div class="b-help-h">Work</div>
+                  <p class="b-work-hint">Newest first. Scene pass is the proposed read. Accept / cut / cut done are yours.</p>
+                  <div id="logWorkBody"></div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="b-log-title-btn" id="logTitleBtn" title="Edit official log title">
+              <span class="b-log-title" id="logTitle">—</span>
+            </button>
+            <div class="b-log-actions" role="toolbar" aria-label="log actions">
+              <button type="button" class="b-hide-down-btn" id="hideDownBtn" title="Hide don't-care (gravity down) messages">
+                hide ↓
+              </button>
+              <button type="button" class="b-hide-down-btn" id="trunkJumpBtn" title="Show or hide the trunk jump rail">
+                jumps
               </button>
               <button type="button" class="b-done-btn" id="cutDoneBtn" title="Mark this log as cut into trunks">
-                mark cut done
+                cut done
+              </button>
+              <button type="button" class="b-export-btn" id="exportLogBtn" title="Seal this whole log as a CXR (fax is a separate act)">
+                export
               </button>
             </div>
-            <div class="b-log-title" id="logTitle">—</div>
-            <div class="b-log-quiet" id="logQuiet"></div>
           </div>
-          <div class="b-branches" id="branchPills"></div>
+          <div class="b-log-card-body">
+            <div class="b-log-orig" id="logOrig" hidden></div>
+            <div class="b-log-quiet" id="logQuiet"></div>
+            <div id="sceneLogCard"></div>
+          </div>
         </header>
-        <div class="b-hint">
-          Tree: <strong>log → trunk → branch → leaf</strong> ·
-          chip e.g. <strong>OT-001.T02.B014</strong> (click to copy) ·
-          <strong>✂</strong> = split message by blank lines / newlines ·
-          <strong>↺</strong> = undo leaf cuts ·
-          <strong>Cut</strong> = new trunk ·
-          place remembered (local + bench.db).
-        </div>
+        <div class="b-branches" id="branchPills" hidden></div>
+        <div id="sceneIndex" class="b-scene-index" hidden></div>
         <div id="msgStream" class="b-stream"></div>
+      </div>
+      <div id="findView" class="b-find-view" hidden>
+        <header class="b-find-head">
+          <div class="b-find-head-code" id="findHead">FIND</div>
+          <div class="b-find-head-sub" id="findHeadSub">type a keyword · forest default · around for neighbors that don't say it</div>
+        </header>
+        <div id="findHits" class="b-find-hits"></div>
+      </div>
+      <div id="reportView" class="b-report-view" hidden>
+        <header class="b-find-head">
+          <div>
+            <div class="b-find-head-code" id="reportHead">CXR</div>
+            <div class="b-find-head-sub" id="reportHeadSub">sealed wood</div>
+          </div>
+          <button type="button" class="b-export-btn" id="reportCopyBtn">copy chips</button>
+          <button type="button" class="b-export-btn" id="reportFaxBtn">fax to shards</button>
+        </header>
+        <div id="reportChips" class="b-report-chips"></div>
+        <pre id="reportBody" class="b-report-body"></pre>
       </div>
     </section>
   </main>
 
   <div class="b-toast" id="toast" hidden></div>
-  <script src="/app.js"></script>
+  <script src="/app.js?v=202609170930plates"></script>
 </body>
 </html>

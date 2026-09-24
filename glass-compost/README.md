@@ -39,7 +39,18 @@ python fetch-zip.py OT-093.T01.B011
 python fetch-zip.py OT-093.T01.B011 --json
 ```
 
-Agents: if Alice hands a glass ZIP, run `fetch-zip.py` — do not grep the 219MB export.
+## Find · CXR · fax
+
+Keyword **FIND** searches the mountain (`yard.db` `messages_fts`). Default is forest-wide; clamp to the open log if you want. Turn filter: all / user / assistant.
+
+Check hits, **seal CXR** (Chester Export Report). Full messages, full timestamps, gravity words, ZIP chips. Thin PocketGo frontmatter.
+
+- Seals live in `prod/bench_sys/store/reports/`
+- Fax copies into `my-pocket-things/pocket-go/~hosts/glass/shards/` (`go.glass`)
+- Chips count how many CXR reports they belong to
+- A whole-log export stays in the compost drawer unless you fax it on purpose
+
+Cabinets in PocketGo stay hand work. Compost does not write Charlie.
 
 ## Run
 

@@ -1,0 +1,15 @@
+---
+description: Scene pass is how trunks get proposed in Glass Compost. Read the skill before cutting a log.
+alwaysApply: true
+---
+
+# Scene pass
+
+When ori'el asks to cut a log, propose trunks, scene-pass, or "do what we did on OT-001 / OT-008":
+
+1. Read and follow `.cursor/skills/scene-pass/SKILL.md` **before** writing cuts.
+2. Full sequential read. No CIO, no 40-msg caps, no begin/mid/end trays.
+3. Propose only (`scene_scenes` / `scene_logs` status `proposed`). They accept · edit.
+4. Do not silently move existing `hand_cuts`. Explain seq disagreements; move only if asked.
+5. Yard is archive. Compost writes live in `bench.db`. Do not commit unless asked.
+6. After trunks exist, a second round proposes **soft tags on those trunks** (`hand_cuts.tags_json`), not the log. Do not overwrite tags they already wrote. Talk first, then do.
