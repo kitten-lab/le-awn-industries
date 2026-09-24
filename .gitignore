@@ -26,12 +26,19 @@ emt-bench/prod/**/store/
 
 # Operator run disk is local clay (desk papers, surface poses).
 # Product code + ~host marketplace ship; un-ignore ~local slices later if you want.
-el-desks-for-her/sophia-desk/~local/ADM/library/
-el-desks-for-her/ava-desk/~local/HER/library/
-el-desks-for-her/cassandra-desk/~local/KME/library/
+# el-desks-for-her/sophia-desk/~local/ADM/library/
+# el-desks-for-her/ava-desk/~local/HER/library/
+# el-desks-for-her/cassandra-desk/~local/KME/library/
+# el-desks-for-her/**/~local/**/~trash/
 
 # Operator mats / papers — local only for now
 safe_box/
 **/safe_box/
 paper/
 **/paper/
+el-desks-for-her/ava-desk/~local/HER/~trash/*
+glass-compost/bench_sys/store/reports/*
+**.bak*
+**/*-bak*
+_safety-aidm-index.md
+_safety-build-desk-typewriter.css

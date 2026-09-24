@@ -12,7 +12,8 @@ Jack Brooks / the cross stay in **story**. They do not own the folder names.
 | [`el-desks-for-her/sophia-desk/`](./el-desks-for-her/sophia-desk/) | **SophiaDesk** (green) | `CO.LEA-001-DESK` | 43167 | `my-pocket-things/pocket-desktop` · was `le-awn-industries/sophia-desk/` |
 | [`el-desks-for-her/cassandra-desk/`](./el-desks-for-her/cassandra-desk/) | **CassandraDesk** (red · KME) | slot | — | clone later · Agent K / cathedral modes |
 | [`el-desks-for-her/ava-desk/`](./el-desks-for-her/ava-desk/) | **AvaDesk** (blue · HER) | slot | — | clone later · Eve / love letters |
-| [`emt-bench/`](./emt-bench/) | **EM Translation Bench** | `CO.LEA-002-EMT` | 43150 | `jacks-cross/the-concor` |
+| [`emt-bench/`](./emt-bench/) | **EM Translation Toy** | `CO.LEA-002-EMT` | 43150 | `jacks-cross/the-concor` |
+| [`em-translation-bench/`](./em-translation-bench/) | **EM Translation Bench** | `CO.LEA-004-EMB` | 43174 | the work desk. Genesis from the Berean table. Notes beside it. |
 | [`glass-compost/`](./glass-compost/) | **The Glass Compost** | `CO.LEA-003-GLASS` | 43182 | `jacks-cross/nim-bench` |
 
 ## Not here
