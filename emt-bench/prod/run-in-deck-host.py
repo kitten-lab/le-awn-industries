@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EM Translation Bench → The Deck Host (fullscreen-capable desk app)
+EM Translation Toy → The Deck Host (the card-table toy, not the bench)
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ def main() -> int:
         sys.executable,
         str(DECK_HOST_PY),
         "--title",
-        "EM Translation Bench",
+        "EM Translation Toy",
         "--profile",
         profile,
         "--width",
@@ -55,7 +55,7 @@ def main() -> int:
         "--spawn-cwd",
         str(CONCOR_SYS),
     ]
-    print("EM Translation Bench · CO.LEA-002-EMT · Deck Host")
+    print("EM Translation Toy · CO.LEA-002-EMT · Deck Host")
     print(f"  url:     {URL}")
     print(f"  size:    {width}x{height}")
     print(f"  profile: {profile}")

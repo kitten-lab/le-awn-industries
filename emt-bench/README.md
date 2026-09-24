@@ -1,7 +1,9 @@
-# EM Translation Bench · CO.LEA-002-EMT
+# EM Translation Toy · CO.LEA-002-EMT
 
 **Maker:** L.E. AWN Industries · `CO.LEA`  
-**Address:** `ALICE_BOX/le-awn-industries/emt-bench/`  
+**Address:** `ALICE_BOX/le-awn-industries/emt-bench/`
+
+The card table stays here. It is the toy. The real bench is a separate build and does not write this `store.json`.  
 **Was:** Jack’s Concor · `jacks-cross/the-concor` · CO.JX-001-CONCOR
 
 Hebrew / concordance / **code-bay** study bench — table, papers, Cab, Strong foil.  
