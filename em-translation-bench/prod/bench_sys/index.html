@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>EM Translation Bench</title>
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+  <header class="chrome" data-deck-chrome>
+    <span class="sku" data-deck-menu>CO.LEA-004-EMB</span>
+    <span class="drag" data-deck-drag>EM Translation Bench</span>
+    <div data-deck-window-controls></div>
+  </header>
+  <div class="chapter-bar">
+    <button type="button" id="open-gen" data-paper="genesis-pick">Open Genesis</button>
+    <button type="button" id="open-lex" data-paper="lexicon">Strong's book</button>
+    <button type="button" id="open-journal" data-paper="journal">Journal</button>
+    <button type="button" id="open-weak" data-paper="weaks">Weak's book</button>
+    <button type="button" id="toggle-keys">Hebrew</button>
+    <button type="button" id="close-desk">Clear desk</button>
+  </div>
+  <div id="desk"></div>
+  <div id="shelf"></div>
+  <div id="heb-board" class="heb-board" hidden>
+    <div class="heb-bar" id="heb-drag">Hebrew <button type="button" id="heb-hide">close</button></div>
+    <div id="heb-keys"></div>
+    <div class="heb-tools">
+      <button type="button" id="heb-finals">finals</button>
+      <button type="button" id="heb-back">delete</button>
+    </div>
+  </div>
+  <footer>Berean Standard Bible and interlinear tables, Bible Hub, CC BY-SA 4.0. Strong’s Hebrew, Open Scriptures, public domain. Their rows are not edited.</footer>
+  <script src="/app.js"></script>
+</body>
+</html>
