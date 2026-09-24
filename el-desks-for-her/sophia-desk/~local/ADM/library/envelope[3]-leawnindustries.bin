@@ -2,16 +2,16 @@
 store:
   file: envelope[3]-leawnindustries.bin
   type: bin
-  bit_count: 2
+  bit_count: 3
 bin:
   uid: envelope[3]
   type: envelope
   name: L.E. AWN Industries
   auth: unknown
   class: envelope
-  chips: ["leaf[0]", "leaf[2]"]
+  chips: ["leaf[2]", "leaf[0]", "leaf[102]"]
 pin:
   tps_created: 1786150621
-  tps_updated: 1786237060
+  tps_updated: 1787242442
   tags: []
 ---

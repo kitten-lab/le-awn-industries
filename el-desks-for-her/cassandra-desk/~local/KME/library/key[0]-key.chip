@@ -1,0 +1,17 @@
+---
+store:
+  file: key[0]-key.chip
+  type: chip
+  subtype: key
+chip:
+  uid: key[0]
+  name: key
+  auth: unknown
+  face: text
+  heading: N
+  type: key
+pin:
+  tps_created: 1787526738
+  tps_updated: 1787526738
+  tags: []
+---

@@ -12,6 +12,6 @@ bin:
   chips: ["leaf[37]", "card[0]"]
 pin:
   tps_created: 1786207552
-  tps_updated: 1786208085
+  tps_updated: 1788974015
   tags: []
 ---

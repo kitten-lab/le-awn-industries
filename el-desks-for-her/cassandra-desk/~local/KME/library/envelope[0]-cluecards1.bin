@@ -2,16 +2,16 @@
 store:
   file: envelope[0]-cluecards1.bin
   type: bin
-  bit_count: 6
+  bit_count: 5
 bin:
   uid: envelope[0]
   type: envelope
   name: CLUE CARDS 1
   auth: unknown
   class: envelope
-  chips: ["card[4]", "card[3]", "card[1]", "card[5]", "card[0]", "card[2]"]
+  chips: ["card[4]", "card[3]", "card[1]", "card[0]", "card[2]"]
 pin:
   tps_created: 1786464067
-  tps_updated: 1786637991
+  tps_updated: 1787242034
   tags: []
 ---

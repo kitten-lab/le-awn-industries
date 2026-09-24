@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[1]-research.bin
+  type: bin
+  bit_count: 1
+bin:
+  uid: envelope[1]
+  type: envelope
+  name: RESEARCH
+  auth: AGENT K
+  class: envelope
+  chips: ["leaf[6]"]
+pin:
+  tps_created: 1786535966
+  tps_updated: 1787242029
+  tags: []
+---

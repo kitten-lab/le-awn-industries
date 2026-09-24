@@ -1,0 +1,19 @@
+---
+store:
+  file: card[2]-gencodebay11.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[2]
+  name: "GEN CODE BAY 1:1"
+  auth: AIDM & MIRA
+  type: card
+pin:
+  tps_created: 1786637114
+  tps_updated: 1786637143
+  tags: ["mail", "shipped-instance"]
+---
+GEN CODE BAY 01|01
+# ברא/שית/ברא/אלה/יםא/תהש/מים/ואת/האר/ץ
+
+# ברא

@@ -2,16 +2,16 @@
 store:
   file: board[1]-blankpapers.bin
   type: bin
-  bit_count: 0
+  bit_count: 2
 bin:
   uid: board[1]
   type: board
   name: Blank Papers
   auth: POCKETDESK
   class: box
-  chips: []
+  chips: ["leaf[104]", "card[15]"]
 pin:
   tps_created: 1785941300
-  tps_updated: 1786325971
+  tps_updated: 1790120756
   tags: []
 ---

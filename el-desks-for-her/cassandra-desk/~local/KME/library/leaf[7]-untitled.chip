@@ -1,0 +1,78 @@
+---
+store:
+  file: leaf[7]-untitled.chip
+chip:
+  uid: leaf[7]
+  name: untitled
+  auth: AGENT K
+pin:
+  tps_created: 1786537256
+  tps_updated: 1786537259
+  tags: ["mailed-out"]
+---
+Parse once, fetch a unit
+
+Soft PHP — no Composer, no YAML library required for flat keys:
+
+/** Split chip text into meta map + body */
+function chipParse(string $raw): array {
+  $meta = [];
+  $body = $raw;
+
+  if (preg_match('/^---\s*\R(.*?)\R---\s*\R?(.*)\z/s', $raw, $m)) {
+    $head = $m[1];
+    $body = $m[2];
+    foreach (preg_split('/\R/', $head) as $line) {
+      $line = trim($line);
+      if ($line === '' || str_starts_with($line, '#')) continue;
+      // "title: Hello stars"
+      if (preg_match('/^([A-Za-z0-9_.-]+)\s*:\s*(.*)$/', $line, $kv)) {
+        $meta[$kv[1]] = trim($kv[2]);
+      }
+    }
+  }
+  return ['meta' => $meta, 'body' => $body, 'raw' => $raw];
+}
+
+/** One unit of information */
+function chipGet(array $chip, string $key, $default = null) {
+  if ($key === 'body') return $chip['body'] ?? $default;
+  if ($key === 'raw')  return $chip['raw'] ?? $default;
+  return $chip['meta'][$key] ?? $default;
+}
+
+Use it
+
+$raw  = file_get_contents($path);
+$chip = chipParse($raw);
+
+$title  = chipGet($chip, 'title', 'untitled');
+$author = chipGet($chip, 'author', '');
+$body   = chipGet($chip, 'body', '');
+
+loadContent('body', '<h1>' . htmlspecialchars($title) . '</h1>');
+loadContent('body', '<p class="by">' . htmlspecialchars($author) . '</p>');
+loadContent('body', '<div class="post">' . nl2br(htmlspecialchars($body)) . '</div>');
+
+That’s fetching a particular unit: chipGet($chip, 'title').
+
+───
+
+Find which chip (registry without a registry)
+
+~storage/STAR-LUX/posts/post-001.chip
+~storage/STAR-LUX/posts/post-002.chip
+~storage/STAR-LUX/mail/msg-....chip
+
+// by filename (id in the name)
+$path = STORAGE_ROOT . '/' . Space_Slug . '/posts/' . $safeId . '.chip';
+
+// by scanning for a meta field (slow, fine for dozens)
+foreach (glob($dir . '/*.chip') as $f) {
+  $c = chipParse(file_get_contents($f));
+  if (chipGet($c, 'type') === 'post' && chipGet($c, 'id') === $want) {
+    // found
+  }
+}
+
+When you have hundreds, you can add a dumb index later (index.chip listing ids). Not day one.

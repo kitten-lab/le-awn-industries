@@ -1,0 +1,12 @@
+# Who sits here. Dresses are sheet names in the general store.
+auth: KME
+title: CassandraDesk
+surface_folder: DetectiveDesk
+surface_name: Detective Desk
+surface_id: desk_DetectiveDesk[0]
+surface_config_id: surf-desk_DetectiveDesk[0]
+port: 43168
+felt: velvet
+mira: neon-red
+sku: RED-KME-689
+whisper: the red thread

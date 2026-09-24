@@ -1,0 +1,17 @@
+---
+store:
+  file: board[0]-untitledboard.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: board[0]
+  type: board
+  name: untitled board
+  auth: unknown
+  class: box
+  chips: []
+pin:
+  tps_created: 1787413697
+  tps_updated: 1787451018
+  tags: []
+---

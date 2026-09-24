@@ -1,0 +1,13 @@
+# Chester's Imports Â· fax docks
+# One host per line.  # comments and blank lines skipped.
+# Format:  id | label | folder path
+#          id | folder path          (label defaults to id)
+#
+# Shared by every El Desk. Island extras:
+#   ~local/<user>/fax-hosts.txt
+# Same id in a later file wins. Cycle the fax face to pick a dock.
+# Re-fax overwrites the same slug.md in that folder.
+
+port-qxa | Port QXA | C:\ALICE_REBORN\PORT-QXA\docks
+kmoire   | Kat Moire | C:\ALICE_BOX\my-pocket-things\pocket-go\~hosts\kmoire\inbox
+terminal-io | Terminal IO Export | C:\ALICE_BOX\my-pocket-things\pocket-go\~hosts\terminals\IO\EXPORTS

@@ -1,0 +1,17 @@
+---
+store:
+  file: book[0]-asadwandering.bin
+  type: bin
+  bit_count: 2
+bin:
+  uid: book[0]
+  type: book
+  name: a sad wandering
+  auth: ava
+  class: book
+  chips: ["leaf[0]", "leaf[16]"]
+pin:
+  tps_created: 1790195434
+  tps_updated: 1790195516
+  tags: []
+---

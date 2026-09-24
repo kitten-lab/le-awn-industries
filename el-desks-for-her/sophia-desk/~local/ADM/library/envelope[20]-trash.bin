@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[20]-trash.bin
+  type: bin
+  bit_count: 1
+bin:
+  uid: envelope[20]
+  type: envelope
+  name: trash
+  auth: ADM
+  class: envelope
+  chips: ["leaf[63]"]
+pin:
+  tps_created: 1787279238
+  tps_updated: 1788974021
+  tags: ["trash-can"]
+---

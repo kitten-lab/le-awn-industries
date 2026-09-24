@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[2]-oizysmiseryx.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: envelope[2]
+  type: envelope
+  name: OIZYS | MISERY | X
+  auth: ADM
+  class: envelope
+  chips: []
+pin:
+  tps_created: 1788973967
+  tps_updated: 1789752686
+  tags: ["shipped-instance"]
+---

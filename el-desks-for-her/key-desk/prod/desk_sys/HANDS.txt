@@ -1,0 +1,3 @@
+Hands lives in el-desks-for-her/desk_core/hands/ (app.js + app.css).
+This folder's copies were removed so a core edit cannot drift per girl.
+index.html still asks for app.js — the server serves the shared file.

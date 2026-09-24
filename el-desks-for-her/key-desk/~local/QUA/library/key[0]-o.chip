@@ -1,0 +1,19 @@
+---
+store:
+  file: key[0]-o.chip
+  type: chip
+  subtype: key
+chip:
+  uid: key[0]
+  name: O
+  auth: unknown
+  face: text
+  glyph: O
+  heading: E
+  type: key
+pin:
+  tps_created: 1787413529
+  tps_updated: 1787449280
+  tags: []
+---
+O

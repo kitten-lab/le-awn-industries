@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[0]-biblebits.bin
+  type: bin
+  bit_count: 12
+bin:
+  uid: envelope[0]
+  type: envelope
+  name: bible bits
+  auth: unknown
+  class: envelope
+  chips: ["leaf[8]", "leaf[11]", "leaf[13]", "leaf[14]", "card[1]", "leaf[15]", "leaf[10]", "leaf[12]", "card[3]", "leaf[9]", "leaf[7]", "card[2]"]
+pin:
+  tps_created: 1786637073
+  tps_updated: 1787279844
+  tags: ["shipped-instance"]
+---

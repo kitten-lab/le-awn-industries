@@ -1,0 +1,19 @@
+---
+store:
+  file: key[6]-9.chip
+  type: chip
+  subtype: key
+chip:
+  uid: key[6]
+  name: 9
+  auth: unknown
+  face: text
+  glyph: 9
+  heading: N
+  type: key
+pin:
+  tps_created: 1787414624
+  tps_updated: 1787449329
+  tags: []
+---
+9

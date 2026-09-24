@@ -1,0 +1,19 @@
+---
+store:
+  file: key[5]-6.chip
+  type: chip
+  subtype: key
+chip:
+  uid: key[5]
+  name: 6
+  auth: unknown
+  face: text
+  glyph: 6
+  heading: N
+  type: key
+pin:
+  tps_created: 1787414616
+  tps_updated: 1787414616
+  tags: []
+---
+6

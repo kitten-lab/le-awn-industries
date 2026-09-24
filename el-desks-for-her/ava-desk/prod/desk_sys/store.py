@@ -36,15 +36,28 @@ import time
 from pathlib import Path
 from typing import Any
 
+_EL_DESKS = Path(__file__).resolve().parents[3]
+if str(_EL_DESKS) not in __import__("sys").path:
+    __import__("sys").path.insert(0, str(_EL_DESKS))
+from desk_core.house import load_house
+from desk_core import dress_store as _dress_store
+from desk_core import mail as _mail
+from desk_core import fax as _fax
+from desk_core import trash as _trash
+from desk_core import keys as _desk_keys
+
+_DESK_ROOT = Path(__file__).resolve().parents[2]
+HOUSE = load_house(_DESK_ROOT)
+
 LOCAL_DIRNAME = "~local"
 SURFACES_DIRNAME = "surfaces"
-DEFAULT_USERNAME = "HER"
+DEFAULT_USERNAME = HOUSE.auth
 LEGACY_USERNAMES = ("abl",)  # prior path segments to migrate
-DEFAULT_SURFACE_FOLDER = "LetterDesk"
-DEFAULT_SURFACE_ID = "desk_LetterDesk[0]"
-DEFAULT_SURFACE_NAME = "Letter Desk"
-DEFAULT_SURFACE_CONFIG_ID = "surf-desk_LetterDesk[0]"
-DEFAULT_SURFACE_SUBTYPE = "desk"
+DEFAULT_SURFACE_FOLDER = HOUSE.surface_folder
+DEFAULT_SURFACE_ID = HOUSE.surface_id
+DEFAULT_SURFACE_NAME = HOUSE.surface_name
+DEFAULT_SURFACE_CONFIG_ID = HOUSE.surface_config_id
+DEFAULT_SURFACE_SUBTYPE = HOUSE.surface_subtype
 SURFACE_PAPER_NAME = "surface.cfg"
 # primary leaf — stable uid leaf[0]; file tail follows title slug
 PRIMARY_CHIP_ID = "leaf[0]"  # uid
@@ -101,6 +114,7 @@ _KEY_ORDER: dict[str, tuple[str, ...]] = {
         "mark",
         "shell",
         "style",
+        "sheets",  # stacked .dsc names over _base (comma list)
         "color",
         "cloth",  # bookbox cloth set (oxblood/forest/navy/sand)
         "class",
@@ -205,61 +219,35 @@ def marketplace_root(safe: Path) -> Path:
 
 
 def leaf_dressups_root(safe: Path) -> Path:
-    """~host/marketplace/chips/leaf/dressups/ — .dsc costumes for leaf shell."""
-    return marketplace_root(safe) / "chips" / "leaf" / "dressups"
+    """General store leaf dressups (shared ~store, island overlay as fallback)."""
+    return _dress_store.dress_dirs(_DESK_ROOT, "leaf")[0]
 
 
 def list_leaf_dressups(safe: Path) -> list[dict[str, Any]]:
-    """Catalog of .dsc files (id = stem)."""
-    root = leaf_dressups_root(safe)
-    root.mkdir(parents=True, exist_ok=True)
-    out: list[dict[str, Any]] = []
-    for p in sorted(root.glob("*.dsc")):
-        out.append(
-            {
-                "id": p.stem,
-                "file": p.name,
-                "path_display": rel_from_bay(safe, p),
-                "chars": p.stat().st_size,
-            }
-        )
-    return out
+    """Catalog of .dsc files (id = stem). Shared store wins on name collision."""
+    return _dress_store.list_dressups(_DESK_ROOT, "leaf")
 
 
 def read_leaf_dressup(
     safe: Path, dress_id: str
 ) -> tuple[Path | None, str | None, str | None]:
     """Returns (path, css text, path_display)."""
-    root = leaf_dressups_root(safe)
-    stem = re.sub(r"[^\w.-]+", "", (dress_id or "").strip())
-    if not stem:
-        return None, None, None
-    path = root / f"{stem}.dsc"
-    if not path.is_file():
-        # dictation alias: lines → lined
-        if stem == "lines":
-            path = root / "lined.dsc"
-            stem = "lined"
-        if not path.is_file():
-            return None, None, None
-    try:
-        return path, path.read_text(encoding="utf-8"), rel_from_bay(safe, path)
-    except OSError:
-        return path, None, rel_from_bay(safe, path)
+    return _dress_store.read_dressup(_DESK_ROOT, "leaf", dress_id)
 
 
 def write_leaf_dressup(safe: Path, dress_id: str, css_text: str) -> Path:
-    """Save costume sheet (.dsc). Local studio edit of host marketplace dress."""
-    root = leaf_dressups_root(safe)
-    root.mkdir(parents=True, exist_ok=True)
-    stem = re.sub(r"[^\w.-]+", "", (dress_id or "").strip())
-    if stem == "lines":
-        stem = "lined"
-    if not stem:
-        raise ValueError("dress id required")
-    path = root / f"{stem}.dsc"
-    path.write_text("" if css_text is None else str(css_text), encoding="utf-8")
-    return path
+    """Save costume sheet (.dsc) into the general store."""
+    return _dress_store.write_dressup(_DESK_ROOT, "leaf", dress_id, css_text)
+
+
+def list_kind_dressups(kind: str) -> list[dict[str, Any]]:
+    return _dress_store.list_dressups(_DESK_ROOT, kind)
+
+
+def read_kind_dressup(
+    kind: str, dress_id: str
+) -> tuple[Path | None, str | None, str | None]:
+    return _dress_store.read_dressup(_DESK_ROOT, kind, dress_id)
 
 
 def discover_username(safe: Path) -> str:
@@ -494,6 +482,10 @@ def layout_object_id(raw: str) -> str:
         return to_leaf_chip_id(s)
     if re.match(r"^card(\[|_)", s):
         return to_card_id(s)
+    if re.match(r"^key(\[|_)", s) or s.startswith("key["):
+        kid = _desk_keys.to_key_id(s)
+        if kid:
+            return kid
     if re.match(r"^(board|book|shelf|deck)\[", s) or is_bin_id(s):
         return to_bin_id(s)
     return s
@@ -526,6 +518,8 @@ def _normalize_pose_dict(raw: Any) -> dict[str, Any]:
                     out[k] = int(fv) if fv == int(fv) else fv
             except (TypeError, ValueError):
                 out[k] = v
+    if raw.get("heading") not in (None, ""):
+        out["heading"] = str(raw.get("heading")).strip().upper()
     return out
 
 
@@ -1412,6 +1406,8 @@ def to_leaf_chip_id(old_id: str) -> str:
     # card[0]-title → not a leaf (Jason bug: used to become leaf_card[0])
     if re.match(r"^card(\[|_)", s) or re.match(r"^card\d", s):
         return ""  # empty · callers must reject
+    if re.match(r"^key(\[|_)", s) or re.match(r"^key\d", s):
+        return ""
     # leaf[0]-thepaper → leaf[0]
     m = re.match(r"^(leaf\[[0-9]+\])", s)
     if m:
@@ -1644,6 +1640,17 @@ def write_leaf_chip(safe: Path, leaf: dict[str, Any]) -> Path:
     pin_prev = (
         prev_meta.get("pin") if isinstance(prev_meta.get("pin"), dict) else {}
     )
+    chip_prev = (
+        prev_meta.get("chip") if isinstance(prev_meta.get("chip"), dict) else {}
+    )
+    if "tags" not in leaf:
+        prev_tags = pin_prev.get("tags") or []
+        if isinstance(prev_tags, list) and prev_tags:
+            tags = [str(t).strip() for t in prev_tags if str(t).strip()]
+    if not stamps:
+        prev_stamps = pin_prev.get("stamps") or chip_prev.get("stamps") or []
+        if isinstance(prev_stamps, list) and prev_stamps:
+            stamps = prev_stamps
     if body is None and prev_body_disk is not None:
         body = prev_body_disk
     if body is None and path.is_file() and (not old or path.resolve() != old.resolve()):
@@ -1807,14 +1814,214 @@ def list_leaf_chips(safe: Path) -> list[dict[str, Any]]:
 
 
 def delete_leaf_chip(safe: Path, chip_id: str) -> bool:
-    p = chip_path(safe, to_leaf_chip_id(chip_id))
-    if not p or not p.is_file():
-        return False
-    try:
-        p.unlink()
+    """Soft delete · bury in ~trash (chip + cfg). Does not unlink forever."""
+    out = bury_item(safe, chip_id)
+    return bool(out.get("ok"))
+
+
+def trash_root(safe: Path, username: str | None = None) -> Path:
+    u = username or discover_username(safe)
+    return _trash.trash_dir(local_root(safe), u)
+
+
+def is_trash_bin(
+    row: dict[str, Any] | None,
+    cfg: dict[str, Any] | None = None,
+) -> bool:
+    row = row or {}
+    prop: dict[str, Any] = {}
+    if isinstance(cfg, dict) and isinstance(cfg.get("prop"), dict):
+        prop = cfg["prop"]
+    elif isinstance(row.get("prop"), dict):
+        prop = row["prop"]
+    flag = prop.get("isTrash")
+    if flag is True or str(flag).strip().lower() in ("yes", "true", "1"):
         return True
-    except OSError:
-        return False
+    tags = row.get("tags") or []
+    if any(str(t).strip().lower() == "trash-can" for t in tags):
+        return True
+    title = str(row.get("title") or row.get("name") or "").strip().lower()
+    return title in ("trash", "wastebasket")
+
+
+TRASH_CAN_DRESSUP = {
+    "face": "bin",
+    "style": "bin",
+    "shell": "trashcan",
+    "package_id": "envelope",
+}
+
+
+def find_trash_can(safe: Path) -> dict[str, Any] | None:
+    for row in list_bin_rows(safe):
+        uid = str(row.get("uid") or row.get("id") or "")
+        cfg = read_bin_config(safe, uid) if uid else None
+        if is_trash_bin(row, cfg):
+            p = bin_path(safe, uid)
+            full = bin_api_from_file(p) if p else dict(row)
+            return {"bin": full, "config": cfg}
+    return None
+
+
+def ensure_trash_can(
+    safe: Path,
+    x: float | None = None,
+    y: float | None = None,
+) -> dict[str, Any]:
+    found = find_trash_can(safe)
+    if found:
+        uid = str((found.get("bin") or {}).get("uid") or (found.get("bin") or {}).get("id") or "")
+        if uid:
+            write_bin_config(
+                safe,
+                uid,
+                pose=None,
+                dressup=dict(TRASH_CAN_DRESSUP),
+                subtype="envelope",
+            )
+            found["config"] = read_bin_config(safe, uid)
+        return found
+    out = spawn_bin(
+        safe,
+        title="trash",
+        author=discover_username(safe) or "unknown",
+        subtype="envelope",
+        x=x,
+        y=y,
+    )
+    row = dict(out.get("bin") or {})
+    uid = str(row.get("uid") or row.get("id") or "")
+    tags = [str(t) for t in (row.get("tags") or []) if str(t).strip()]
+    if not any(t.lower() == "trash-can" for t in tags):
+        tags.append("trash-can")
+    row["tags"] = tags
+    row["title"] = "trash"
+    if uid:
+        write_bin_file(safe, row)
+        prev = read_bin_config(safe, uid) or {}
+        prop = dict(prev.get("prop") or {})
+        prop["isTrash"] = True
+        prop["maxLoad"] = 0
+        acc = prop.get("accepts")
+        if not isinstance(acc, list):
+            acc = ["card", "leaf"]
+        for k in ("card", "leaf", "envelope"):
+            if k not in acc:
+                acc.append(k)
+        prop["accepts"] = acc
+        write_bin_config(
+            safe,
+            uid,
+            pose=None,
+            dressup=dict(TRASH_CAN_DRESSUP),
+            prop=prop,
+            subtype="envelope",
+        )
+    p = bin_path(safe, uid) if uid else None
+    full = bin_api_from_file(p) if p else row
+    return {"bin": full, "config": read_bin_config(safe, uid) if uid else out.get("config")}
+
+
+def _cfg_files_for_uid(safe: Path, cid: str) -> list[Path]:
+    root = configs_root(safe)
+    if not root.is_dir() or not cid:
+        return []
+    return [f for f in root.glob("*.cfg") if cid in f.name]
+
+
+def bury_item(safe: Path, item_id: str) -> dict[str, Any]:
+    """Take a paper off this desk and move its files into ~trash."""
+    kind, cid = classify_mail_item_id(item_id)
+    if kind == "unknown":
+        raw = str(item_id or "").strip()
+        if re.match(r"^(board|book|shelf|deck|envelope)\[", raw, re.I):
+            kind, cid = "deck", to_bin_id(raw)
+        elif is_card_id(raw):
+            kind, cid = "card", to_card_id(raw)
+        elif re.match(r"^leaf\[", raw, re.I):
+            kind, cid = "leaf", to_leaf_chip_id(raw)
+    if not cid:
+        return {"ok": False, "error": "unknown item"}
+    if cid == PRIMARY_CHIP_ID:
+        return {"ok": False, "error": "will not trash primary leaf"}
+    dest = trash_root(safe)
+    moved: list[str] = []
+    if kind == "deck":
+        p = bin_path(safe, cid)
+        row = bin_api_from_file(p) if p else {}
+        cfg = read_bin_config(safe, cid)
+        if is_trash_bin(row, cfg):
+            return {"ok": False, "error": "empty the can · do not bury the can"}
+        for mid in list(row.get("chips") or []):
+            sub = bury_item(safe, str(mid))
+            moved.extend(list(sub.get("moved") or []))
+    try:
+        clear_item_from_desk_surface(safe, cid)
+    except Exception:
+        pass
+    paths: list[Path] = []
+    if kind == "leaf":
+        p = chip_path(safe, cid)
+        if p:
+            paths.append(p)
+    elif kind == "card":
+        p = card_path(safe, cid)
+        if p:
+            paths.append(p)
+    else:
+        p = bin_path(safe, cid)
+        if p:
+            paths.append(p)
+    paths.extend(_cfg_files_for_uid(safe, cid))
+    moved.extend(_trash.bury_files(paths, dest))
+    return {
+        "ok": True,
+        "id": cid,
+        "kind": kind,
+        "moved": moved,
+        "folder": str(dest),
+    }
+
+
+def empty_trash_can(safe: Path, bin_id: str | None = None) -> dict[str, Any]:
+    """Archive everything in the can into ~trash. The can stays on the felt."""
+    found = None
+    if bin_id:
+        uid = to_bin_id(bin_id)
+        p = bin_path(safe, uid)
+        row = bin_api_from_file(p) if p else None
+        cfg = read_bin_config(safe, uid) if uid else None
+        if row and is_trash_bin(row, cfg):
+            found = {"bin": row, "config": cfg}
+    if not found:
+        found = find_trash_can(safe)
+    if not found or not found.get("bin"):
+        return {"ok": False, "error": "no trash can · try: trash can"}
+    row = dict(found["bin"])
+    uid = str(row.get("uid") or row.get("id") or "")
+    members = [str(m) for m in (row.get("chips") or []) if str(m).strip()]
+    moved: list[str] = []
+    ids: list[str] = []
+    errors: list[str] = []
+    for mid in members:
+        out = bury_item(safe, mid)
+        if out.get("ok"):
+            ids.append(str(out.get("id") or mid))
+            moved.extend(list(out.get("moved") or []))
+        else:
+            errors.append(str(out.get("error") or mid))
+    row["chips"] = []
+    write_bin_file(safe, row)
+    dest = trash_root(safe)
+    return {
+        "ok": True,
+        "id": uid,
+        "count": len(ids),
+        "ids": ids,
+        "moved": moved,
+        "folder": str(dest),
+        "errors": errors,
+    }
 
 
 def primary_leaf(safe: Path) -> dict[str, Any] | None:
@@ -1849,15 +2056,14 @@ def primary_leaf(safe: Path) -> dict[str, Any] | None:
 
 def normalize_leaf_dressup(du: dict[str, Any] | None) -> dict[str, Any]:
     """
-    Hands law: shell = form (paper) · style = costume (lined .dsc).
-    Fix inverted legacy {style: paper, shell: lined}.
+    Hands law: shell = form (paper) · style = last costume · sheets = stacked .dsc
+    names over _base. Fix inverted legacy {style: paper, shell: lined}.
     """
     du = dict(du or {})
     shell = str(du.get("shell") or "").strip()
     style = str(du.get("style") or "").strip()
     costumes = {"lined", "plain", "dotted", "letter"}
     forms = {"paper", "card", "ticket", "fragment"}
-    # shell must be form; if shell is a costume name, it's inverted/wrong
     if shell in costumes:
         if not style or style in forms or style == shell:
             style = shell if shell in costumes else (style or "lined")
@@ -1866,9 +2072,28 @@ def normalize_leaf_dressup(du: dict[str, Any] | None) -> dict[str, Any]:
         style = "lined"
     if not shell or shell in costumes:
         shell = "paper"
-    if not style or style in forms:
-        style = "lined"
-    out = {"shell": shell, "style": style}
+    raw_sheets = du.get("sheets")
+    sheet_list: list[str] = []
+    if isinstance(raw_sheets, str):
+        sheet_list = [s.strip() for s in re.split(r"[,\s]+", raw_sheets) if s.strip()]
+    elif isinstance(raw_sheets, list):
+        sheet_list = [str(s).strip() for s in raw_sheets if str(s).strip()]
+    sheet_list = [
+        s
+        for s in sheet_list
+        if s and s.lower() not in ("_base", "base")
+    ]
+    if not sheet_list:
+        if not style or style in forms:
+            style = "lined"
+        sheet_list = [style]
+    else:
+        style = sheet_list[-1]
+    out: dict[str, Any] = {
+        "shell": shell,
+        "style": style,
+        "sheets": ", ".join(sheet_list),
+    }
     if du.get("id"):
         out["id"] = du["id"]
     return out
@@ -2465,6 +2690,15 @@ def write_card_chip(safe: Path, card: dict[str, Any]) -> Path:
         body = body[:CARD_BODY_MAX]
     stamps = card.get("stamps") if isinstance(card.get("stamps"), list) else []
     tags = card.get("tags") if isinstance(card.get("tags"), list) else []
+    if "tags" not in card and old and old.is_file():
+        try:
+            prev, _ = parse_nested_fm(old.read_text(encoding="utf-8"))
+            pin_prev = prev.get("pin") if isinstance(prev.get("pin"), dict) else {}
+            prev_tags = pin_prev.get("tags") or []
+            if isinstance(prev_tags, list) and prev_tags:
+                tags = [str(t).strip() for t in prev_tags if str(t).strip()]
+        except OSError:
+            pass
     fname = card_filename_for(uid, title)
     path = library_root(safe) / fname
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -2928,6 +3162,10 @@ def normalize_bin_member_id(raw: str) -> str:
         return to_bin_id(s)
     if re.match(r"^card\[", s) or s.startswith("card"):
         return to_card_id(s)
+    if re.match(r"^key\[", s) or s.startswith("key["):
+        kid = _desk_keys.to_key_id(s)
+        if kid:
+            return kid
     # tools BEFORE to_leaf_chip_id — else stamper[0] becomes leaf_stamper[0]
     tid = to_tool_member_id(s)
     if tid:
@@ -3482,7 +3720,7 @@ def despawn_bin(
     surface_folder: str = DEFAULT_SURFACE_FOLDER,
 ) -> dict[str, Any]:
     """
-    Remove a book or shelf (and its cfg/layout) from the desk.
+    Remove a book, shelf, or envelope (and its cfg/layout) from the desk.
     Ejects members first so leaves/cards/volumes are not deleted with the host.
     """
     ensure_user_tree(safe)
@@ -3497,17 +3735,32 @@ def despawn_bin(
         st = "book"
     elif re.match(r"^shelf\[", host_uid):
         st = "shelf"
+    elif re.match(r"^envelope\[", host_uid):
+        st = "envelope"
     elif re.match(r"^deck\[", host_uid):
         st = "deck"
     elif re.match(r"^board\[", host_uid):
         st = "board"
-    if st not in ("book", "shelf"):
+    if st not in ("book", "shelf", "envelope", "deck", "board"):
         return {
             "ok": False,
-            "error": "despawn · books and shelves only (not boards/envelopes)",
+            "error": "despawn · unknown host",
         }
-    # eject members (pages off book · volumes off shelf)
-    for raw in list(row.get("chips") or []):
+    cfg = read_bin_config(safe, bid, username, surface_folder)
+    if is_trash_bin(row, cfg):
+        return {
+            "ok": False,
+            "error": "despawn · that's the trash can · empty it instead",
+        }
+    host_pose = get_surface_object_pose(safe, bid, username, surface_folder) or {}
+    try:
+        hx = float(host_pose.get("x") or 48)
+        hy = float(host_pose.get("y") or 48)
+    except (TypeError, ValueError):
+        hx, hy = 48.0, 48.0
+    members = list(row.get("chips") or [])
+    # eject members (pages off book · papers out of envelope · volumes off shelf)
+    for i, raw in enumerate(members):
         try:
             set_bin_membership(
                 safe,
@@ -3519,30 +3772,37 @@ def despawn_bin(
             )
         except Exception:
             pass
-    # drop surface pose (face id = book[n] / shelf[n])
+        mid = normalize_bin_member_id(str(raw))
+        if not mid:
+            continue
+        try:
+            upsert_surface_object_pose(
+                safe,
+                mid,
+                {
+                    "x": hx + 28 + (i % 6) * 18,
+                    "y": hy + 24 + (i // 6) * 16,
+                },
+                username,
+                surface_folder,
+            )
+        except Exception:
+            pass
+    # drop surface pose (face id = book[n] / shelf[n] / envelope[n])
     try:
         remove_surface_object_pose(safe, bid, username, surface_folder)
     except Exception:
         pass
-    # delete instance cfg(s)
-    root = configs_root(safe, username, surface_folder)
-    for name in (
-        f"{bin_config_id(bid, st)}.cfg",
-        f"bin-{bid}.cfg",
-        f"bin-{st}[{n_from_bin_uid(bid)}].cfg",
-    ):
-        cp = root / name
-        if cp.is_file():
-            try:
-                cp.unlink()
-            except OSError:
-                pass
-    # remove matter so /api/bins will not remount
-    try:
-        p.unlink()
-    except OSError as e:
-        return {"ok": False, "error": "could not remove bin file · " + str(e)}
-    return {"ok": True, "id": bid, "subtype": st}
+    # bury packet in ~trash (not a forever unlink) so a mistaken despawn can be found
+    dest = trash_root(safe)
+    paths = [p] + _cfg_files_for_uid(safe, bid)
+    buried = _trash.bury_files(paths, dest)
+    if not buried and p.is_file():
+        try:
+            p.unlink()
+        except OSError as e:
+            return {"ok": False, "error": "could not remove bin file · " + str(e)}
+    return {"ok": True, "id": bid, "subtype": st, "ejected": len(members)}
 
 
 # membership index cache — resolve_leaf_pose used to call leaf_owner_bin per leaf
@@ -3588,10 +3848,12 @@ def member_owner_index(safe: Path) -> dict[str, str]:
 
 
 def leaf_owner_bin(safe: Path, leaf_id: str) -> str | None:
-    """Which bin exclusively owns this leaf, card, or tool (if any)."""
+    """Which bin exclusively owns this leaf, card, key, or tool (if any)."""
     raw = str(leaf_id or "").strip()
     if re.match(r"^card\[", raw) or raw.startswith("card"):
         lid = to_card_id(raw)
+    elif _desk_keys.is_key_id(raw) or raw.startswith("key["):
+        lid = _desk_keys.to_key_id(raw)
     elif is_tool_member_id(raw):
         lid = to_tool_member_id(raw)
     else:
@@ -3654,6 +3916,8 @@ def set_bin_membership(
     elif host_type == "book":
         if re.match(r"^card\[", raw_m) or raw_m.startswith("card"):
             raise ValueError("cards go in an envelope · not book pages")
+        if _desk_keys.is_key_id(raw_m) or raw_m.startswith("key["):
+            raise ValueError("keys go on a board · not book pages")
         if is_tool_member_id(raw_m):
             raise ValueError("tools go in a board · not book pages")
         mid = to_leaf_chip_id(raw_m)
@@ -3664,6 +3928,8 @@ def set_bin_membership(
                 raise ValueError("books go on a shelf, not a board")
     elif host_type in ("deck", "envelope"):
         # manila envelope · cards and papers; true deck · cards only
+        if _desk_keys.is_key_id(raw_m) or raw_m.startswith("key["):
+            raise ValueError("keys pin on a board · not envelope")
         if (
             re.match(r"^card\[", raw_m)
             or raw_m.startswith("card")
@@ -3685,11 +3951,17 @@ def set_bin_membership(
             if not chip_path(safe, mid):
                 raise ValueError("leaf not found · " + mid)
     else:
-        # board · leaf, card, or guest tool (stamper / eraser / chipper / …)
+        # board · leaf, card, key, or guest tool (stamper / eraser / chipper / …)
         if re.match(r"^card\[", raw_m) or raw_m.startswith("card"):
             mid = to_card_id(raw_m)
             if not mid:
                 raise ValueError("invalid card id")
+        elif _desk_keys.is_key_id(raw_m) or raw_m.startswith("key["):
+            mid = _desk_keys.to_key_id(raw_m)
+            if not mid:
+                raise ValueError("invalid key id")
+            if not _desk_keys.key_path(__import__(__name__), safe, mid):
+                raise ValueError("key not found · " + mid)
         elif is_tool_member_id(raw_m):
             mid = to_tool_member_id(raw_m)
             if not mid:
@@ -3728,6 +4000,17 @@ def set_bin_membership(
                 cfg.get("prop") if isinstance(cfg.get("prop"), dict) else None
             )
             max_load = int(prop.get("maxLoad") or 0)
+            st = str(target.get("subtype") or target.get("bin_type") or "").lower()
+            uid = str(target.get("uid") or target.get("id") or bid)
+            parcel = st in ("envelope", "deck") or bool(
+                re.match(r"^(envelope|deck)\[", uid, re.I)
+            )
+            trash = bool(prop.get("isTrash"))
+            if trash:
+                max_load = 0
+            elif parcel and max_load <= 10:
+                # old DEFAULT_BIN_PROP 10 was cork-board thrash, not a parcel law
+                max_load = 80
             if max_load > 0 and len(chips) >= max_load:
                 raise ValueError(
                     f"bin full · maxLoad {max_load} · take something out first"
@@ -4589,51 +4872,32 @@ def list_tool_configs(
     return out
 
 
-# -- Chester's Imports fax · copy clean MD to dock destinations --------------
-
-# Desk object destinations. Add rows here (or later a paper) — not Jason nests.
-FAX_DESTINATIONS: list[dict[str, str]] = [
-    {
-        "id": "port-qxa",
-        "label": "Port QXA",
-        "path": r"C:\ALICE_REBORN\PORT-QXA\docks",
-    },
-]
+# -- Chester's Imports fax · copy MD + mark/cite scars to dock destinations --
 
 
-def list_fax_destinations() -> list[dict[str, str]]:
-    """Outbound fax docks (id · label · path)."""
-    out: list[dict[str, str]] = []
-    for row in FAX_DESTINATIONS:
-        did = str(row.get("id") or "").strip().lower()
-        label = str(row.get("label") or did).strip()
-        path = str(row.get("path") or "").strip()
-        if did and path:
-            out.append({"id": did, "label": label, "path": path})
-    return out
+def _fax_island_hosts(safe: Path | None = None) -> Path | None:
+    if safe is not None:
+        try:
+            u = discover_username(safe)
+            return local_root(safe) / u / "fax-hosts.txt"
+        except Exception:
+            return None
+    return _DESK_ROOT / LOCAL_DIRNAME / DEFAULT_USERNAME / "fax-hosts.txt"
 
 
-def get_fax_destination(dest_id: str) -> dict[str, str] | None:
-    want = str(dest_id or "").strip().lower()
-    if not want:
-        return None
-    for row in list_fax_destinations():
-        if row["id"] == want or row["label"].lower() == want:
-            return row
-    return None
+def list_fax_destinations(safe: Path | None = None) -> list[dict[str, str]]:
+    """Outbound fax docks from fax-hosts.txt (re-read each call)."""
+    return _fax.list_destinations(_DESK_ROOT, _fax_island_hosts(safe))
 
 
-def _fax_slug(title: str, uid: str) -> str:
-    base = re.sub(r"[^\w\s-]+", "", (title or "").strip(), flags=re.UNICODE)
-    base = re.sub(r"[-\s]+", "-", base).strip("-").lower()
-    if not base:
-        base = re.sub(r"[^\w]+", "-", uid).strip("-").lower() or "faxed"
-    return base[:80]
+def get_fax_destination(dest_id: str, safe: Path | None = None) -> dict[str, str] | None:
+    return _fax.get_destination(dest_id, _DESK_ROOT, _fax_island_hosts(safe))
 
 
 def chip_to_clean_markdown(safe: Path, item_id: str) -> dict[str, Any]:
     """
-    Leaf or card → clean MD (title + body only). No nested frontmatter dump.
+    Leaf or card → markdown for a dock.
+    Body stays the paper. Marks / cites / pin cites ride in YAML frontmatter.
     """
     raw = str(item_id or "").strip()
     if not raw:
@@ -4642,6 +4906,9 @@ def chip_to_clean_markdown(safe: Path, item_id: str) -> dict[str, Any]:
     body = ""
     kind = "leaf"
     uid = raw
+    api: dict[str, Any] | None = None
+    cfg: dict[str, Any] = {}
+    auth = (discover_username(safe) or DEFAULT_USERNAME).strip()
     if is_card_id(raw) or re.match(r"^card(\[|_)", raw):
         kind = "card"
         uid = to_card_id(raw) or raw
@@ -4651,8 +4918,7 @@ def chip_to_clean_markdown(safe: Path, item_id: str) -> dict[str, Any]:
         api = card_api_from_file(p)
         if not api:
             raise ValueError(f"card unreadable · {uid}")
-        title = str(api.get("title") or uid)
-        body = str(api.get("body") or "")
+        cfg = read_card_config(safe, uid, auth) or {}
     else:
         uid = to_leaf_chip_id(raw) or raw
         p = chip_path(safe, uid)
@@ -4661,29 +4927,22 @@ def chip_to_clean_markdown(safe: Path, item_id: str) -> dict[str, Any]:
         api = leaf_api_from_chip_file(p)
         if not api:
             raise ValueError(f"leaf unreadable · {uid}")
-        title = str(api.get("title") or uid)
-        body = str(api.get("body") or "")
-    body = body.replace("\r\n", "\n").replace("\r", "\n").strip()
-    # if body already opens with the same H1, don't double the title
-    h1 = f"# {title}".strip()
-    body_lines = body.split("\n") if body else []
-    if body_lines and body_lines[0].strip().lower() == h1.lower():
-        body = "\n".join(body_lines[1:]).lstrip("\n")
-    # clean MD: heading + body; one provenance comment for humans/tools
-    lines = [f"# {title}", ""]
-    if body:
-        lines.append(body)
-        lines.append("")
-    lines.append(f"<!-- faxed from {uid} · Sophia Desk · Chester's Imports -->")
-    lines.append("")
-    md = "\n".join(lines)
-    return {
-        "uid": uid,
-        "kind": kind,
-        "title": title,
-        "markdown": md,
-        "slug": _fax_slug(title, uid),
-    }
+        cfg = read_leaf_config(safe, uid, auth) or {}
+    title = str(api.get("title") or api.get("name") or uid)
+    body = str(api.get("body") or "")
+    inst = _mail.parcel_instance(api, cfg)
+    return _fax.pack_note(
+        title=title,
+        body=body,
+        uid=uid,
+        kind=kind,
+        author=str(api.get("author") or api.get("auth") or auth),
+        tags=list(api.get("tags") or []),
+        cites=inst["cites"],
+        prop=inst["prop"],
+        house=HOUSE,
+        created=api.get("created") or api.get("event"),
+    )
 
 
 def fax_item_to_destination(
@@ -4692,30 +4951,14 @@ def fax_item_to_destination(
     dest_id: str,
 ) -> dict[str, Any]:
     """
-    Copy leaf/card to destination docks as clean .md.
+    Copy leaf/card to destination docks as .md (frontmatter scars + body).
     Does not remove or alter the desk original.
     """
-    dest = get_fax_destination(dest_id)
+    dest = get_fax_destination(dest_id, safe)
     if not dest:
         raise ValueError(f"unknown fax destination · {dest_id}")
-    docks = Path(dest["path"])
-    docks.mkdir(parents=True, exist_ok=True)
     pack = chip_to_clean_markdown(safe, item_id)
-    # same slug always · overwrite on re-fax (Sophia is source; docks = push)
-    fname = f"{pack['slug']}.md"
-    out_path = docks / fname
-    out_path.write_text(pack["markdown"], encoding="utf-8", newline="\n")
-    return {
-        "ok": True,
-        "uid": pack["uid"],
-        "kind": pack["kind"],
-        "title": pack["title"],
-        "dest": dest["id"],
-        "dest_label": dest["label"],
-        "path": str(out_path),
-        "file": fname,
-        "docks": str(docks),
-    }
+    return _fax.write_dock(dest, pack)
 
 
 def spawn_tool(
@@ -7278,7 +7521,8 @@ def export_mail_parcel(
         full = leaf_api_from_chip_file(p) if p else None
         if not full:
             raise ValueError(f"leaf not found · {cid}")
-        return {
+        cfg = read_leaf_config(safe, cid, auth) or {}
+        parcel = {
             "ok": True,
             "kind": "leaf",
             "origin_uid": cid,
@@ -7289,13 +7533,16 @@ def export_mail_parcel(
             "body": full.get("body") or "",
             "tags": list(full.get("tags") or []),
         }
+        parcel.update(_mail.parcel_instance(full, cfg))
+        return parcel
 
     if kind == "card":
         p = card_path(safe, cid)
         full = card_api_from_file(p) if p else None
         if not full:
             raise ValueError(f"card not found · {cid}")
-        return {
+        cfg = read_card_config(safe, cid, auth) or {}
+        parcel = {
             "ok": True,
             "kind": "card",
             "origin_uid": cid,
@@ -7307,6 +7554,8 @@ def export_mail_parcel(
             "body": full.get("body") or "",
             "tags": list(full.get("tags") or []),
         }
+        parcel.update(_mail.parcel_instance(full, cfg))
+        return parcel
 
     # deck / envelope — remint bag + member instances on accept
     p = bin_path(safe, cid)
@@ -7326,7 +7575,8 @@ def export_mail_parcel(
         bin_type = "envelope"
     elif re.match(r"^deck\[", cid):
         bin_type = "deck"
-    return {
+    cfg = read_bin_config(safe, cid, auth) or {}
+    parcel = {
         "ok": True,
         "kind": "deck",
         "bin_type": bin_type,
@@ -7338,6 +7588,8 @@ def export_mail_parcel(
         "tags": list(full.get("tags") or []),
         "members": members,
     }
+    parcel.update(_mail.parcel_instance(full, cfg))
+    return parcel
 
 
 def _mail_instance_tags(base: list[Any] | None, *extra: str) -> list[str]:
@@ -7395,18 +7647,17 @@ def accept_mail_parcel(
             )
         inbox_id = str(box.get("uid") or "").strip()
 
-    def _mail_prop() -> dict[str, Any]:
-        return {
-            "isMarkable": True,
-            "isMarked": False,
-            "Mail.inbox": inbox_id,
-            "Mail.address": addr,
-            "Mail.from": author_from,
-            "Mail.sent_at": t,
-            "Mail.origin": origin_call or origin_uid,
-            "Mail.instance_of": origin_call or origin_uid,
-            "Mail.ship": "instance",
-        }
+    def _mail_prop(base: dict[str, Any] | None = None) -> dict[str, Any]:
+        src = base if base is not None else parcel.get("prop")
+        return _mail.append_mail_travel(
+            _mail.traveling_prop(src),
+            inbox=inbox_id,
+            address=addr,
+            from_auth=author_from,
+            sent_at=t,
+            origin=origin_call or origin_uid,
+            ship="instance",
+        )
 
     if kind == "leaf":
         new_uid = next_leaf_uid(safe)
@@ -7424,14 +7675,20 @@ def accept_mail_parcel(
             "created": t,
             "updated": t,
             "tags": _mail_instance_tags(parcel.get("tags"), *tag_extra),
-            "stamps": [],
+            "stamps": _mail.stamps_of(parcel),
+            "cites": _mail.cites_of(parcel),
         }
         write_leaf_chip(safe, leaf)
+        du = _mail.traveling_dressup(parcel.get("dressup"), new_uid)
+        if not du.get("shell"):
+            du["shell"] = "paper"
+        if not (du.get("style") or du.get("paper") or du.get("face")):
+            du["style"] = "lined"
         write_leaf_config(
             safe,
             new_uid,
             pose={"x": 40, "y": 40, "openW": 420, "openH": 520},
-            dressup={"shell": "paper", "style": "lined", "id": new_uid},
+            dressup=du,
             prop=_mail_prop(),
             username=u,
             surface_folder=sf,
@@ -7472,22 +7729,20 @@ def accept_mail_parcel(
             "subject": str(parcel.get("subject") or ""),
             "body": parcel.get("body") if parcel.get("body") is not None else "",
             "tags": _mail_instance_tags(parcel.get("tags"), *tag_extra),
+            "stamps": _mail.stamps_of(parcel),
         }
         write_card_chip(safe, card)
+        du = _mail.traveling_dressup(parcel.get("dressup"), new_uid)
+        if not du.get("shell"):
+            du["shell"] = "card"
+        if not (du.get("face") or du.get("style")):
+            du["face"] = "plain"
         write_card_config(
             safe,
             new_uid,
             pose={"x": 40, "y": 40, "openW": 280, "openH": 200},
-            dressup={"shell": "card", "face": "plain", "id": new_uid},
-            prop={
-                "Mail.inbox": inbox_id,
-                "Mail.address": addr,
-                "Mail.from": author_from,
-                "Mail.sent_at": t,
-                "Mail.origin": origin_call or origin_uid,
-                "Mail.instance_of": origin_call or origin_uid,
-                "Mail.ship": "instance",
-            },
+            dressup=du,
+            prop=_mail_prop(),
             username=u,
             surface_folder=sf,
         )
@@ -7553,16 +7808,8 @@ def accept_mail_parcel(
             safe,
             new_uid,
             pose={"x": 40, "y": 40, "openW": 200, "openH": 160},
-            dressup={"id": new_uid},
-            prop={
-                "Mail.inbox": inbox_id,
-                "Mail.address": addr,
-                "Mail.from": author_from,
-                "Mail.sent_at": t,
-                "Mail.origin": origin_call or origin_uid,
-                "Mail.instance_of": origin_call or origin_uid,
-                "Mail.ship": "instance",
-            },
+            dressup=_mail.traveling_dressup(parcel.get("dressup"), new_uid),
+            prop=_mail_prop(),
             username=u,
             surface_folder=sf,
             subtype=bin_type,
@@ -7778,3 +8025,6 @@ def scar_item_sent(
             return
         full["tags"] = _mail_instance_tags(full.get("tags"), "mailed-out")
         write_bin_file(safe, full)
+
+
+_desk_keys.bind(__import__(__name__))

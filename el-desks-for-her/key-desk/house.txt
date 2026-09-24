@@ -1,0 +1,12 @@
+# Who sits here. Dresses are sheet names in the general store.
+auth: QUA
+title: QuaDesk
+surface_folder: KeyDesk
+surface_name: Key Desk
+surface_id: desk_KeyDesk[0]
+surface_config_id: surf-desk_KeyDesk[0]
+port: 43172
+felt: amber
+mira: electric
+sku: AMBER-QUA-001
+whisper: turn the count

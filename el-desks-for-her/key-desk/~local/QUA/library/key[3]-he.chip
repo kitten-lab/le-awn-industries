@@ -1,0 +1,19 @@
+---
+store:
+  file: key[3]-he.chip
+  type: chip
+  subtype: key
+chip:
+  uid: key[3]
+  name: HE
+  auth: unknown
+  face: text
+  glyph: HE
+  heading: N
+  type: key
+pin:
+  tps_created: 1787414394
+  tps_updated: 1787414542
+  tags: []
+---
+HE

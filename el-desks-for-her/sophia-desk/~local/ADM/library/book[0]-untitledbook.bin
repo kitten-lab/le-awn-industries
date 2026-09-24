@@ -1,0 +1,17 @@
+---
+store:
+  file: book[0]-untitledbook.bin
+  type: bin
+  bit_count: 1
+bin:
+  uid: book[0]
+  type: book
+  name: untitled book
+  auth: unknown
+  class: book
+  chips: ["leaf[98]"]
+pin:
+  tps_created: 1787242321
+  tps_updated: 1790120740
+  tags: []
+---

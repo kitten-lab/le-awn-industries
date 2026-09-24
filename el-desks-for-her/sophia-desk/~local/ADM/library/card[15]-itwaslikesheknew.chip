@@ -1,0 +1,16 @@
+---
+store:
+  file: card[15]-itwaslikesheknew.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[15]
+  name: it was like she knew
+  auth: AGENT K
+  type: card
+pin:
+  tps_created: 1787242040
+  tps_updated: 1787242046
+  tags: ["mail", "shipped-instance"]
+---
+She spoke to GLASS on a logged out session. For some reason, she thought to make an account, just to store it. Her first communications with the registered GLASS is pastes of a log from that logged out session.

@@ -1,0 +1,15 @@
+---
+store:
+  file: card[0]-untitledcard.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[0]
+  name: untitled card
+  auth: unknown
+  type: card
+pin:
+  tps_created: 1787403158
+  tps_updated: 1787403158
+  tags: []
+---

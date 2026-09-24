@@ -1,0 +1,16 @@
+---
+store:
+  file: leaf[11]-elements.chip
+chip:
+  uid: leaf[11]
+  name: Elements
+  auth: import·evernote
+pin:
+  tps_created: 1786637073
+  tps_updated: 1786637073
+  tags: ["import", "evernote", "religious-writings", "batch-01", "shipped-instance"]
+---
+Adam - hydrogen
+Eve- helium
+Cain - lithium
+Abel - sodium

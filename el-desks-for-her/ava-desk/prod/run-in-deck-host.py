@@ -11,6 +11,14 @@ from pathlib import Path
 PROD = Path(__file__).resolve().parent
 SYS = PROD / "desk_sys"
 
+_EL_DESKS = PROD.parent.parent
+if str(_EL_DESKS) not in sys.path:
+    sys.path.insert(0, str(_EL_DESKS))
+from desk_core.house import load_house
+
+_HOUSE = load_house(PROD.parent)
+
+
 
 def _alice_box() -> Path:
     """Walk up until the-deck-host/shell/deck_host.py is found (depth-safe)."""
@@ -23,7 +31,7 @@ def _alice_box() -> Path:
 
 
 DECK = _alice_box() / "the-deck-host" / "shell" / "deck_host.py"
-PORT = os.environ.get("POCKET_DESKTOP_PORT", os.environ.get("AVA_DESK_PORT", "43171"))
+PORT = os.environ.get("POCKET_DESKTOP_PORT", str(_HOUSE.port))
 URL = f"http://127.0.0.1:{PORT}/"
 HEALTH = f"http://127.0.0.1:{PORT}/api/health"
 
@@ -41,7 +49,7 @@ def main() -> int:
         sys.executable,
         str(DECK),
         "--title",
-        "AvaDesk",
+        _HOUSE.title,
         "--profile",
         "desk",
         "--window-mode",

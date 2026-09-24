@@ -1,0 +1,17 @@
+---
+store:
+  file: shelf[0]-bookshelf.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: shelf[0]
+  type: shelf
+  name: bookshelf
+  auth: unknown
+  class: shelf
+  chips: []
+pin:
+  tps_created: 1787524209
+  tps_updated: 1790120734
+  tags: []
+---

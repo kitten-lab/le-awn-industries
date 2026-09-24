@@ -1,0 +1,17 @@
+---
+store:
+  file: board[0]-nothing.bin
+  type: bin
+  bit_count: 3
+bin:
+  uid: board[0]
+  type: board
+  name: nothing
+  auth: ava
+  class: box
+  chips: ["leaf[17]", "leaf[23]", "leaf[6]"]
+pin:
+  tps_created: 1789671814
+  tps_updated: 1790195585
+  tags: []
+---

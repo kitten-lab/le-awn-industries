@@ -1,0 +1,13 @@
+---
+store:
+  file: leaf[0]-thekeyboardswitchboard.chip
+chip:
+  uid: leaf[0]
+  name: THE KEYBOARD SWITCHBOARD
+  auth: the considerer
+pin:
+  tps_created: 1787413514
+  tps_updated: 1787413849
+  tags: ["keys", "letters", "numbers", "tiles"]
+---
+The **board** is for **keys**. 

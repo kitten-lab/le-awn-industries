@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[0]-untitledenvelope.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: envelope[0]
+  type: envelope
+  name: untitled envelope
+  auth: unknown
+  class: envelope
+  chips: []
+pin:
+  tps_created: 1787451021
+  tps_updated: 1787451021
+  tags: []
+---

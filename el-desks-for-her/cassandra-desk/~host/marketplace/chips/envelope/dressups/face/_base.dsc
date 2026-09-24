@@ -1,4 +1,5 @@
 /* envelope · physical black packet on felt · label on velvet (desk object, not digicore screen) */
+/* named sheet for other desks: ~store/.../envelope/dressups/face/velvet.dsc  (dress up velvet) */
 /* digicore / CRT case look lives in face/case.dsc — do not put terminal wash here */
 
 .nb-win.kind-deck {

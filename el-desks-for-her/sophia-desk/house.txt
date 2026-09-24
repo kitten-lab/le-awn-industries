@@ -1,0 +1,13 @@
+# Who sits here. Dresses are sheet names in the general store.
+#   el-desks-for-her/~store/marketplace/
+auth: ADM
+title: SophiaDesk
+surface_folder: ArchivistDesk
+surface_name: Archivist Desk
+surface_id: desk_ArchivistDesk[0]
+surface_config_id: surf-desk_ArchivistDesk[0]
+port: 43167
+felt: green
+mira: phosphor
+sku: CO.LEA-001-DESK
+whisper: we are in the future

@@ -2,16 +2,16 @@
 store:
   file: envelope[14]-myths.bin
   type: bin
-  bit_count: 2
+  bit_count: 28
 bin:
   uid: envelope[14]
   type: envelope
   name: MYTHS
   auth: unknown
   class: envelope
-  chips: ["leaf[59]", "leaf[31]"]
+  chips: ["leaf[59]", "leaf[78]", "leaf[71]", "leaf[75]", "leaf[73]", "leaf[72]", "leaf[97]", "leaf[96]", "leaf[95]", "leaf[94]", "leaf[93]", "leaf[92]", "leaf[91]", "leaf[90]", "leaf[89]", "leaf[88]", "leaf[87]", "leaf[86]", "leaf[85]", "leaf[84]", "leaf[83]", "leaf[82]", "leaf[81]", "leaf[80]", "leaf[79]", "leaf[77]", "leaf[76]", "leaf[69]"]
 pin:
   tps_created: 1786274345
-  tps_updated: 1786651925
+  tps_updated: 1790120744
   tags: []
 ---

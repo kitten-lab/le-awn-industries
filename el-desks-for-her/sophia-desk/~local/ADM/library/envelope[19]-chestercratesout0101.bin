@@ -2,16 +2,16 @@
 store:
   file: envelope[19]-chestercratesout0101.bin
   type: bin
-  bit_count: 30
+  bit_count: 0
 bin:
   uid: envelope[19]
   type: envelope
   name: Chester · CRATES-OUT · 01/01
   auth: import·crates
   class: envelope
-  chips: ["leaf[70]", "leaf[71]", "leaf[72]", "leaf[73]", "leaf[74]", "leaf[75]", "leaf[76]", "leaf[77]", "leaf[78]", "leaf[79]", "leaf[80]", "leaf[81]", "leaf[82]", "leaf[83]", "leaf[85]", "leaf[86]", "leaf[87]", "leaf[88]", "leaf[89]", "leaf[90]", "leaf[92]", "leaf[93]", "leaf[94]", "leaf[95]", "leaf[96]", "leaf[97]", "leaf[98]", "leaf[69]", "leaf[84]", "leaf[91]"]
+  chips: []
 pin:
   tps_created: 1786392028
-  tps_updated: 1786393980
-  tags: []
+  tps_updated: 1789407836
+  tags: ["mailed-out"]
 ---

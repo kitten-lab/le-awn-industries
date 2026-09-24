@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Pocket Desktop · consider desk (Deck Host ROM; Receiver fork lineage).
+Pocket Desktop Â· consider desk (Deck Host ROM; Receiver fork lineage).
 
 NOT a notepad / notes app. NOT a permanent "one-paper strip." That phrase was a
-damage-control slice so agents would stop thrashing an opaque backend — see
+damage-control slice so agents would stop thrashing an opaque backend â€” see
 papers, redline them, keep custody. Now: multi-leaf desk + bins + tools where
 you write about the pocket OS so the project can declare itself.
 
@@ -27,13 +27,19 @@ from urllib.parse import unquote, urlparse
 from store import (
     DEFAULT_SURFACE_FOLDER,
     DEFAULT_USERNAME,
+    HOUSE,
     PRIMARY_CHIP_ID,
+    list_kind_dressups,
+    read_kind_dressup,
     bin_api_from_file,
     bin_path,
     chip_path,
     configs_root,
     delete_leaf_chip,
     delete_tool_config,
+    bury_item,
+    empty_trash_can,
+    ensure_trash_can,
     discover_username,
     ensure_primary_leaf,
     ensure_user_tree,
@@ -84,6 +90,15 @@ from store import (
     write_surface_paper,
     card_path,
     card_api_from_file,
+    spawn_key,
+    write_key_chip,
+    write_key_config,
+    read_key_config,
+    list_key_chips,
+    key_path,
+    key_api_from_file,
+    to_key_id,
+    is_key_id,
     list_leaf_dressups,
     read_leaf_dressup,
     write_leaf_dressup,
@@ -112,11 +127,13 @@ from store import (
     GIRL_MAIL_NETWORK,
 )
 
+from desk_core.hands import serve_hands
+
 SYS = Path(__file__).resolve().parent
 PROD = SYS.parent
 SAFE = PROD / "safe_box"
-HOST = "127.0.0.1"
-PORT = int(__import__("os").environ.get("POCKET_DESKTOP_PORT", __import__("os").environ.get("AVA_DESK_PORT", "43171")))
+HOST = os.environ.get("DESK_HOST", "0.0.0.0")
+PORT = int(__import__("os").environ.get("POCKET_DESKTOP_PORT", str(HOUSE.port)))
 SKU = "CO.LEA-BLUE-HER"
 APP = "AvaDesk"
 
@@ -126,8 +143,8 @@ def ensure() -> None:
     Cheap path guard only: ~local tree exists.
 
     Not a migration hammer. Early desk called this on every GET so "the paper
-    would always be there" — that rewrote surface.cfg under concurrent CSS/API
-    loads (WinError 32 → black screen / empty desk). Migrations are one-shot
+    would always be there" â€” that rewrote surface.cfg under concurrent CSS/API
+    loads (WinError 32 â†’ black screen / empty desk). Migrations are one-shot
     tools in store.py; run them explicitly when needed, not per bill.
     """
     SAFE.mkdir(parents=True, exist_ok=True)
@@ -156,7 +173,7 @@ def jsend(handler: SimpleHTTPRequestHandler, code: int, payload: Any) -> None:
 
 
 def _find_alice_box() -> Path:
-    """Walk up until the-deck-host exists (works under el-desks-for-her/…)."""
+    """Walk up until the-deck-host exists (works under el-desks-for-her/â€¦)."""
     here = Path(__file__).resolve().parent
     for p in [here, *here.parents]:
         if (p / "the-deck-host" / "shell" / "deck_host.py").is_file():
@@ -169,7 +186,7 @@ def _find_alice_box() -> Path:
 _ALICE_BOX = _find_alice_box()
 
 # Desk-forever ROMs: launch into window on desk or fill the felt (not hardcoded citizens)
-# Face dress from ROM Cat catalog (case_shell · julie_tint · plate_css · name)
+# Face dress from ROM Cat catalog (case_shell Â· julie_tint Â· plate_css Â· name)
 # Launch ids stay short; catalog id is the ROM Cat shelf id.
 ROM_CATALOG: dict[str, dict[str, Any]] = {
     "kde-001": {
@@ -188,7 +205,7 @@ ROM_CATALOG: dict[str, dict[str, Any]] = {
             "color: red;\n"
             "border: 1px dashed darkred;"
         ),
-        # host window strip (SophiaDesk · not the ROM's own header)
+        # host window strip (SophiaDesk Â· not the ROM's own header)
         "chrome": {
             "bg": "linear-gradient(180deg, #2a0808 0%, #120404 100%)",
             "fg": "#ff9090",
@@ -241,7 +258,7 @@ ROM_CATALOG: dict[str, dict[str, Any]] = {
             / "yard_sys"
         ),
     },
-    # L.E. AWN · was nim-bench / jx-nim-bench
+    # L.E. AWN Â· was nim-bench / jx-nim-bench
     "glass-compost": {
         "id": "glass-compost",
         "catalog_id": "glass-compost",
@@ -282,7 +299,7 @@ ROM_CATALOG: dict[str, dict[str, Any]] = {
             / "bench_sys"
         ),
     },
-    # L.E. AWN · was Jack's Concor / jx-concor
+    # L.E. AWN Â· was Jack's Concor / jx-concor
     "emt-bench": {
         "id": "emt-bench",
         "catalog_id": "emt-bench",
@@ -323,7 +340,7 @@ ROM_CATALOG: dict[str, dict[str, Any]] = {
             / "concor_sys"
         ),
     },
-    # Charlie's Toys · mailer → Pocket inbox
+    # Charlie's Toys Â· mailer â†’ Pocket inbox
     "hermes": {
         "id": "hermes",
         "catalog_id": "hermes",
@@ -355,8 +372,8 @@ ROM_CATALOG: dict[str, dict[str, Any]] = {
             _ALICE_BOX / "charlies-toys" / "hermes" / "prod" / "box_sys"
         ),
     },
-    # Charlie's Toys · multi-color found terminals · FileKeeper chips
-    # Host chrome stays black — station skins (IOX/DRX/OSX…) live inside the ROM.
+    # Charlie's Toys Â· multi-color found terminals Â· FileKeeper chips
+    # Host chrome stays black â€” station skins (IOX/DRX/OSXâ€¦) live inside the ROM.
     "sdk-import": {
         "id": "sdk-import",
         "catalog_id": "sdk-import",
@@ -392,11 +409,48 @@ ROM_CATALOG: dict[str, dict[str, Any]] = {
             _ALICE_BOX / "charlies-toys" / "sdk-import-station"
         ),
     },
+    # My Pocket Things Â· Win 3.1 WWW explorer
+    "pocket-go": {
+        "id": "pocket-go",
+        "catalog_id": "pocket-go",
+        "sku": "CO.MYPT-004-GO",
+        "title": "My Pocket Go",
+        "url": "http://127.0.0.1:43210/",
+        "health": "http://127.0.0.1:43210/api/health",
+        "desk_chrome": "own",
+        "case_shell": "julie",
+        "julie_tint": "#1a3a8a",
+        "plate_css": (
+            "font-size: 0.7rem;\n"
+            "letter-spacing: 0.06em;\n"
+            "background: linear-gradient(to top, #000080, #0000cd);\n"
+            "color: #fff;\n"
+            "border: 1px solid #000080;"
+        ),
+        "chrome": {
+            "bg": "linear-gradient(to top, #0000cd, #1a3aff)",
+            "fg": "#ffffff",
+            "dim": "rgba(200, 210, 255, 0.45)",
+            "border": "rgba(0, 0, 205, 0.65)",
+            "btn": "rgba(220, 220, 255, 0.8)",
+        },
+        "run": str(
+            _ALICE_BOX
+            / "my-pocket-things"
+            / "pocket-go"
+            / "prod"
+            / "www_sys"
+            / "server.py"
+        ),
+        "cwd": str(
+            _ALICE_BOX / "my-pocket-things" / "pocket-go" / "prod" / "www_sys"
+        ),
+    },
 }
 
 
 def normalize_rom_key(rom_id: str) -> str:
-    """Short launch ids + friendly aliases → ROM_CATALOG key."""
+    """Short launch ids + friendly aliases â†’ ROM_CATALOG key."""
     key = (rom_id or "").strip().lower()
     if key in ("kde", "kde001", "kde-notes", "kde-notes-chords", "co.kde-001-instr"):
         return "kde-001"
@@ -466,6 +520,17 @@ def normalize_rom_key(rom_id: str) -> str:
         "iox",
     ):
         return "sdk-import"
+    if key in (
+        "pocket-go",
+        "go",
+        "pocketgo",
+        "my-pocket-go",
+        "mypi-go",
+        "mypi:go",
+        "co.mypt-004-go",
+        "co.mypt-004",
+    ):
+        return "pocket-go"
     return key
 
 _rom_procs: dict[str, subprocess.Popen] = {}
@@ -555,7 +620,7 @@ def stop_rom(rom_id: str) -> dict[str, Any]:
 
     Closing the window used to only kill PIDs in _rom_procs. If the server was
     already warm (launcher / prior desk / hard-refresh lost the Popen handle),
-    stop no-op'd and the ROM stayed up — so hard-kill-the-desk became the only
+    stop no-op'd and the ROM stayed up â€” so hard-kill-the-desk became the only
     reset. We now fall back to port kill when health is still up.
     """
     key = normalize_rom_key(rom_id)
@@ -586,7 +651,7 @@ def stop_rom(rom_id: str) -> dict[str, Any]:
             _kill_pid_tree(pid)
             if pid not in killed:
                 killed.append(pid)
-        reason = (reason + " · port " + str(port)).strip(" ·")
+        reason = (reason + " Â· port " + str(port)).strip(" Â·")
 
     # brief wait + recheck
     still = rom_health(health) if health else False
@@ -611,15 +676,17 @@ def stop_rom(rom_id: str) -> dict[str, Any]:
 
 
 def _rom_chrome_payload(meta: dict[str, Any] | None) -> dict[str, str]:
-    """Host strip for every SophiaDesk ROM window.
+    """How the desk frames a ROM window.
 
-    Global law: SOPHIADESK | THE DECK HOST + SKU, black bar.
-    Product costume lives inside the iframe — not on this strip.
-    Per-ROM chrome overrides are ignored so the host stays one language.
+    host (default): SOPHIADESK | THE DECK HOST strip. Product name stays inside.
+    own: no host rail â€” the ROM's chrome is the face. Desk keeps a thin grab + acts.
     """
-    # meta kept for call-site compatibility
-    _ = meta
+    meta = meta or {}
+    mode = str(meta.get("desk_chrome") or "host").strip().lower()
+    if mode not in ("own", "host"):
+        mode = "host"
     return {
+        "mode": mode,
         "bg": "linear-gradient(180deg, #0a0a0a 0%, #000000 100%)",
         "fg": "#c8c8c8",
         "dim": "rgba(180, 180, 180, 0.4)",
@@ -660,7 +727,7 @@ def ensure_rom(rom_id: str) -> dict[str, Any]:
     key = normalize_rom_key(rom_id)
     meta = ROM_CATALOG.get(key)
     if not meta:
-        return {"ok": False, "error": "unknown rom · " + (rom_id or "?")}
+        return {"ok": False, "error": "unknown rom Â· " + (rom_id or "?")}
     health = str(meta.get("health") or "")
     url = str(meta.get("url") or "")
     chrome = _rom_chrome_payload(meta)
@@ -680,7 +747,7 @@ def ensure_rom(rom_id: str) -> dict[str, Any]:
     if not run_path.is_file():
         return {
             "ok": False,
-            "error": "rom server missing · " + str(run_path),
+            "error": "rom server missing Â· " + str(run_path),
             "id": key,
             "url": url,
             "up": False,
@@ -711,7 +778,7 @@ def ensure_rom(rom_id: str) -> dict[str, Any]:
             creation = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
             creation |= getattr(subprocess, "DETACHED_PROCESS", 0x00000008)
         env = os.environ.copy()
-        # TERMINALS (PHP FileKeeper) · glass mountain default if unset
+        # TERMINALS (PHP FileKeeper) Â· glass mountain default if unset
         if key == "sdk-import" and not env.get("GLASS_LOGS_ROOT"):
             env["GLASS_LOGS_ROOT"] = str(_ALICE_BOX / ".glass-logs")
         if key == "sdk-import" and not env.get("SDK_IMPORT_PHP"):
@@ -731,7 +798,7 @@ def ensure_rom(rom_id: str) -> dict[str, Any]:
     except Exception as e:
         return {
             "ok": False,
-            "error": "spawn failed · " + str(e),
+            "error": "spawn failed Â· " + str(e),
             "id": key,
             "up": False,
             "chrome": chrome,
@@ -754,7 +821,7 @@ def ensure_rom(rom_id: str) -> dict[str, Any]:
             }
     return {
         "ok": False,
-        "error": "rom started but health not ready · try again",
+        "error": "rom started but health not ready Â· try again",
         "id": key,
         "url": url,
         "up": False,
@@ -784,7 +851,9 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
-        # static css/js never need ensure — that was the black-screen path
+        if serve_hands(self, path):
+            return
+        # static css/js never need ensure â€” that was the black-screen path
         if path.startswith("/api/"):
             ensure()
 
@@ -797,6 +866,61 @@ class Handler(SimpleHTTPRequestHandler):
             except Exception as e:
                 return jsend(self, 400, {"ok": False, "error": str(e)})
             return jsend(self, 200, {"ok": True, "items": rows, "count": len(rows)})
+
+        if path == "/api/house":
+            return jsend(
+                self,
+                200,
+                {
+                    "ok": True,
+                    "house": HOUSE.as_dict(),
+                    "felt": HOUSE.felt,
+                    "mira": HOUSE.mira,
+                    "auth": HOUSE.auth,
+                    "title": HOUSE.title,
+                    "port": PORT,
+                },
+            )
+
+        for kind in ("desk", "mira", "leaf", "card", "envelope", "key"):
+            if path in (
+                f"/api/marketplace/{kind}/dressups",
+                f"/api/store/{kind}/dressups",
+            ):
+                return jsend(
+                    self,
+                    200,
+                    {
+                        "ok": True,
+                        "kind": kind,
+                        "dressups": list_kind_dressups(kind),
+                    },
+                )
+
+        for kind in ("desk", "mira", "leaf", "card", "envelope", "key"):
+            prefix = f"/api/marketplace/{kind}/dressups/"
+            alt = f"/api/store/{kind}/dressups/"
+            if path.startswith(prefix) or path.startswith(alt):
+                rest = path[len(prefix if path.startswith(prefix) else alt) :].strip("/")
+                if rest.endswith(".dsc"):
+                    rest = rest[: -len(".dsc")]
+                if rest.endswith("/raw"):
+                    rest = rest[: -len("/raw")].rstrip("/")
+                pth, text, disp = read_kind_dressup(kind, rest)
+                if not pth:
+                    return jsend(self, 404, {"ok": False, "error": "dressup not found"})
+                return jsend(
+                    self,
+                    200,
+                    {
+                        "ok": True,
+                        "id": rest,
+                        "kind": kind,
+                        "css": text,
+                        "file": pth.name if pth else rest + ".dsc",
+                        "path_display": disp,
+                    },
+                )
 
         if path == "/api/health":
             leaf = primary_leaf(SAFE)
@@ -811,7 +935,7 @@ class Handler(SimpleHTTPRequestHandler):
                     "role": "consider-desk",
                     "not": "notepad",
                     "port": PORT,
-                    "lineage": "the-deck-host/receiver · fork for paper custody",
+                    "lineage": "the-deck-host/receiver Â· fork for paper custody",
                     "library": str(library_root(SAFE)),
                     "library_rel": f"~local/{user}/library",
                     "user_configs": str(configs_root(SAFE)),
@@ -828,7 +952,7 @@ class Handler(SimpleHTTPRequestHandler):
             data = read_surface_paper(SAFE)
             return jsend(self, 200, {"ok": True, "surface": data})
 
-        # store · leaf dressups (.dsc costumes under ~host/marketplace/…)
+        # store Â· leaf dressups (.dsc costumes under ~host/marketplace/â€¦)
         if path in (
             "/api/marketplace/chips/leaf/dressups",
             "/api/store/leaf/dressups",
@@ -903,7 +1027,7 @@ class Handler(SimpleHTTPRequestHandler):
         if path == "/api/primary":
             leaf = ensure_primary_leaf(SAFE)
             cfg = read_leaf_config(SAFE, leaf["id"])
-            # dressup: shell=form · style=costume (.dsc). UI "paper" = style.
+            # dressup: shell=form Â· style=costume (.dsc). UI "paper" = style.
             if cfg and isinstance(cfg.get("dressup"), dict):
                 du = cfg["dressup"]
                 leaf = dict(leaf)
@@ -912,6 +1036,9 @@ class Handler(SimpleHTTPRequestHandler):
                 if du.get("style"):
                     leaf["style"] = du["style"]
                     leaf["paper"] = du["style"]
+                if du.get("sheets"):
+                    leaf["sheets"] = du["sheets"]
+                    leaf["dressup"] = du
             if leaf and not leaf.get("_rel"):
                 p = chip_path(SAFE, leaf["id"])
                 if p:
@@ -930,9 +1057,9 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path in ("/api/leaves", "/api/scraps"):
             rows = list_leaf_chips(SAFE)
-            # one bin scan for all members (was N× list_bin_rows — brutal after many chips)
+            # one bin scan for all members (was NÃ— list_bin_rows â€” brutal after many chips)
             owner_idx = member_owner_index(SAFE)
-            # surface.cfg layout: is the presence registry — not every library chip
+            # surface.cfg layout: is the presence registry â€” not every library chip
             layout_ids = set(read_surface_layout(SAFE).keys())
             # skip redline chips on surface load
             surface_leaves = []
@@ -962,7 +1089,7 @@ class Handler(SimpleHTTPRequestHandler):
                     full["bin"] = owner_idx.get(uid) or owner_idx.get(
                         str(full.get("id") or "")
                     )
-                # mail held in inbox — not dumped on the felt
+                # mail held in inbox â€” not dumped on the felt
                 if leaf_is_inbox_held(full or r):
                     continue
                 # shipped away / explicitly off this stage (library may still hold clay)
@@ -981,6 +1108,9 @@ class Handler(SimpleHTTPRequestHandler):
                         if du.get("style"):
                             full["style"] = du["style"]
                             full["paper"] = du["style"]
+                        if du.get("sheets"):
+                            full["sheets"] = du["sheets"]
+                            full["dressup"] = du
                         if du.get("shell"):
                             full["shell"] = du["shell"]
                 surface_leaves.append(
@@ -1020,7 +1150,7 @@ class Handler(SimpleHTTPRequestHandler):
                     continue
                 # presence registry: only bins on this surface (or nested later)
                 if layout_ids and uid not in layout_ids:
-                    # allow bins that are members of something on-desk? rare — skip for now
+                    # allow bins that are members of something on-desk? rare â€” skip for now
                     continue
                 cfg = read_bin_config(SAFE, uid)
                 full_p = bin_path(SAFE, uid)
@@ -1040,6 +1170,38 @@ class Handler(SimpleHTTPRequestHandler):
                 if uid:
                     cfg["bin"] = leaf_owner_bin(SAFE, uid)
             return jsend(self, 200, {"ok": True, "tools": rows})
+
+        if path == "/api/keys":
+            rows = list_key_chips(SAFE)
+            layout_ids = set(read_surface_layout(SAFE).keys())
+            owner_idx = member_owner_index(SAFE)
+            surface = []
+            for r in rows:
+                uid = str(r.get("uid") or r.get("id") or "")
+                cfg = read_key_config(SAFE, uid)
+                full = dict(r)
+                if cfg and isinstance(cfg.get("dressup"), dict):
+                    du = cfg["dressup"]
+                    full["face"] = du.get("face") or du.get("style") or "plain"
+                    full["style"] = full["face"]
+                if cfg and cfg.get("prop"):
+                    full["prop"] = cfg["prop"]
+                if cfg and cfg.get("pose"):
+                    full["heading"] = (cfg.get("pose") or {}).get("heading") or full.get(
+                        "heading"
+                    )
+                tags = [str(t).lower() for t in (full.get("tags") or [])]
+                prop = full.get("prop") if isinstance(full.get("prop"), dict) else {}
+                if "inbox-held" in tags or "mailed-out" in tags or prop.get("Mail.off_desk"):
+                    continue
+                in_layout = uid in layout_ids
+                in_bin = bool(owner_idx.get(uid))
+                if layout_ids and not in_layout and not in_bin:
+                    continue
+                surface.append({"key": full, "config": cfg, "meta": r})
+            return jsend(
+                self, 200, {"ok": True, "keys": rows, "surface": surface}
+            )
 
         if path == "/api/cards":
             rows = list_card_chips(SAFE)
@@ -1070,7 +1232,37 @@ class Handler(SimpleHTTPRequestHandler):
                 self, 200, {"ok": True, "cards": rows, "surface": surface}
             )
 
-        # card matter paper (GET) — Hands nested FM, not JSON body
+        # key matter paper (GET)
+        if path.startswith("/api/key/") and path.endswith("/raw"):
+            rest = unquote(path[len("/api/key/") :].strip("/"))
+            if rest.endswith("/raw"):
+                rest = rest[: -len("/raw")].strip("/")
+            kid = to_key_id(rest)
+            p = key_path(SAFE, kid)
+            if not p or not p.is_file():
+                return jsend(self, 404, {"ok": False, "error": "key not found"})
+            try:
+                text = p.read_text(encoding="utf-8")
+            except OSError as e:
+                return jsend(self, 500, {"ok": False, "error": str(e)})
+            disp = rel_from_bay(SAFE, p)
+            return jsend(
+                self,
+                200,
+                {
+                    "ok": True,
+                    "id": kid,
+                    "kind": "key",
+                    "path": disp,
+                    "path_abs": str(p.resolve()),
+                    "path_display": disp,
+                    "file": p.name,
+                    "text": text,
+                    "chars": len(text),
+                },
+            )
+
+        # card matter paper (GET) â€” Hands nested FM, not JSON body
         if path.startswith("/api/card/") and path.endswith("/raw"):
             rest = unquote(path[len("/api/card/") :].strip("/"))
             if rest.endswith("/raw"):
@@ -1104,7 +1296,7 @@ class Handler(SimpleHTTPRequestHandler):
             return jsend(
                 self,
                 200,
-                {"ok": True, "destinations": list_fax_destinations()},
+                {"ok": True, "destinations": list_fax_destinations(SAFE)},
             )
 
         if path == "/api/mail/inboxes":
@@ -1142,7 +1334,7 @@ class Handler(SimpleHTTPRequestHandler):
             # security: no path escape
             if ".." in fname or fname.startswith("/") or "\\" in fname:
                 return jsend(self, 400, {"ok": False, "error": "bad path"})
-            # resolve_package_id lives inside tool_package_file (stamp→stamper)
+            # resolve_package_id lives inside tool_package_file (stampâ†’stamper)
             p = tool_package_file(SAFE, pkg, fname)
             if not p or not p.is_file():
                 # try nested dressups
@@ -1236,7 +1428,7 @@ class Handler(SimpleHTTPRequestHandler):
                         "chars": len(text),
                     },
                 )
-            # GET /api/bin/{id} → row
+            # GET /api/bin/{id} â†’ row
             bid = to_bin_id(rest)
             p = bin_path(SAFE, bid)
             if not p:
@@ -1254,8 +1446,8 @@ class Handler(SimpleHTTPRequestHandler):
             rest = unquote(path[len("/api/config/") :]).strip("/")
             if rest.endswith("/raw"):
                 rest = rest[: -len("/raw")].strip("/")
-            # bin config: board[0] · envelope[1] · bin-envelope[1] · bin:…
-            # (living matter uids are not only board[ — books/shelves/decks/envelopes too)
+            # bin config: board[0] Â· envelope[1] Â· bin-envelope[1] Â· bin:â€¦
+            # (living matter uids are not only board[ â€” books/shelves/decks/envelopes too)
             is_bin_cfg = (
                 rest.startswith("bin:")
                 or rest.startswith("bin[")
@@ -1287,7 +1479,7 @@ class Handler(SimpleHTTPRequestHandler):
                         "chars": len(text),
                     },
                 )
-            # tool instance cfg: tool-stamper[0] · stamper[0] · tool:stamper[0]
+            # tool instance cfg: tool-stamper[0] Â· stamper[0] Â· tool:stamper[0]
             is_tool_cfg = (
                 rest.startswith("tool-")
                 or rest.startswith("tool:")
@@ -1323,7 +1515,7 @@ class Handler(SimpleHTTPRequestHandler):
                         "chars": len(text),
                     },
                 )
-            # card instance cfg: card[0] · chip-card[0]
+            # card instance cfg: card[0] Â· chip-card[0]
             if (
                 rest.startswith("card[")
                 or rest.startswith("card:")
@@ -1372,7 +1564,7 @@ class Handler(SimpleHTTPRequestHandler):
                 lid = lid[len("leaf_") :]
             p, text, path_display = read_config_raw(SAFE, lid)
             if not p or text is None:
-                # empty config still "exists" as concept — 404 until pose saved
+                # empty config still "exists" as concept â€” 404 until pose saved
                 return jsend(self, 404, {"ok": False, "error": "config not found"})
             return jsend(
                 self,
@@ -1402,7 +1594,7 @@ class Handler(SimpleHTTPRequestHandler):
             if not sc.get("id"):
                 return jsend(self, 400, {"ok": False, "error": "id required"})
             sc["id"] = to_leaf_chip_id(str(sc["id"]))
-            # style/paper → config dressup only (not on chip)
+            # style/paper â†’ config dressup only (not on chip)
             style = sc.get("style") or sc.get("paper")
             shell = sc.get("shell") or "paper"
             write_leaf_chip(SAFE, sc)
@@ -1450,7 +1642,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(self, 400, {"ok": False, "error": "empty diff"})
             t = int(__import__("time").time())
             rid = f"leaf_red_{t}"
-            title = (body.get("title") or f"redline · {target}").strip()
+            title = (body.get("title") or f"redline Â· {target}").strip()
             body_md = (
                 f"# redline\n\n"
                 f"target: `{target}`\n\n"
@@ -1469,7 +1661,7 @@ class Handler(SimpleHTTPRequestHandler):
             write_leaf_chip(SAFE, leaf)
             p = chip_path(SAFE, rid)
             full = leaf_api_from_chip_file(p) if p else leaf
-            # redline chip: disk only · do not auto-spawn a second felt object
+            # redline chip: disk only Â· do not auto-spawn a second felt object
             return jsend(
                 self,
                 200,
@@ -1540,7 +1732,7 @@ class Handler(SimpleHTTPRequestHandler):
                     else "boardbox",
                 )
                 prop = body.get("prop") if isinstance(body.get("prop"), dict) else None
-                # pose → surface.layout; dress+prop → object cfg
+                # pose â†’ surface.layout; dress+prop â†’ object cfg
                 path_out = write_bin_config(
                     SAFE,
                     bid,
@@ -1571,7 +1763,7 @@ class Handler(SimpleHTTPRequestHandler):
                 },
             )
 
-        # save costume sheet (.dsc) — live studio edit
+        # save costume sheet (.dsc) â€” live studio edit
         if path.startswith("/api/marketplace/chips/leaf/dressups/") and path.endswith(
             "/save"
         ):
@@ -1602,7 +1794,7 @@ class Handler(SimpleHTTPRequestHandler):
             )
 
         if path == "/api/surface/save":
-            # surface paper: id · name · auth — auth renames ~local/<user>/
+            # surface paper: id Â· name Â· auth â€” auth renames ~local/<user>/
             surf_in = body.get("surface") if isinstance(body.get("surface"), dict) else body
             try:
                 data = write_surface_paper(
@@ -1619,7 +1811,7 @@ class Handler(SimpleHTTPRequestHandler):
             return jsend(self, 200, {"ok": True, "surface": data})
 
         if path == "/api/leaf/reset":
-            # optional: wipe primary body only — not used by default UI
+            # optional: wipe primary body only â€” not used by default UI
             leaf = ensure_primary_leaf(SAFE)
             return jsend(self, 200, {"ok": True, "leaf": leaf})
 
@@ -1632,11 +1824,36 @@ class Handler(SimpleHTTPRequestHandler):
                     400,
                     {
                         "ok": False,
-                        "error": "will not trash primary leaf · remove other leaves freely",
+                        "error": "will not trash primary leaf Â· remove other leaves freely",
                     },
                 )
             ok = delete_leaf_chip(SAFE, lid)
             return jsend(self, 200 if ok else 404, {"ok": ok})
+
+        if path == "/api/trash/ensure":
+            x = body.get("x")
+            y = body.get("y")
+            try:
+                x = float(x) if x is not None else None
+                y = float(y) if y is not None else None
+            except (TypeError, ValueError):
+                x, y = None, None
+            out = ensure_trash_can(SAFE, x=x, y=y)
+            return jsend(self, 200, {"ok": True, **out})
+
+        if path == "/api/trash/empty":
+            bid = (body.get("id") or body.get("bin_id") or "").strip() or None
+            out = empty_trash_can(SAFE, bid)
+            code = 200 if out.get("ok") else 400
+            return jsend(self, code, out)
+
+        if path == "/api/trash/bury":
+            iid = (body.get("id") or body.get("item_id") or "").strip()
+            if not iid:
+                return jsend(self, 400, {"ok": False, "error": "id required"})
+            out = bury_item(SAFE, iid)
+            code = 200 if out.get("ok") else 400
+            return jsend(self, code, out)
 
         if path in ("/api/leaf/spawn", "/api/scrap/spawn"):
             title = (body.get("title") or "untitled").strip() or "untitled"
@@ -1763,33 +1980,33 @@ class Handler(SimpleHTTPRequestHandler):
                         400,
                         {
                             "ok": False,
-                            "error": "shelf holds books or decks · drop a closed volume",
+                            "error": "shelf holds books or decks Â· drop a closed volume",
                         },
                     )
                 if not bin_path(SAFE, mid):
                     return jsend(
                         self,
                         404,
-                        {"ok": False, "error": "volume not found · " + mid},
+                        {"ok": False, "error": "volume not found Â· " + mid},
                     )
             elif host_type == "book":
-                # books hold leaf pages only — never cards
+                # books hold leaf pages only â€” never cards
                 if is_card_id(raw_member) or str(raw_member).startswith("card"):
                     return jsend(
                         self,
                         400,
                         {
                             "ok": False,
-                            "error": "cards go in a deck · not book pages",
+                            "error": "cards go in a deck Â· not book pages",
                         },
                     )
                 mid = to_leaf_chip_id(raw_member)
                 if not mid or not chip_path(SAFE, mid):
                     return jsend(
-                        self, 404, {"ok": False, "error": "leaf not found · " + mid}
+                        self, 404, {"ok": False, "error": "leaf not found Â· " + mid}
                     )
             elif host_type == "deck":
-                # envelope · cards OR papers (leaves)
+                # envelope Â· cards OR papers (leaves)
                 if (
                     is_card_id(raw_member)
                     or re.match(r"^card[\[_]", str(raw_member))
@@ -1800,7 +2017,7 @@ class Handler(SimpleHTTPRequestHandler):
                         return jsend(
                             self,
                             404,
-                            {"ok": False, "error": "card not found · " + mid},
+                            {"ok": False, "error": "card not found Â· " + mid},
                         )
                 else:
                     mid = to_leaf_chip_id(raw_member)
@@ -1810,14 +2027,14 @@ class Handler(SimpleHTTPRequestHandler):
                             404,
                             {
                                 "ok": False,
-                                "error": "envelope holds cards or papers · "
+                                "error": "envelope holds cards or papers Â· "
                                 + (mid or raw_member),
                             },
                         )
             else:
-                # board · leaf[n] or card[n] or tool (toolbox thrash)
+                # board Â· leaf[n] or card[n] or tool (toolbox thrash)
                 # CRITICAL: to_leaf_chip_id("card[0]") returns "" then chip_path("")
-                # resolves leaf[0] — drop-card used to yank leaf[0] into the box.
+                # resolves leaf[0] â€” drop-card used to yank leaf[0] into the box.
                 if is_card_id(raw_member) or re.match(
                     r"^card[\[_]", str(raw_member)
                 ) or str(raw_member).startswith("card"):
@@ -1826,7 +2043,7 @@ class Handler(SimpleHTTPRequestHandler):
                         return jsend(
                             self,
                             404,
-                            {"ok": False, "error": "card not found · " + mid},
+                            {"ok": False, "error": "card not found Â· " + mid},
                         )
                 elif is_tool_member_id(raw_member):
                     mid = to_tool_member_id(raw_member)
@@ -1834,7 +2051,7 @@ class Handler(SimpleHTTPRequestHandler):
                         return jsend(
                             self,
                             404,
-                            {"ok": False, "error": "tool not found · " + mid},
+                            {"ok": False, "error": "tool not found Â· " + mid},
                         )
                 else:
                     mid = to_leaf_chip_id(raw_member)
@@ -1842,7 +2059,7 @@ class Handler(SimpleHTTPRequestHandler):
                         return jsend(
                             self,
                             404,
-                            {"ok": False, "error": "leaf not found · " + mid},
+                            {"ok": False, "error": "leaf not found Â· " + mid},
                         )
             add = action not in ("remove", "out", "pull", "leave")
             try:
@@ -1853,7 +2070,7 @@ class Handler(SimpleHTTPRequestHandler):
                 self, 200, {"ok": True, **out, "leaf_id": mid, "member_id": mid, "added": add}
             )
 
-        # Hermes mail · deliver chip into inbox by Receive.address
+        # Hermes mail Â· deliver chip into inbox by Receive.address
         if path == "/api/mail/send":
             address = str(body.get("address") or body.get("to") or "").strip()
             title = str(body.get("title") or body.get("subject") or "letter").strip()
@@ -1959,8 +2176,8 @@ class Handler(SimpleHTTPRequestHandler):
                 pass
             return jsend(self, 200, out)
 
-        # file existing leaf/card/deck into a mailbox (desk parcels · not TERMINALS)
-        # if address homes on another girl desk → ship instance (network), not local park
+        # file existing leaf/card/deck into a mailbox (desk parcels Â· not TERMINALS)
+        # if address homes on another girl desk â†’ ship instance (network), not local park
         if path == "/api/mail/file":
             lid = str(
                 body.get("leaf_id")
@@ -1979,7 +2196,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(
                     self,
                     400,
-                    {"ok": False, "error": "item_id required (leaf · card · deck)"},
+                    {"ok": False, "error": "item_id required (leaf Â· card Â· deck)"},
                 )
             from_auth = str(
                 body.get("from") or body.get("auth") or body.get("from_auth") or "Hermes"
@@ -2040,7 +2257,7 @@ class Handler(SimpleHTTPRequestHandler):
                         502,
                         {
                             "ok": False,
-                            "error": f"ship failed · is dest desk up? · {e}",
+                            "error": f"ship failed Â· is dest desk up? Â· {e}",
                             "home": girl_mail_home_url(address),
                         },
                     )
@@ -2081,7 +2298,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(self, 400, {"ok": False, "error": str(e)})
             return jsend(self, 200, out)
 
-        # explicit ship (same as network file) · Hermes multi-desk uses this
+        # explicit ship (same as network file) Â· Hermes multi-desk uses this
         if path == "/api/mail/ship":
             lid = str(
                 body.get("item_id")
@@ -2105,7 +2322,7 @@ class Handler(SimpleHTTPRequestHandler):
                 "address": address,
                 "from": from_auth,
             }
-            # local or remote handled by /api/mail/file branch — call same path code
+            # local or remote handled by /api/mail/file branch â€” call same path code
             if is_remote_girl_address(address) or girl_mail_home_url(address):
                 # fall through by simulating file
                 try:
@@ -2168,7 +2385,7 @@ class Handler(SimpleHTTPRequestHandler):
                 {
                     "ok": True,
                     "network": dict(GIRL_MAIL_NETWORK),
-                    "note": "uid local · address global · ship remints instance",
+                    "note": "uid local Â· address global Â· ship remints instance",
                 },
             )
 
@@ -2180,7 +2397,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(self, 400, {"ok": False, "error": str(e)})
             return jsend(self, 200, {"ok": True, "items": rows, "count": len(rows)})
 
-        # ROMs · list / ensure running (desk forever · program on top)
+        # ROMs Â· list / ensure running (desk forever Â· program on top)
         if path == "/api/rom/list":
             return jsend(self, 200, {"ok": True, "roms": list_roms()})
 
@@ -2200,14 +2417,14 @@ class Handler(SimpleHTTPRequestHandler):
             code = 200 if out.get("ok") else 500
             return jsend(self, code, out)
 
-        # place ROM cart on felt (desk object) — does not launch the game
+        # place ROM cart on felt (desk object) â€” does not launch the game
         if path == "/api/rom/place":
             rid = str(body.get("id") or body.get("rom") or "kde-001").strip()
             key = normalize_rom_key(rid)
             meta = ROM_CATALOG.get(key)
             if not meta:
                 return jsend(
-                    self, 404, {"ok": False, "error": "unknown rom · " + rid}
+                    self, 404, {"ok": False, "error": "unknown rom Â· " + rid}
                 )
             x, y = body.get("x"), body.get("y")
             try:
@@ -2233,7 +2450,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(self, 400, {"ok": False, "error": str(e)})
             return jsend(self, 200, {"ok": True, **out})
 
-        # guest tools · install + spawn instance
+        # guest tools Â· install + spawn instance
         if path == "/api/tool/despawn" or path == "/api/tool/delete":
             tid = str(
                 body.get("uid") or body.get("id") or body.get("tool") or ""
@@ -2242,7 +2459,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(self, 400, {"ok": False, "error": "uid required"})
             ok = delete_tool_config(SAFE, tid)
             if not ok:
-                return jsend(self, 404, {"ok": False, "error": "tool not found · " + tid})
+                return jsend(self, 404, {"ok": False, "error": "tool not found Â· " + tid})
             return jsend(self, 200, {"ok": True, "deleted": tid})
 
         if path == "/api/tool/install":
@@ -2273,12 +2490,12 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(self, 400, {"ok": False, "error": str(e)})
             return jsend(self, 200, {"ok": True, **out})
 
-        # Chester's Imports fax · destinations + send (copy clean MD)
+        # Chester's Imports fax Â· destinations + send (copy clean MD)
         if path == "/api/fax/destinations":
             return jsend(
                 self,
                 200,
-                {"ok": True, "destinations": list_fax_destinations()},
+                {"ok": True, "destinations": list_fax_destinations(SAFE)},
             )
 
         if path == "/api/fax/send":
@@ -2309,12 +2526,12 @@ class Handler(SimpleHTTPRequestHandler):
                 return jsend(self, 400, {"ok": False, "error": str(e)})
             except OSError as e:
                 return jsend(
-                    self, 500, {"ok": False, "error": f"write failed · {e}"}
+                    self, 500, {"ok": False, "error": f"write failed Â· {e}"}
                 )
             return jsend(self, 200, out)
 
         if path == "/api/tool/mark":
-            # stamper use → leaf or card prop
+            # stamper use â†’ leaf or card prop
             raw_target = str(
                 body.get("leaf_id")
                 or body.get("card_id")
@@ -2410,6 +2627,87 @@ class Handler(SimpleHTTPRequestHandler):
                 },
             )
 
+        if path == "/api/key/spawn":
+            title = (body.get("title") or body.get("glyph") or "key").strip() or "key"
+            author = (body.get("author") or "unknown").strip() or "unknown"
+            glyph = (body.get("glyph") or "").strip()
+            svg = body.get("svg") or body.get("body") or ""
+            heading = body.get("heading") or "N"
+            x, y = body.get("x"), body.get("y")
+            try:
+                x = float(x) if x is not None else None
+                y = float(y) if y is not None else None
+            except (TypeError, ValueError):
+                x, y = None, None
+            try:
+                out = spawn_key(
+                    SAFE,
+                    title=title,
+                    author=author,
+                    glyph=glyph,
+                    svg=svg,
+                    heading=heading,
+                    x=x,
+                    y=y,
+                )
+            except ValueError as e:
+                return jsend(self, 400, {"ok": False, "error": str(e)})
+            return jsend(self, 200, {"ok": True, **out})
+
+        if path == "/api/key/save":
+            sk = body.get("key") or body
+            if not sk.get("id") and not sk.get("uid"):
+                return jsend(self, 400, {"ok": False, "error": "id required"})
+            kid = to_key_id(str(sk.get("uid") or sk.get("id")))
+            sk["id"] = kid
+            sk["uid"] = kid
+            write_key_chip(SAFE, sk)
+            p = key_path(SAFE, kid)
+            full = key_api_from_file(p) if p else sk
+            if full and p:
+                full["_rel"] = rel_from_bay(SAFE, p)
+            heading = sk.get("heading") or (full or {}).get("heading")
+            if heading or sk.get("face") or sk.get("style"):
+                face = sk.get("face") or sk.get("style") or "plain"
+                pose = {"heading": heading} if heading else None
+                write_key_config(
+                    SAFE,
+                    kid,
+                    pose=pose,
+                    dressup={"id": kid, "shell": "key", "face": face, "style": face},
+                    prop={"heading": heading} if heading else None,
+                )
+            cfg = read_key_config(SAFE, kid)
+            return jsend(self, 200, {"ok": True, "key": full, "config": cfg})
+
+        if path == "/api/key/pose":
+            raw_id = (body.get("id") or body.get("key_id") or "").strip()
+            if not raw_id:
+                return jsend(self, 400, {"ok": False, "error": "id required"})
+            kid = to_key_id(raw_id)
+            pose = body.get("pose") if isinstance(body.get("pose"), dict) else {}
+            dress = body.get("dressup") if isinstance(body.get("dressup"), dict) else {}
+            prop = body.get("prop") if isinstance(body.get("prop"), dict) else None
+            path_out = write_key_config(
+                SAFE, kid, pose=pose, dressup=dress or None, prop=prop
+            )
+            owner = leaf_owner_bin(SAFE, kid)
+            layout_owner = (
+                str(owner)
+                if owner and re.match(r"^(board|deck)\[", str(owner))
+                else "surface"
+            )
+            return jsend(
+                self,
+                200,
+                {
+                    "ok": True,
+                    "path": str(path_out.resolve()),
+                    "file": path_out.name,
+                    "layout_owner": layout_owner,
+                },
+            )
+
         if path == "/api/tool/pose":
             tid = (body.get("id") or body.get("tool_id") or "").strip()
             if not tid:
@@ -2433,7 +2731,7 @@ def main() -> None:
     ensure()
     httpd = ThreadingHTTPServer((HOST, PORT), Handler)
     sys.stderr.write(
-        "%s · %s · http://%s:%s/ · chips %s\n"
+        "%s Â· %s Â· http://%s:%s/ Â· chips %s\n"
         % (APP, SKU, HOST, PORT, SAFE / "USER" / "chips")
     )
     try:

@@ -2,16 +2,16 @@
 store:
   file: envelope[1]-machinememories.bin
   type: bin
-  bit_count: 2
+  bit_count: 3
 bin:
   uid: envelope[1]
   type: envelope
   name: Machine Memories
   auth: unknown
   class: envelope
-  chips: ["card[4]", "card[1]"]
+  chips: ["card[4]", "card[1]", "leaf[70]"]
 pin:
   tps_created: 1786028179
-  tps_updated: 1786241754
+  tps_updated: 1788920509
   tags: []
 ---

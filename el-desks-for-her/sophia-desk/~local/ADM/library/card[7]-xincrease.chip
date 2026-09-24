@@ -10,8 +10,8 @@ chip:
   type: card
 pin:
   tps_created: 1786161233
-  tps_updated: 1786200353
-  tags: ["mail", "hermes", "casestreet"]
+  tps_updated: 1787276638
+  tags: ["mail", "hermes", "casestreet", "x-platform"]
 ---
 from:verified min_faves:5
 
@@ -23,6 +23,9 @@ Grok OR xAI (agent OR tool OR experiment)
 @karpathy 
 "local AI" OR "personal AI" OR "desktop AI"
 "build log" OR "devlog" (AI OR OS OR agent)
+
+#tag 
+
 
 "I built" 
 prompt engineering OR "system prompt"

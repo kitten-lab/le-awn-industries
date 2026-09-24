@@ -9,9 +9,9 @@ bin:
   name: Weird Papers for Filing Later
   auth: AUORI
   class: box
-  chips: ["leaf[63]", "leaf[65]", "leaf[35]"]
+  chips: ["leaf[65]", "leaf[35]", "card[7]"]
 pin:
   tps_created: 1785960188
-  tps_updated: 1786652632
+  tps_updated: 1788974007
   tags: []
 ---

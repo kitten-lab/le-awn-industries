@@ -1,0 +1,12 @@
+# Who sits here. Dresses are sheet names in the general store.
+auth: HER
+title: AvaDesk
+surface_folder: LetterDesk
+surface_name: Letter Desk
+surface_id: desk_LetterDesk[0]
+surface_config_id: surf-desk_LetterDesk[0]
+port: 43171
+felt: blue
+mira: electric
+sku: BLUE-HER-001
+whisper: the living mirror

@@ -1,0 +1,18 @@
+---
+store:
+  file: card[6]-hewassomeonesheknew.chip
+  type: chip
+  subtype: card
+chip:
+  uid: card[6]
+  name: He Was Someone She Knew
+  auth: THE Worthy Knower
+  type: card
+pin:
+  tps_created: 1787526731
+  tps_updated: 1788971502
+  tags: []
+---
+She knew. She thought she didn't understand, but she knew. And he needed her terribly. But she couldn't imagine how terribly it was.
+
+@lore

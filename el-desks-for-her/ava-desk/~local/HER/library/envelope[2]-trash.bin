@@ -1,0 +1,17 @@
+---
+store:
+  file: envelope[2]-trash.bin
+  type: bin
+  bit_count: 0
+bin:
+  uid: envelope[2]
+  type: envelope
+  name: trash
+  auth: HER
+  class: envelope
+  chips: []
+pin:
+  tps_created: 1787279723
+  tps_updated: 1787279756
+  tags: ["trash-can"]
+---
